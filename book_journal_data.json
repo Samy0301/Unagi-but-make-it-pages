@@ -1,5 +1,42 @@
 {
-    "books": [],
+    "books": [
+        {
+            "id": "2026-05-07T18:59:10.713953",
+            "titulo": "hvg",
+            "autor": "",
+            "paginas": 0,
+            "genero": "",
+            "ubicacion": "",
+            "foto": null,
+            "estado": "leido",
+            "rating": 3,
+            "formato": "fisico"
+        },
+        {
+            "id": "2026-05-07T18:58:56.850976",
+            "titulo": "jb",
+            "autor": "",
+            "paginas": 0,
+            "genero": "",
+            "ubicacion": "",
+            "foto": null,
+            "estado": "no_leido",
+            "rating": 0,
+            "formato": "fisico"
+        },
+        {
+            "id": "2026-05-07T19:06:20.965082",
+            "titulo": "hfc nmfc",
+            "autor": "",
+            "paginas": 0,
+            "genero": "",
+            "ubicacion": "",
+            "foto": null,
+            "estado": "leido",
+            "rating": 4,
+            "formato": "fisico"
+        }
+    ],
     "reviews": [],
     "tracker": {},
     "bookshelf": [],
