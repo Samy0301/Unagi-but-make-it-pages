@@ -202,7 +202,7 @@ class BibliotecaFrame(CTkFrame):
         self.extras_frame.pack_forget()
         self.add_stars.set_rating(0)
         self.fmt_var.set("fisico")
-        self.photo_preview.configure(image="", text="")
+        self.photo_preview.configure(image=None, text="")
 
         self.toggle_add_panel()
         self.render_books()
