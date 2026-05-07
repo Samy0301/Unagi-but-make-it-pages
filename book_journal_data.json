@@ -1,0 +1,52 @@
+{
+    "books": [
+        {
+            "id": "2026-05-07T16:23:28.060415",
+            "titulo": "el principe cruel",
+            "autor": "jk rowlin",
+            "genero": "fantasia",
+            "rating": 5,
+            "estado": "Por leer"
+        }
+    ],
+    "reviews": [
+        {
+            "id": "2026-05-07T16:24:28.387303",
+            "titulo": "el principe cruel",
+            "autor": "no se",
+            "fecha_inicio": "3/4/23",
+            "fecha_final": "4/5/23",
+            "paginas": "543",
+            "formato": "Digital",
+            "genero": "fantasia",
+            "rating": 5,
+            "personaje_fav": "lucien",
+            "personaje_odiado": "la hermana de la tipa",
+            "sentimientos": {
+                "amor": 1,
+                "enojo": 0,
+                "tristeza": 0,
+                "plot": 0,
+                "reflexion": 0,
+                "felicidad": 0,
+                "hot": 0
+            },
+            "frases": "erg",
+            "resena": "qrg"
+        }
+    ],
+    "tracker": {
+        "2026-01": {
+            "6": "8",
+            "9": "0"
+        },
+        "2029-05": {
+            "6": "78"
+        },
+        "2026-05": {
+            "4": "1"
+        }
+    },
+    "tbr": [],
+    "challenges": []
+}
