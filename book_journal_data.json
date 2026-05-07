@@ -1,29 +1,20 @@
 {
-    "books": [
-        {
-            "id": "2026-05-07T16:23:28.060415",
-            "titulo": "el principe cruel",
-            "autor": "jk rowlin",
-            "genero": "fantasia",
-            "rating": 5,
-            "estado": "Por leer"
-        }
-    ],
+    "books": [],
     "reviews": [
         {
-            "id": "2026-05-07T16:24:28.387303",
-            "titulo": "el principe cruel",
-            "autor": "no se",
-            "fecha_inicio": "3/4/23",
-            "fecha_final": "4/5/23",
-            "paginas": "543",
-            "formato": "Digital",
-            "genero": "fantasia",
-            "rating": 5,
-            "personaje_fav": "lucien",
-            "personaje_odiado": "la hermana de la tipa",
+            "id": "2026-05-07T17:24:45.112575",
+            "titulo": "e3t",
+            "autor": "regh",
+            "fecha_inicio": "4",
+            "fecha_final": "32",
+            "paginas": "3",
+            "formato": "fisico",
+            "genero": "eath",
+            "rating": 2,
+            "personaje_fav": "aeth",
+            "personaje_odiado": "aet",
             "sentimientos": {
-                "amor": 1,
+                "amor": 3,
                 "enojo": 0,
                 "tristeza": 0,
                 "plot": 0,
@@ -31,22 +22,36 @@
                 "felicidad": 0,
                 "hot": 0
             },
-            "frases": "erg",
-            "resena": "qrg"
+            "frases": "awtaet",
+            "resena": "aetg"
+        },
+        {
+            "id": "2026-05-07T17:25:24.387993",
+            "titulo": "khb",
+            "autor": "",
+            "fecha_inicio": "",
+            "fecha_final": "",
+            "paginas": "",
+            "formato": "fisico",
+            "genero": "",
+            "rating": 2,
+            "personaje_fav": "",
+            "personaje_odiado": "",
+            "sentimientos": {
+                "amor": 0,
+                "enojo": 0,
+                "tristeza": 0,
+                "plot": 0,
+                "reflexion": 0,
+                "felicidad": 0,
+                "hot": 0
+            },
+            "frases": "",
+            "resena": ""
         }
     ],
-    "tracker": {
-        "2026-01": {
-            "6": "8",
-            "9": "0"
-        },
-        "2029-05": {
-            "6": "78"
-        },
-        "2026-05": {
-            "4": "1"
-        }
-    },
-    "tbr": [],
-    "challenges": []
+    "tracker": {},
+    "bookshelf": [],
+    "reading_streaks": [],
+    "current_streak": null
 }

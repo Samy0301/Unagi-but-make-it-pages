@@ -1,11 +1,9 @@
-"""Widgets reutilizables para Book Journal."""
+"""Widgets reutilizables."""
 import customtkinter as ctk
 from customtkinter import CTkFrame, CTkLabel
 
 
 class StarRating(CTkFrame):
-    """Widget de 5 estrellas interactivo."""
-
     def __init__(self, master, rating=0, command=None, size=20, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
         self.rating = rating
@@ -31,8 +29,6 @@ class StarRating(CTkFrame):
 
 
 class IconRating(CTkFrame):
-    """Rating con iconos personalizados (❤️ 😠 😢 etc)."""
-
     def __init__(self, master, icon="♥", max_val=5, value=0, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
         self.value = value

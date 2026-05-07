@@ -1,47 +1,62 @@
-# 📚 Book Journal App - Refactorizado
+# 📚 Book Journal v2
 
-## Estructura del proyecto
+## Estructura
 
 ```
-book_journal/
-├── main.py              # Punto de entrada y navegación principal
-├── database.py          # Persistencia JSON y utilidades de ID
-├── widgets.py           # Componentes reutilizables (StarRating, IconRating)
+book_journal_v2/
+├── main.py              # Punto de entrada
+├── database.py          # JSON + lógica de rachas
+├── widgets.py           # StarRating, IconRating
 ├── frames/
 │   ├── __init__.py
-│   ├── biblioteca.py    # Grid de libros
-│   ├── review.py        # Formulario de reseñas
-│   ├── tracker.py       # Tracker circular de lectura
-│   ├── tbr.py           # Lista "To Be Read"
-│   ├── bookshelf.py     # Visualización de estantería
-│   └── challenges.py    # Desafíos de lectura
+│   ├── biblioteca.py    # Grid libros + estados + filtros TBR/Leídos
+│   ├── tracker.py       # Dona mensual + libros leyendo + rachas
+│   ├── bookshelf.py     # Estantería con lomos personalizables
+│   ├── review.py        # Libro abierto con navegación de páginas
+│   └── challenges.py    # Reservado
 ```
 
-## Cambios realizados
+## Funcionalidades
 
-### Limpieza de código muerto
-- Eliminados imports no utilizados: `PIL.Image/ImageDraw/ImageFont`, `CTkSegmentedButton`, `CTkSlider`, `CTkImage`.
-- Eliminado método vacío `on_canvas_click` en Tracker.
-- Eliminado `addtag_withtag` roto que no aportaba funcionalidad.
+### 📖 Biblioteca
+- Grid de libros con portada (foto desde ruta), título, autor, páginas, género, ubicación.
+- Estados: **No leído / Leyendo / Leído**.
+- Si está **Leído**: aparece puntuación con estrellas y formato (Físico/Digital/Audiolibro).
+- Filtros rápidos: **Todos / TBR / Leídos**.
+- Formulario embebido para añadir libros.
 
-### Corrección de bugs
-- **Tracker circular**: eliminada línea de coordenadas corrupta (`__class__(__import__('math')...)`). Ahora usa `math` importado correctamente.
-- **IDs únicos**: TBR y Challenges ahora usan identificadores únicos en lugar de comparar por título/fecha o nombre/meta, evitando colisiones y bugs al editar/eliminar.
-- **Review form**: los `CTkTextbox` de frases y reseña ahora se empaquetan de forma consistente dentro del layout.
-- **Biblioteca**: validación de título obligatorio al agregar libro.
-- **Ventanas modales**: `transient` + `grab_set` en diálogos para mejor UX.
+### 📅 Tracker
+- **Dona circular** con días del mes.
+- Selector de mes/año.
+- Escala de color **degradada continua** según páginas leídas (gris → azul → verde → amarillo → naranja → rojo).
+- Sobre cada día coloreado aparece la **cantidad de páginas** introducida.
+- Panel lateral con lista de libros marcados como **"Leyendo"**.
+- **Racha de lectura**: contador de días consecutivos. Se reinicia si falta un día.
+- **Historial de rachas**: fechas de inicio/fin y duración de cada racha pasada.
 
-### Modularización
-- Cada vista reside en su propio módulo bajo `frames/`.
-- `Database` y widgets genéricos están desacoplulados.
-- Fácil de extender: agregar un nuevo frame solo requiere importarlo en `main.py`.
+### 🪴 Bookshelf
+- Canvas con estantes.
+- Selecciona un libro de tu biblioteca y elige **color del lomo**.
+- Haz click en la estantería para **colocar el lomo** donde quieras.
+- El **ancho del lomo es proporcional** a la longitud del título para que se lea completo.
+- Lomos con efecto de brillo y sombra.
 
-## Cómo ejecutar
+### ✍️ Review
+- Diseño de **libro abierto**: dos páginas visibles.
+- Navegación con botones **Anterior / Siguiente**.
+- Págenes izquierda/derecha muestran reseñas guardadas.
+- La última página derecha siempre es un **formulario en blanco** para escribir una nueva reseña.
+- Al guardar, salta automáticamente a la spread donde se ve la nueva reseña.
+
+### 🏆 Challenges
+- Panel vacío reservado para futuras funcionalidades.
+
+## Ejecutar
 
 ```bash
-cd book_journal
-pip install customtkinter
+cd book_journal_v2
+pip install customtkinter pillow
 python main.py
 ```
 
-> El archivo `book_journal_data.json` se creará automáticamente en el directorio de trabajo.
+> Se creará `book_journal_data.json` automáticamente.

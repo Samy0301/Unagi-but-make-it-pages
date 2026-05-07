@@ -1,1 +1,1 @@
-"""Frames del Book Journal."""
+"""Frames del Book Journal v2."""

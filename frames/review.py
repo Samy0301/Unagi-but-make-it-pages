@@ -1,9 +1,8 @@
-"""Formulario de reseña detallada (Lectura Concluida)."""
+"""Reviews en formato libro abierto con navegacion de paginas."""
+from datetime import datetime
+
 import customtkinter as ctk
-from customtkinter import (
-    CTkFrame, CTkLabel, CTkButton, CTkEntry,
-    CTkTextbox, CTkScrollableFrame, CTkRadioButton
-)
+from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkEntry, CTkTextbox, CTkRadioButton
 from tkinter import messagebox
 
 from database import Database
@@ -11,154 +10,252 @@ from widgets import StarRating, IconRating
 
 
 class ReviewFrame(CTkFrame):
+    PAGE_W = 460
+    PAGE_H = 620
+
     def __init__(self, master, db: Database, **kwargs):
         super().__init__(master, **kwargs)
         self.db = db
         self.configure(fg_color="transparent")
 
-        CTkLabel(
-            self, text="✍️ Lectura Concluida", font=("Helvetica", 28, "bold")
-        ).pack(pady=(20, 10))
+        CTkLabel(self, text="✍️ Lectura Concluida", font=("Helvetica", 28, "bold")).pack(pady=(10, 5))
 
-        self.scroll = CTkScrollableFrame(
-            self, width=950, height=620, fg_color="transparent"
-        )
-        self.scroll.pack(padx=20, pady=10, fill="both", expand=True)
+        self.book = CTkFrame(self, fg_color="#2b2b2b", corner_radius=4, border_width=3)
+        self.book.pack(pady=10)
 
-        self.build_form()
+        self.left_page = CTkFrame(self.book, width=self.PAGE_W, height=self.PAGE_H,
+                                  fg_color="#f5f5f5", corner_radius=0)
+        self.left_page.pack(side="left", padx=(4, 1))
+        self.left_page.pack_propagate(False)
 
-    def build_form(self):
-        f = self.scroll
+        self.spine = CTkFrame(self.book, width=10, height=self.PAGE_H, fg_color="#1a1a1a", corner_radius=0)
+        self.spine.pack(side="left")
 
-        # Título y Autor
-        r0 = CTkFrame(f, fg_color="transparent")
-        r0.pack(fill="x", pady=10)
+        self.right_page = CTkFrame(self.book, width=self.PAGE_W, height=self.PAGE_H,
+                                   fg_color="#f5f5f5", corner_radius=0)
+        self.right_page.pack(side="left", padx=(1, 4))
+        self.right_page.pack_propagate(False)
 
-        CTkLabel(r0, text="TÍTULO:", font=("Arial", 12, "bold")).pack(anchor="w", padx=20)
-        self.entry_titulo = CTkEntry(r0, width=600, height=35)
-        self.entry_titulo.pack(anchor="w", padx=20, pady=5)
+        nav = CTkFrame(self, fg_color="transparent")
+        nav.pack(pady=10)
+        CTkButton(nav, text="◀ Anterior", command=self.prev_spread, width=120).pack(side="left", padx=10)
+        self.page_label = CTkLabel(nav, text="Pagina 1", font=("Arial", 12, "bold"))
+        self.page_label.pack(side="left", padx=10)
+        CTkButton(nav, text="Siguiente ▶", command=self.next_spread, width=120).pack(side="left", padx=10)
 
-        CTkLabel(r0, text="AUTOR:", font=("Arial", 12, "bold")).pack(anchor="w", padx=20)
-        self.entry_autor = CTkEntry(r0, width=600, height=35)
-        self.entry_autor.pack(anchor="w", padx=20, pady=5)
+        self.spread_idx = 0
+        self.render_spread()
 
-        # Fechas y páginas
-        r1 = CTkFrame(f, fg_color="transparent")
-        r1.pack(fill="x", pady=10)
+    def render_spread(self):
+        for w in self.left_page.winfo_children():
+            w.destroy()
+        for w in self.right_page.winfo_children():
+            w.destroy()
 
-        fields = [
-            ("Fecha Inicio", "fecha_inicio"),
-            ("Fecha Final", "fecha_final"),
-            ("N° Páginas", "paginas")
-        ]
-        for text, attr in fields:
-            col = CTkFrame(r1, fg_color="transparent")
-            col.pack(side="left", padx=20)
-            CTkLabel(col, text=text + ":", font=("Arial", 11, "bold")).pack(anchor="w")
-            entry = CTkEntry(col, width=150)
-            entry.pack()
-            setattr(self, f"entry_{attr}", entry)
+        reviews = self.db.get("reviews")
+        left_idx = self.spread_idx * 2
+        right_idx = left_idx + 1
+        total_reviews = len(reviews)
 
-        # Formato y Género
-        r2 = CTkFrame(f, fg_color="transparent")
-        r2.pack(fill="x", pady=10, padx=20)
-        CTkLabel(r2, text="Formato:", font=("Arial", 12, "bold")).pack(side="left")
-        self.formato_var = ctk.StringVar(value="Físico")
-        for val in ["Físico", "Digital", "Audiolibro"]:
-            CTkRadioButton(r2, text=val, variable=self.formato_var, value=val).pack(
-                side="left", padx=10
-            )
+        if total_reviews == 0:
+            self.render_blank_form(self.left_page, 1)
+            CTkLabel(self.right_page, text="📄 Pagina 2", text_color="gray",
+                     font=("Arial", 14)).place(relx=0.5, rely=0.5, anchor="center")
+            self.page_label.configure(text="Pagina 1 de 1")
+            return
 
-        CTkLabel(r2, text="Género:", font=("Arial", 12, "bold")).pack(
-            side="left", padx=(30, 0)
-        )
-        self.entry_genero = CTkEntry(r2, width=200)
-        self.entry_genero.pack(side="left", padx=10)
+        if left_idx < total_reviews:
+            self.render_review_readonly(self.left_page, reviews[left_idx], left_idx + 1)
+        else:
+            self.render_blank_form(self.left_page, left_idx + 1)
 
-        # Rating general
-        r3 = CTkFrame(f, fg_color="transparent")
-        r3.pack(fill="x", pady=15, padx=20)
-        CTkLabel(r3, text="Calificación General:", font=("Arial", 14, "bold")).pack(
-            side="left"
-        )
-        self.stars_general = StarRating(r3, rating=0, size=28)
-        self.stars_general.pack(side="left", padx=20)
+        if right_idx < total_reviews:
+            self.render_review_readonly(self.right_page, reviews[right_idx], right_idx + 1)
+        else:
+            self.render_blank_form(self.right_page, right_idx + 1)
 
-        # Personajes
-        r4 = CTkFrame(f, fg_color="transparent")
-        r4.pack(fill="x", pady=10, padx=20)
-        CTkLabel(r4, text="Personaje Favorito:").pack(side="left")
-        self.entry_fav = CTkEntry(r4, width=200)
-        self.entry_fav.pack(side="left", padx=10)
-        CTkLabel(r4, text="Personaje Odiado:").pack(side="left", padx=(20, 0))
-        self.entry_hate = CTkEntry(r4, width=200)
-        self.entry_hate.pack(side="left", padx=10)
+        total_pages = total_reviews + 1
+        self.page_label.configure(text=f"Paginas {left_idx + 1}-{right_idx + 1} de {total_pages}")
 
-        # Sentimientos
-        r5 = CTkFrame(f, fg_color="transparent")
-        r5.pack(fill="x", pady=15, padx=20)
+    def render_review_readonly(self, parent, review, num):
+        scroll = ctk.CTkScrollableFrame(parent, width=self.PAGE_W - 20, height=self.PAGE_H - 20,
+                                        fg_color="#f5f5f5")
+        scroll.pack(padx=10, pady=10, fill="both", expand=True)
 
+        CTkLabel(scroll, text=f"— Pagina {num} —", text_color="#888", font=("Arial", 10)).pack()
+        CTkLabel(scroll, text=review.get("titulo", "Sin titulo"),
+                 text_color="#222", font=("Arial", 16, "bold"), wraplength=380).pack(pady=(5, 2))
+        CTkLabel(scroll, text=f"de {review.get('autor', 'Autor desconocido')}",
+                 text_color="#555", font=("Arial", 11)).pack()
+
+        meta = CTkFrame(scroll, fg_color="transparent")
+        meta.pack(pady=8)
+        CTkLabel(meta, text=f"📅 {review.get('fecha_inicio','')} → {review.get('fecha_final','')}",
+                 text_color="#444", font=("Arial", 9)).pack(side="left", padx=5)
+        CTkLabel(meta, text=f"📖 {review.get('paginas','')} pag.",
+                 text_color="#444", font=("Arial", 9)).pack(side="left", padx=5)
+        CTkLabel(meta, text=f"🎭 {review.get('genero','')}",
+                 text_color="#444", font=("Arial", 9)).pack(side="left", padx=5)
+
+        fmt = review.get("formato", "fisico")
+        fmt_emoji = {"fisico": "📖", "digital": "💻", "audiolibro": "🎧"}
+        CTkLabel(scroll, text=f"{fmt_emoji.get(fmt,'')} {fmt.capitalize()}",
+                 text_color="#444", font=("Arial", 9)).pack()
+
+        stars = CTkFrame(scroll, fg_color="transparent")
+        stars.pack(pady=5)
+        for i in range(5):
+            CTkLabel(stars, text="★" if i < review.get("rating", 0) else "☆",
+                     text_color="gold", font=("Arial", 16)).pack(side="left")
+
+        if review.get("personaje_fav"):
+            CTkLabel(scroll, text=f"❤️ Favorito: {review['personaje_fav']}",
+                     text_color="#333", font=("Arial", 10)).pack(anchor="w", padx=10)
+        if review.get("personaje_odiado"):
+            CTkLabel(scroll, text=f"💀 Odiado: {review['personaje_odiado']}",
+                     text_color="#333", font=("Arial", 10)).pack(anchor="w", padx=10)
+
+        if review.get("sentimientos"):
+            sent = CTkFrame(scroll, fg_color="transparent")
+            sent.pack(pady=5)
+            icons = {"amor": "♥", "enojo": "😠", "tristeza": "💧",
+                     "plot": "✦", "reflexion": "🧠", "felicidad": "☺", "hot": "🔥"}
+            for k, v in review["sentimientos"].items():
+                if v > 0:
+                    CTkLabel(sent, text=f"{icons.get(k,k)} {v}", text_color="#555",
+                             font=("Arial", 9)).pack(side="left", padx=4)
+
+        if review.get("frases"):
+            CTkLabel(scroll, text="Frases destacadas", text_color="#666",
+                     font=("Arial", 10, "italic")).pack(anchor="w", padx=10, pady=(10, 2))
+            CTkLabel(scroll, text=review["frases"], text_color="#333",
+                     font=("Arial", 9), wraplength=380).pack(anchor="w", padx=10)
+
+        if review.get("resena"):
+            CTkLabel(scroll, text="Resena:", text_color="#666",
+                     font=("Arial", 10, "bold")).pack(anchor="w", padx=10, pady=(10, 2))
+            CTkLabel(scroll, text=review["resena"], text_color="#333",
+                     font=("Arial", 9), wraplength=380).pack(anchor="w", padx=10)
+
+    def render_blank_form(self, parent, num):
+        scroll = ctk.CTkScrollableFrame(parent, width=self.PAGE_W - 20, height=self.PAGE_H - 20,
+                                        fg_color="#f5f5f5")
+        scroll.pack(padx=10, pady=10, fill="both", expand=True)
+
+        CTkLabel(scroll, text=f"— Pagina {num} —", text_color="#888", font=("Arial", 10)).pack()
+        CTkLabel(scroll, text="Nueva Resena", text_color="#222",
+                 font=("Arial", 16, "bold")).pack(pady=(5, 10))
+
+        def row_label(parent, text):
+            CTkLabel(parent, text=text + ":", text_color="#444", font=("Arial", 10, "bold")).pack(anchor="w", pady=(8, 2))
+
+        row_label(scroll, "TITULO")
+        self.f_titulo = CTkEntry(scroll, width=380, height=28)
+        self.f_titulo.pack()
+
+        row_label(scroll, "AUTOR")
+        self.f_autor = CTkEntry(scroll, width=380, height=28)
+        self.f_autor.pack()
+
+        row = CTkFrame(scroll, fg_color="transparent")
+        row.pack(fill="x", pady=5)
+        for txt, attr, w in [("Inicio", "fecha_inicio", 110), ("Final", "fecha_final", 110), ("Pags", "paginas", 80)]:
+            c = CTkFrame(row, fg_color="transparent")
+            c.pack(side="left", padx=5)
+            CTkLabel(c, text=txt + ":", text_color="#444", font=("Arial", 9, "bold")).pack(anchor="w")
+            e = CTkEntry(c, width=w, height=26)
+            e.pack()
+            setattr(self, f"f_{attr}", e)
+
+        row2 = CTkFrame(scroll, fg_color="transparent")
+        row2.pack(fill="x", pady=5)
+        CTkLabel(row2, text="Formato:", text_color="#444", font=("Arial", 10, "bold")).pack(side="left")
+        self.f_formato = ctk.StringVar(value="fisico")
+        for val, txt in [("fisico", "Fisico"), ("digital", "Digital"), ("audiolibro", "Audio")]:
+            CTkRadioButton(row2, text=txt, variable=self.f_formato, value=val,
+                           text_color="#333", font=("Arial", 9)).pack(side="left", padx=6)
+
+        row_label(scroll, "GENERO")
+        self.f_genero = CTkEntry(scroll, width=380, height=26)
+        self.f_genero.pack()
+
+        rframe = CTkFrame(scroll, fg_color="transparent")
+        rframe.pack(pady=8)
+        CTkLabel(rframe, text="Calificacion:", text_color="#444", font=("Arial", 12, "bold")).pack(side="left")
+        self.f_stars = StarRating(rframe, rating=0, size=28)
+        self.f_stars.pack(side="left", padx=10)
+
+        row3 = CTkFrame(scroll, fg_color="transparent")
+        row3.pack(fill="x", pady=3)
+        CTkLabel(row3, text="Fav:", text_color="#444", font=("Arial", 10)).pack(side="left")
+        self.f_fav = CTkEntry(row3, width=140, height=24)
+        self.f_fav.pack(side="left", padx=5)
+        CTkLabel(row3, text="Odiado:", text_color="#444", font=("Arial", 10)).pack(side="left", padx=(10, 0))
+        self.f_hate = CTkEntry(row3, width=140, height=24)
+        self.f_hate.pack(side="left", padx=5)
+
+        CTkLabel(scroll, text="Sentimientos:", text_color="#444", font=("Arial", 12, "bold")).pack(anchor="w", pady=(10, 4))
+        sframe = CTkFrame(scroll, fg_color="transparent")
+        sframe.pack(fill="x", pady=5)
         feelings = [
-            ("Amor", "♥", "amor"),
-            ("Enojo", "😠", "enojo"),
-            ("Tristeza", "💧", "tristeza"),
-            ("Plot", "✦", "plot"),
-            ("Reflexión", "🧠", "reflexion"),
-            ("Felicidad", "☺", "felicidad"),
-            ("Hot", "🔥", "hot")
+            ("Amor", "♥", "amor"), ("Enojo", "😠", "enojo"), ("Tristeza", "💧", "tristeza"),
+            ("Plot", "✦", "plot"), ("Reflexion", "🧠", "reflexion"),
+            ("Felicidad", "☺", "felicidad"), ("Hot", "🔥", "hot")
         ]
-        self.feelings = {}
-        for name, icon, key in feelings:
-            col = CTkFrame(r5, fg_color="transparent")
-            col.pack(side="left", padx=12)
-            CTkLabel(col, text=name, font=("Arial", 10, "bold")).pack()
-            ir = IconRating(col, icon=icon, max_val=5)
+        self.f_feelings = {}
+        for idx, (name, icon, key) in enumerate(feelings):
+            c = CTkFrame(sframe, fg_color="transparent")
+            c.grid(row=idx // 4, column=idx % 4, padx=6, pady=5)
+            CTkLabel(c, text=name, text_color="#555", font=("Arial", 11, "bold")).pack()
+            ir = IconRating(c, icon=icon, max_val=5)
+            for lbl in ir.labels:
+                lbl.configure(font=("Arial", 24))
             ir.pack()
-            self.feelings[key] = ir
+            self.f_feelings[key] = ir
 
-        # Frases
-        r6 = CTkFrame(f, fg_color="transparent")
-        r6.pack(fill="x", pady=10, padx=20)
-        CTkLabel(r6, text="FRASES DESTACADAS:", font=("Arial", 12, "bold")).pack(
-            anchor="w"
-        )
-        self.text_frases = CTkTextbox(f, width=800, height=100, corner_radius=10)
-        self.text_frases.pack(padx=20, pady=5, fill="x")
+        row_label(scroll, "FRASES DESTACADAS")
+        self.f_frases = CTkTextbox(scroll, width=380, height=60, corner_radius=6)
+        self.f_frases.pack()
 
-        # Reseña
-        r7 = CTkFrame(f, fg_color="transparent")
-        r7.pack(fill="x", pady=10, padx=20)
-        CTkLabel(r7, text="RESEÑA:", font=("Arial", 12, "bold")).pack(anchor="w")
-        self.text_resena = CTkTextbox(f, width=800, height=150, corner_radius=10)
-        self.text_resena.pack(padx=20, pady=5, fill="x")
+        row_label(scroll, "RESENA")
+        self.f_resena = CTkTextbox(scroll, width=380, height=100, corner_radius=6)
+        self.f_resena.pack()
 
-        # Guardar
-        CTkButton(
-            f,
-            text="💾 Guardar Reseña",
-            command=self.save_review,
-            height=40,
-            font=("Arial", 14, "bold")
-        ).pack(pady=20)
+        CTkButton(scroll, text="💾 Guardar Resena", command=self.save_review,
+                  height=32, font=("Arial", 12, "bold")).pack(pady=15)
 
     def save_review(self):
         review = {
             "id": Database.generate_id(),
-            "titulo": self.entry_titulo.get().strip(),
-            "autor": self.entry_autor.get().strip(),
-            "fecha_inicio": self.entry_fecha_inicio.get().strip(),
-            "fecha_final": self.entry_fecha_final.get().strip(),
-            "paginas": self.entry_paginas.get().strip(),
-            "formato": self.formato_var.get(),
-            "genero": self.entry_genero.get().strip(),
-            "rating": self.stars_general.rating,
-            "personaje_fav": self.entry_fav.get().strip(),
-            "personaje_odiado": self.entry_hate.get().strip(),
-            "sentimientos": {k: v.value for k, v in self.feelings.items()},
-            "frases": self.text_frases.get("1.0", "end").strip(),
-            "resena": self.text_resena.get("1.0", "end").strip()
+            "titulo": self.f_titulo.get().strip(),
+            "autor": self.f_autor.get().strip(),
+            "fecha_inicio": self.f_fecha_inicio.get().strip(),
+            "fecha_final": self.f_fecha_final.get().strip(),
+            "paginas": self.f_paginas.get().strip(),
+            "formato": self.f_formato.get(),
+            "genero": self.f_genero.get().strip(),
+            "rating": self.f_stars.rating,
+            "personaje_fav": self.f_fav.get().strip(),
+            "personaje_odiado": self.f_hate.get().strip(),
+            "sentimientos": {k: v.value for k, v in self.f_feelings.items()},
+            "frases": self.f_frases.get("1.0", "end").strip(),
+            "resena": self.f_resena.get("1.0", "end").strip()
         }
         reviews = self.db.get("reviews")
         reviews.append(review)
         self.db.set("reviews", reviews)
-        messagebox.showinfo("Éxito", "¡Reseña guardada correctamente!")
+        messagebox.showinfo("Exito", "Resena guardada!")
+        self.spread_idx = (len(reviews) - 1) // 2
+        self.render_spread()
+
+    def prev_spread(self):
+        if self.spread_idx > 0:
+            self.spread_idx -= 1
+            self.render_spread()
+
+    def next_spread(self):
+        reviews = self.db.get("reviews")
+        max_spread = len(reviews) // 2
+        if self.spread_idx < max_spread:
+            self.spread_idx += 1
+            self.render_spread()
