@@ -59,8 +59,7 @@ class ReviewFrame(CTkFrame):
 
         if total_reviews == 0:
             self.render_blank_form(self.left_page, 1)
-            CTkLabel(self.right_page, text="📄 Pagina 2", text_color="gray",
-                     font=("Arial", 14)).place(relx=0.5, rely=0.5, anchor="center")
+            self.render_empty_page(self.right_page, 2)
             self.page_label.configure(text="Pagina 1 de 1")
             return
 
@@ -76,6 +75,15 @@ class ReviewFrame(CTkFrame):
 
         total_pages = total_reviews + 1
         self.page_label.configure(text=f"Paginas {left_idx + 1}-{right_idx + 1} de {total_pages}")
+
+    def render_empty_page(self, parent, num):
+        scroll = ctk.CTkScrollableFrame(parent, width=self.PAGE_W - 20, height=self.PAGE_H - 20,
+                                        fg_color="#f5f5f5")
+        scroll.pack(padx=10, pady=10, fill="both", expand=True)
+        CTkLabel(scroll, text=f"— Pagina {num} —", text_color="#888",
+                 font=("Arial", 10)).pack(pady=5)
+        CTkLabel(scroll, text="📄", text_color="gray",
+                 font=("Arial", 48)).pack(pady=20)
 
     def render_review_readonly(self, parent, review, num):
         scroll = ctk.CTkScrollableFrame(parent, width=self.PAGE_W - 20, height=self.PAGE_H - 20,
@@ -150,49 +158,51 @@ class ReviewFrame(CTkFrame):
             CTkLabel(parent, text=text + ":", text_color="#444", font=("Arial", 10, "bold")).pack(anchor="w", pady=(8, 2))
 
         row_label(scroll, "TITULO")
-        self.f_titulo = CTkEntry(scroll, width=380, height=28)
-        self.f_titulo.pack()
+        f_titulo = CTkEntry(scroll, width=380, height=28)
+        f_titulo.pack()
 
         row_label(scroll, "AUTOR")
-        self.f_autor = CTkEntry(scroll, width=380, height=28)
-        self.f_autor.pack()
+        f_autor = CTkEntry(scroll, width=380, height=28)
+        f_autor.pack()
 
         row = CTkFrame(scroll, fg_color="transparent")
         row.pack(fill="x", pady=5)
-        for txt, attr, w in [("Inicio", "fecha_inicio", 110), ("Final", "fecha_final", 110), ("Pags", "paginas", 80)]:
+        fields = [("Inicio", "fecha_inicio", 110), ("Final", "fecha_final", 110), ("Pags", "paginas", 80)]
+        local_entries = {}
+        for txt, attr, w in fields:
             c = CTkFrame(row, fg_color="transparent")
             c.pack(side="left", padx=5)
             CTkLabel(c, text=txt + ":", text_color="#444", font=("Arial", 9, "bold")).pack(anchor="w")
             e = CTkEntry(c, width=w, height=26)
             e.pack()
-            setattr(self, f"f_{attr}", e)
+            local_entries[attr] = e
 
         row2 = CTkFrame(scroll, fg_color="transparent")
         row2.pack(fill="x", pady=5)
         CTkLabel(row2, text="Formato:", text_color="#444", font=("Arial", 10, "bold")).pack(side="left")
-        self.f_formato = ctk.StringVar(value="fisico")
+        f_formato = ctk.StringVar(value="fisico")
         for val, txt in [("fisico", "Fisico"), ("digital", "Digital"), ("audiolibro", "Audio")]:
-            CTkRadioButton(row2, text=txt, variable=self.f_formato, value=val,
+            CTkRadioButton(row2, text=txt, variable=f_formato, value=val,
                            text_color="#333", font=("Arial", 9)).pack(side="left", padx=6)
 
         row_label(scroll, "GENERO")
-        self.f_genero = CTkEntry(scroll, width=380, height=26)
-        self.f_genero.pack()
+        f_genero = CTkEntry(scroll, width=380, height=26)
+        f_genero.pack()
 
         rframe = CTkFrame(scroll, fg_color="transparent")
         rframe.pack(pady=8)
         CTkLabel(rframe, text="Calificacion:", text_color="#444", font=("Arial", 12, "bold")).pack(side="left")
-        self.f_stars = StarRating(rframe, rating=0, size=28)
-        self.f_stars.pack(side="left", padx=10)
+        f_stars = StarRating(rframe, rating=0, size=28)
+        f_stars.pack(side="left", padx=10)
 
         row3 = CTkFrame(scroll, fg_color="transparent")
         row3.pack(fill="x", pady=3)
         CTkLabel(row3, text="Fav:", text_color="#444", font=("Arial", 10)).pack(side="left")
-        self.f_fav = CTkEntry(row3, width=140, height=24)
-        self.f_fav.pack(side="left", padx=5)
+        f_fav = CTkEntry(row3, width=140, height=24)
+        f_fav.pack(side="left", padx=5)
         CTkLabel(row3, text="Odiado:", text_color="#444", font=("Arial", 10)).pack(side="left", padx=(10, 0))
-        self.f_hate = CTkEntry(row3, width=140, height=24)
-        self.f_hate.pack(side="left", padx=5)
+        f_hate = CTkEntry(row3, width=140, height=24)
+        f_hate.pack(side="left", padx=5)
 
         CTkLabel(scroll, text="Sentimientos:", text_color="#444", font=("Arial", 12, "bold")).pack(anchor="w", pady=(10, 4))
         sframe = CTkFrame(scroll, fg_color="transparent")
@@ -202,7 +212,7 @@ class ReviewFrame(CTkFrame):
             ("Plot", "✦", "plot"), ("Reflexion", "🧠", "reflexion"),
             ("Felicidad", "☺", "felicidad"), ("Hot", "🔥", "hot")
         ]
-        self.f_feelings = {}
+        f_feelings = {}
         for idx, (name, icon, key) in enumerate(feelings):
             c = CTkFrame(sframe, fg_color="transparent")
             c.grid(row=idx // 4, column=idx % 4, padx=6, pady=5)
@@ -211,42 +221,45 @@ class ReviewFrame(CTkFrame):
             for lbl in ir.labels:
                 lbl.configure(font=("Arial", 24))
             ir.pack()
-            self.f_feelings[key] = ir
+            f_feelings[key] = ir
 
         row_label(scroll, "FRASES DESTACADAS")
-        self.f_frases = CTkTextbox(scroll, width=380, height=60, corner_radius=6)
-        self.f_frases.pack()
+        f_frases = CTkTextbox(scroll, width=380, height=60, corner_radius=6)
+        f_frases.pack()
 
         row_label(scroll, "RESENA")
-        self.f_resena = CTkTextbox(scroll, width=380, height=100, corner_radius=6)
-        self.f_resena.pack()
+        f_resena = CTkTextbox(scroll, width=380, height=100, corner_radius=6)
+        f_resena.pack()
 
-        CTkButton(scroll, text="💾 Guardar Resena", command=self.save_review,
+        def do_save():
+            review = {
+                "id": Database.generate_id(),
+                "titulo": f_titulo.get().strip(),
+                "autor": f_autor.get().strip(),
+                "fecha_inicio": local_entries["fecha_inicio"].get().strip(),
+                "fecha_final": local_entries["fecha_final"].get().strip(),
+                "paginas": local_entries["paginas"].get().strip(),
+                "formato": f_formato.get(),
+                "genero": f_genero.get().strip(),
+                "rating": f_stars.rating,
+                "personaje_fav": f_fav.get().strip(),
+                "personaje_odiado": f_hate.get().strip(),
+                "sentimientos": {k: v.value for k, v in f_feelings.items()},
+                "frases": f_frases.get("1.0", "end").strip(),
+                "resena": f_resena.get("1.0", "end").strip()
+            }
+            reviews = self.db.get("reviews")
+            reviews.append(review)
+            self.db.set("reviews", reviews)
+            messagebox.showinfo("Exito", "Resena guardada!")
+            self.spread_idx = (len(reviews) - 1) // 2
+            self.render_spread()
+
+        CTkButton(scroll, text="💾 Guardar Resena", command=do_save,
                   height=32, font=("Arial", 12, "bold")).pack(pady=15)
 
     def save_review(self):
-        review = {
-            "id": Database.generate_id(),
-            "titulo": self.f_titulo.get().strip(),
-            "autor": self.f_autor.get().strip(),
-            "fecha_inicio": self.f_fecha_inicio.get().strip(),
-            "fecha_final": self.f_fecha_final.get().strip(),
-            "paginas": self.f_paginas.get().strip(),
-            "formato": self.f_formato.get(),
-            "genero": self.f_genero.get().strip(),
-            "rating": self.f_stars.rating,
-            "personaje_fav": self.f_fav.get().strip(),
-            "personaje_odiado": self.f_hate.get().strip(),
-            "sentimientos": {k: v.value for k, v in self.f_feelings.items()},
-            "frases": self.f_frases.get("1.0", "end").strip(),
-            "resena": self.f_resena.get("1.0", "end").strip()
-        }
-        reviews = self.db.get("reviews")
-        reviews.append(review)
-        self.db.set("reviews", reviews)
-        messagebox.showinfo("Exito", "Resena guardada!")
-        self.spread_idx = (len(reviews) - 1) // 2
-        self.render_spread()
+        pass
 
     def prev_spread(self):
         if self.spread_idx > 0:

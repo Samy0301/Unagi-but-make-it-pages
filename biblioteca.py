@@ -60,7 +60,6 @@ class BibliotecaFrame(CTkFrame):
 
         # --- PANEL EMBEBIDO AÑADIR LIBRO ---
         self.add_panel = CTkFrame(self, fg_color="#252525", corner_radius=12, border_width=2)
-        # No hacemos pack todavía
 
         CTkLabel(self.add_panel, text="NUEVO LIBRO", font=("Helvetica", 18, "bold")).pack(pady=(15, 10))
 
@@ -107,7 +106,7 @@ class BibliotecaFrame(CTkFrame):
         # Extras para "leído"
         self.extras_frame = CTkFrame(self.add_panel, fg_color="transparent")
         self.extras_frame.pack(fill="x", padx=30, pady=5)
-        self.extras_frame.pack_forget()  # Oculto por defecto
+        self.extras_frame.pack_forget()
 
         CTkLabel(self.extras_frame, text="Calificación:", font=("Arial", 12, "bold")).pack(side="left", padx=5)
         self.add_stars = StarRating(self.extras_frame, rating=0, size=26)
@@ -134,8 +133,6 @@ class BibliotecaFrame(CTkFrame):
             self.btn_toggle_add.configure(text="+ Añadir Libro")
             self.add_panel_visible = False
         else:
-            # Re-empaquetamos el scroll después para que el panel quede arriba
-            # sin depender de 'before=' que falla con CTkScrollableFrame
             self.scroll.pack_forget()
             self.add_panel.pack(fill="x", padx=20, pady=10)
             self.scroll.pack(padx=20, pady=10, fill="both", expand=True)
@@ -156,7 +153,6 @@ class BibliotecaFrame(CTkFrame):
         if path:
             self.entry_foto.delete(0, "end")
             self.entry_foto.insert(0, path)
-            # Preview
             try:
                 img = Image.open(path).resize((40, 55), Image.LANCZOS)
                 if CTkImage:
@@ -199,7 +195,6 @@ class BibliotecaFrame(CTkFrame):
         books.append(new_book)
         self.db.set("books", books)
 
-        # Limpiar formulario
         for e in self.entries.values():
             e.delete(0, "end")
         self.entry_foto.delete(0, "end")

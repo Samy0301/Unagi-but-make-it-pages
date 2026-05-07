@@ -6,11 +6,11 @@ import customtkinter as ctk
 from customtkinter import CTk, CTkFrame, CTkLabel, CTkButton, CTkSwitch
 
 from database import Database
-from frames.biblioteca import BibliotecaFrame
-from frames.tracker import TrackerFrame
-from frames.bookshelf import BookshelfFrame
-from frames.review import ReviewFrame
-from frames.challenges import ChallengesFrame
+from biblioteca import BibliotecaFrame
+from tracker import TrackerFrame
+from bookshelf import BookshelfFrame
+from review import ReviewFrame
+from challenges import ChallengesFrame
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")

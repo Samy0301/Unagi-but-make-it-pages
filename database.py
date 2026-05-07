@@ -14,13 +14,19 @@ class Database:
 
     def _load(self):
         if os.path.exists(self.filepath):
-            with open(self.filepath, "r", encoding="utf-8") as f:
-                return json.load(f)
+            try:
+                with open(self.filepath, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, OSError):
+                return {}
         return {}
 
     def save(self):
-        with open(self.filepath, "w", encoding="utf-8") as f:
-            json.dump(self.data, f, indent=4, ensure_ascii=False)
+        try:
+            with open(self.filepath, "w", encoding="utf-8") as f:
+                json.dump(self.data, f, indent=4, ensure_ascii=False)
+        except OSError as e:
+            print(f"[Database] Error al guardar: {e}")
 
     def _ensure_structure(self):
         defaults = {
@@ -29,7 +35,8 @@ class Database:
             "tracker": {},
             "bookshelf": [],
             "reading_streaks": [],
-            "current_streak": None
+            "current_streak": None,
+            "tbr": []
         }
         changed = False
         for key, val in defaults.items():
@@ -50,23 +57,20 @@ class Database:
     def generate_id():
         return datetime.now().isoformat()
 
-    # --- helpers para rachas ---
     def get_tracker_dates(self):
-        """Devuelve set de fechas (date) con lectura registrada."""
         dates = set()
         tracker = self.get("tracker")
         for month_key, days in tracker.items():
             try:
                 year, month = map(int, month_key.split("-"))
                 for day_str, pages in days.items():
-                    if pages and int(pages) > 0:
+                    if pages and str(pages).isdigit() and int(pages) > 0:
                         dates.add(datetime(year, month, int(day_str)).date())
             except Exception:
                 continue
         return dates
 
     def recalc_streaks(self):
-        """Recalcula rachas históricas y la racha actual."""
         dates = sorted(self.get_tracker_dates())
         if not dates:
             self.set("current_streak", None)
@@ -95,7 +99,6 @@ class Database:
             "length": (current_end - current_start).days + 1
         })
 
-        # La última racha es la actual si incluye hoy o ayer
         today = datetime.now().date()
         last = streaks[-1]
         last_end = datetime.fromisoformat(last["end"]).date()

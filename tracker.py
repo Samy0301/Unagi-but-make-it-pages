@@ -14,7 +14,6 @@ from database import Database
 
 
 def lerp_color(c1, c2, t):
-    """Interpolación lineal entre dos colores hex."""
     def hex_to_rgb(h):
         h = h.lstrip("#")
         return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
@@ -30,16 +29,14 @@ def lerp_color(c1, c2, t):
 
 
 def color_for_pages(pages):
-    """Gradiente continuo según cantidad de páginas."""
     if pages == 0 or pages == "None" or pages == "":
         return "#1f1f1f"
     try:
         p = int(pages)
-    except ValueError:
+    except (ValueError, TypeError):
         return "#1f1f1f"
     if p <= 0:
         return "#1f1f1f"
-    # Escala: gris oscuro -> azul -> verde -> amarillo -> naranja -> rojo
     stops = [
         (1,   "#3a3a5c"),
         (10,  "#3498db"),
@@ -67,14 +64,12 @@ class TrackerFrame(CTkFrame):
 
         CTkLabel(self, text="📅 Reading Tracker", font=("Helvetica", 28, "bold")).pack(pady=(15, 5))
 
-        # Contenedor principal: izquierda (dona) | derecha (listas y rachas)
         main = CTkFrame(self, fg_color="transparent")
         main.pack(fill="both", expand=True, padx=20, pady=10)
         main.grid_columnconfigure(0, weight=2)
         main.grid_columnconfigure(1, weight=1)
         main.grid_rowconfigure(0, weight=1)
 
-        # --- IZQUIERDA: Dona ---
         left = CTkFrame(main, fg_color="transparent")
         left.grid(row=0, column=0, sticky="nsew", padx=(0, 15))
 
@@ -89,7 +84,6 @@ class TrackerFrame(CTkFrame):
         self.canvas = Canvas(left, width=520, height=520, bg="#1a1a1a", highlightthickness=0)
         self.canvas.pack(pady=10)
 
-        # Leyenda degradada
         legend = CTkFrame(left, fg_color="transparent")
         legend.pack(pady=5)
         samples = [1, 10, 30, 50, 80, 120]
@@ -99,7 +93,6 @@ class TrackerFrame(CTkFrame):
             box.pack(side="left", padx=2)
             CTkLabel(legend, text=f"{p}", font=("Arial", 9)).pack(side="left", padx=(0, 10))
 
-        # Input rápido
         inp = CTkFrame(left, fg_color="transparent")
         inp.pack(pady=10)
         CTkLabel(inp, text="Día:").pack(side="left", padx=5)
@@ -110,22 +103,18 @@ class TrackerFrame(CTkFrame):
         self.entry_pages.pack(side="left", padx=5)
         CTkButton(inp, text="Registrar", command=self.log_day).pack(side="left", padx=10)
 
-        # --- DERECHA: Libros leyendo + Rachas ---
         right = CTkFrame(main, fg_color="transparent")
         right.grid(row=0, column=1, sticky="nsew")
 
-        # Libros leyendo
         CTkLabel(right, text="📖 Leyendo ahora", font=("Helvetica", 16, "bold")).pack(anchor="w", pady=(0, 5))
         self.reading_scroll = CTkScrollableFrame(right, width=280, height=180, fg_color="transparent")
         self.reading_scroll.pack(fill="x", pady=5)
 
-        # Racha actual
         self.streak_frame = CTkFrame(right, corner_radius=10, border_width=2)
         self.streak_frame.pack(fill="x", pady=15)
         self.streak_label = CTkLabel(self.streak_frame, text="🔥 Racha actual: 0 días", font=("Arial", 14, "bold"))
         self.streak_label.pack(pady=10)
 
-        # Historial de rachas
         CTkLabel(right, text="📜 Historial de rachas", font=("Helvetica", 14, "bold")).pack(anchor="w", pady=(5, 5))
         self.streaks_scroll = CTkScrollableFrame(right, width=280, height=200, fg_color="transparent")
         self.streaks_scroll.pack(fill="x", pady=5)
@@ -195,14 +184,12 @@ class TrackerFrame(CTkFrame):
 
             self.canvas.create_text(x, y, text=str(day), fill="white", font=("Arial", 9, "bold"))
 
-            # Mostrar cantidad si hay páginas
-            if pages and int(pages) > 0:
+            if pages and str(pages).isdigit() and int(pages) > 0:
                 x2 = cx + (r_inner - 25) * math.cos(math.radians(mid_angle))
                 y2 = cy + (r_inner - 25) * math.sin(math.radians(mid_angle))
                 self.canvas.create_text(x2, y2, text=str(pages), fill="white",
                                         font=("Arial", 8, "bold"))
 
-        # Centro
         self.canvas.create_oval(cx - 70, cy - 70, cx + 70, cy + 70,
                                 fill="#2b2b2b", outline="#444", width=2)
         total = sum(int(v) for v in tracker_data.values() if str(v).isdigit())
@@ -228,13 +215,15 @@ class TrackerFrame(CTkFrame):
         pages = self.entry_pages.get().strip()
         if not day.isdigit():
             return
+        if not pages.isdigit():
+            return
         year = int(self.year_var.get())
         month = int(self.month_var.get())
         key = f"{year}-{month:02d}"
         tracker = self.db.get("tracker")
         if key not in tracker:
             tracker[key] = {}
-        tracker[key][day] = pages
+        tracker[key][day] = int(pages)
         self.db.set("tracker", tracker)
         self.db.recalc_streaks()
         self.render_tracker()

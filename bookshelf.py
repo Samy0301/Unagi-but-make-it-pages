@@ -21,24 +21,20 @@ class BookshelfFrame(CTkFrame):
 
         CTkLabel(self, text="🪴 The Bookshelf", font=("Helvetica", 28, "bold")).pack(pady=(15, 5))
 
-        # Panel superior de controles
         ctrl = CTkFrame(self, fg_color="transparent")
         ctrl.pack(fill="x", padx=20, pady=5)
 
-        # Libro a colocar
         CTkLabel(ctrl, text="Libro:").pack(side="left", padx=5)
         self.book_var = ctk.StringVar()
         self.book_menu = CTkOptionMenu(ctrl, variable=self.book_var, width=200, values=self._book_titles())
         self.book_menu.pack(side="left", padx=5)
 
-        # Color
         CTkLabel(ctrl, text="Color:").pack(side="left", padx=(15, 5))
         self.color_var = ctk.StringVar(value=COLORS[0])
         self.color_preview = CTkFrame(ctrl, width=25, height=25, fg_color=COLORS[0], corner_radius=4)
         self.color_preview.pack(side="left", padx=5)
         self.color_preview.bind("<Button-1>", self.pick_color)
 
-        # Paleta rápida
         for c in COLORS[:5]:
             btn = CTkFrame(ctrl, width=20, height=20, fg_color=c, corner_radius=3)
             btn.pack(side="left", padx=2)
@@ -50,7 +46,6 @@ class BookshelfFrame(CTkFrame):
         self.status_label = CTkLabel(self, text="Haz click en la estantería para colocar el lomo seleccionado.", font=("Arial", 11))
         self.status_label.pack(pady=2)
 
-        # Canvas
         self.canvas = Canvas(self, width=950, height=620, bg="#1a1a1a", highlightthickness=0)
         self.canvas.pack(pady=10)
         self.canvas.bind("<Button-1>", self.on_canvas_click)
@@ -86,16 +81,13 @@ class BookshelfFrame(CTkFrame):
     def draw_shelf(self):
         self.canvas.delete("all")
 
-        # Estantes
         for y in SHELF_Y:
             self.canvas.create_rectangle(40, y, 910, y + 8, fill="#5c3a21", outline="")
             self.canvas.create_rectangle(40, y + 8, 910, y + 10, fill="#3e2716", outline="")
 
-        # Lomos guardados
         for item in self.db.get("bookshelf"):
             self._draw_spine(item)
 
-        # Plantas decorativas
         for px, py in [(55, 105), (880, 385), (120, 525)]:
             self.canvas.create_oval(px - 12, py - 25, px + 12, py, fill="#2ecc71", outline="")
             self.canvas.create_oval(px - 8, py - 38, px + 8, py - 12, fill="#27ae60", outline="")
@@ -107,46 +99,34 @@ class BookshelfFrame(CTkFrame):
         title = item.get("title", "")
         width = item.get("width", 60)
 
-        # Ajustar a estante más cercano
         shelf_y = min(SHELF_Y, key=lambda s: abs(s - y_base))
         y_top = shelf_y - LOMO_H
 
-        # Sombra
+        tag = f"spine_{item.get('id', '')}"
+
         self.canvas.create_rectangle(x + 3, y_top + 3, x + width + 3, shelf_y + 3,
-                                     fill="#000000", outline="", stipple="gray50")
-        # Lomo
+                                     fill="#000000", outline="", stipple="gray50", tags=(tag,))
         self.canvas.create_rectangle(x, y_top, x + width, shelf_y,
-                                     fill=color, outline="#111", width=2)
-        # Texto rotado 90°
+                                     fill=color, outline="#111", width=2, tags=(tag,))
         self.canvas.create_text(x + width / 2, (y_top + shelf_y) / 2,
                                 text=title, fill="white", font=("Arial", 9),
-                                angle=90, anchor="center")
-        # Brillo superior
+                                angle=90, anchor="center", tags=(tag,))
         self.canvas.create_line(x + 4, y_top + 4, x + width - 4, y_top + 4,
-                                fill="#ffffff", width=1, stipple="gray50")
-
-        # Tag para identificar
-        tag = f"spine_{item.get('id', '')}"
-        self.canvas.addtag_withtag(tag, "all")
+                                fill="#ffffff", width=1, stipple="gray50", tags=(tag,))
 
     def on_canvas_click(self, event):
         title = self.book_var.get()
         if title == "Sin libros":
             return
 
-        # Buscar libro en DB para obtener título exacto y ancho
         books = self.db.get("books")
         book = next((b for b in books if b.get("titulo") == title), None)
         if not book:
             return
 
-        # Calcular ancho proporcional al título (aprox 7px por carácter + padding)
         width = max(40, min(160, len(book["titulo"]) * 7 + 14))
 
-        # Ajustar Y al estante más cercano
         shelf_y = min(SHELF_Y, key=lambda s: abs(s - event.y))
-
-        # Ajustar X para que no se salga
         x = max(45, min(event.x, 910 - width))
 
         new_item = {
