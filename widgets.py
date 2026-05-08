@@ -4,20 +4,24 @@ from customtkinter import CTkFrame, CTkLabel
 
 
 class StarRating(CTkFrame):
-    def __init__(self, master, rating=0, command=None, size=20, **kwargs):
+    def __init__(self, master, rating=0, command=None, size=20, readonly=False, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
         self.rating = rating
         self.command = command
         self.size = size
+        self.readonly = readonly
         self.stars = []
         for i in range(5):
             lbl = CTkLabel(self, text="☆", font=("Arial", size), text_color="gold")
-            lbl.bind("<Button-1>", lambda e, idx=i: self.set_rating(idx + 1))
+            if not readonly:
+                lbl.bind("<Button-1>", lambda e, idx=i: self.set_rating(idx + 1))
             lbl.pack(side="left", padx=2)
             self.stars.append(lbl)
         self.update_stars()
 
     def set_rating(self, value):
+        if self.readonly:
+            return
         self.rating = value
         self.update_stars()
         if self.command:
