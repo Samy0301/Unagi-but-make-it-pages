@@ -73,7 +73,7 @@ class Database:
     def recalc_streaks(self):
         dates = sorted(self.get_tracker_dates())
         if not dates:
-            self.set("current_streak", None)
+            self.set("current_streak", {"count": 0})
             self.set("reading_streaks", [])
             return
 
@@ -93,23 +93,26 @@ class Database:
                 current_start = dates[i]
                 current_end = dates[i]
 
-        streaks.append({
+        # La última racha es la actual
+        last_streak = {
             "start": current_start.isoformat(),
             "end": current_end.isoformat(),
             "length": (current_end - current_start).days + 1
-        })
+        }
 
         today = datetime.now().date()
-        last = streaks[-1]
-        last_end = datetime.fromisoformat(last["end"]).date()
-        if last_end >= today - timedelta(days=1):
-            self.set("current_streak", {
-                "start": last["start"],
-                "last_date": last["end"],
-                "count": last["length"]
-            })
-            streaks = streaks[:-1]
+        last_end = current_end
+
+        # Si la última racha terminó hace más de 1 día, se rompió
+        # Se guarda en historial y la racha actual se resetea a 0
+        if last_end < today - timedelta(days=1):
+            streaks.append(last_streak)
+            self.set("current_streak", {"count": 0})
         else:
-            self.set("current_streak", None)
+            self.set("current_streak", {
+                "start": last_streak["start"],
+                "last_date": last_streak["end"],
+                "count": last_streak["length"]
+            })
 
         self.set("reading_streaks", streaks)

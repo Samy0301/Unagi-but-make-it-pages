@@ -1,13 +1,37 @@
 {
     "books": [
         {
-            "id": "2026-05-07T22:12:16.226147",
-            "titulo": "Prohibido Enamorarse",
-            "autor": "Elle Kennedy",
-            "paginas": 340,
-            "genero": "SportRomance",
+            "id": "2026-05-08T14:40:49.537209",
+            "titulo": "Amos y Mazmorras",
+            "autor": "Darlys  Stefanie",
+            "paginas": 765,
+            "genero": "Policiaco/Romance",
             "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/kbegf.jpg",
+            "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg",
+            "estado": "leido",
+            "rating": 5,
+            "formato": "digital"
+        },
+        {
+            "id": "2026-05-08T14:56:25.981774",
+            "titulo": "El Heroe Perdido",
+            "autor": "Rick Riordan",
+            "paginas": 534,
+            "genero": "Fantasia/GreekMitology",
+            "ubicacion": "Books",
+            "foto": "C:/Users/pc/Pictures/,hfcx.png",
+            "estado": "leido",
+            "rating": 4,
+            "formato": "digital"
+        },
+        {
+            "id": "2026-05-08T14:44:37.243156",
+            "titulo": "God of Fury",
+            "autor": "Rina Kent",
+            "paginas": 468,
+            "genero": "DarkRomance",
+            "ubicacion": "Books",
+            "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg",
             "estado": "leido",
             "rating": 5,
             "formato": "digital"
@@ -23,6 +47,18 @@
             "estado": "leyendo",
             "rating": 0,
             "formato": "fisico"
+        },
+        {
+            "id": "2026-05-07T22:12:16.226147",
+            "titulo": "Prohibido Enamorarse",
+            "autor": "Elle Kennedy",
+            "paginas": 340,
+            "genero": "SportRomance",
+            "ubicacion": "Books",
+            "foto": "C:/Users/pc/Pictures/kbegf.jpg",
+            "estado": "leido",
+            "rating": 5,
+            "formato": "digital"
         },
         {
             "id": "2026-05-07T22:19:15.989810",
@@ -47,48 +83,38 @@
             "estado": "leido",
             "rating": 5,
             "formato": "digital"
-        },
-        {
-            "id": "2026-05-08T14:40:49.537209",
-            "titulo": "Amos y Mazmorras",
-            "autor": "Darlys  Stefanie",
-            "paginas": 765,
-            "genero": "Policiaco/Romance",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg",
-            "estado": "leido",
-            "rating": 5,
-            "formato": "digital"
-        },
-        {
-            "id": "2026-05-08T14:44:37.243156",
-            "titulo": "God of Fury",
-            "autor": "Rina Kent",
-            "paginas": 468,
-            "genero": "DarkRomance",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg",
-            "estado": "leido",
-            "rating": 5,
-            "formato": "digital"
-        },
-        {
-            "id": "2026-05-08T14:56:25.981774",
-            "titulo": "El Heroe Perdido",
-            "autor": "Rick Riordan",
-            "paginas": 534,
-            "genero": "Fantasia/GreekMitology",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/,hfcx.png",
-            "estado": "leido",
-            "rating": 4,
-            "formato": "digital"
         }
     ],
     "reviews": [],
-    "tracker": {},
+    "tracker": {
+        "2026-05": {
+            "1": 34,
+            "2": 3,
+            "3": 387,
+            "4": 76,
+            "6": 76,
+            "7": 45,
+            "8": 45,
+            "10": 45
+        }
+    },
     "bookshelf": [],
-    "reading_streaks": [],
-    "current_streak": null,
+    "reading_streaks": [
+        {
+            "start": "2026-05-01",
+            "end": "2026-05-04",
+            "length": 4
+        },
+        {
+            "start": "2026-05-06",
+            "end": "2026-05-08",
+            "length": 3
+        }
+    ],
+    "current_streak": {
+        "start": "2026-05-10",
+        "last_date": "2026-05-10",
+        "count": 1
+    },
     "tbr": []
 }
