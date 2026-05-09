@@ -35,8 +35,9 @@ class Database:
             "tracker": {},
             "bookshelf": [],
             "reading_streaks": [],
-            "current_streak": None,
-            "tbr": []
+            "current_streak": {"count": 0},
+            "tbr": [],
+            "shelf_config": {"shelves": [140, 300, 460]}
         }
         changed = False
         for key, val in defaults.items():
