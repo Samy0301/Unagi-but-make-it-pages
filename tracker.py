@@ -298,3 +298,8 @@ class TrackerFrame(CTkFrame):
         self.db.recalc_streaks()
         self.render_tracker()
         self.render_streaks()
+
+    def refresh(self):
+        self.render_tracker()
+        self.render_reading()
+        self.render_streaks()

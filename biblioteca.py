@@ -635,3 +635,9 @@ class BibliotecaFrame(CTkFrame):
         self.db.set("bookshelf", shelf)
         self._cover_cache.clear()
         self.render_books()
+
+    def refresh(self):
+        self.close_add_panel()
+        self.close_edit_panel()
+        self._cover_cache.clear()
+        self.render_books()

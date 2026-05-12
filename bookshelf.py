@@ -425,3 +425,7 @@ class BookshelfFrame(CTkFrame):
                 self.db.set("bookshelf", shelf)
                 self.refresh_books()
                 self.draw_shelf()
+
+    def refresh(self):
+        self.refresh_books()
+        self.draw_shelf()

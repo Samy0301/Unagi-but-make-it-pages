@@ -45,7 +45,10 @@ class BookJournalApp(CTk):
             ("Challenges", "🏆", ChallengesFrame)
         ]
 
+        self.frames = {}        # <-- CACHEO DE FRAMES
         self.current_frame = None
+        self.current_name = None
+
         for idx, (name, icon, FrameClass) in enumerate(nav_items, 1):
             btn = CTkButton(
                 self.sidebar, text=f"{icon} {name}", font=("Arial", 14),
@@ -71,17 +74,32 @@ class BookJournalApp(CTk):
         self.show_frame(BibliotecaFrame, "Biblioteca")
 
     def show_frame(self, FrameClass, name):
+        # Actualizar botones del sidebar
         for btn, btn_name in self.nav_buttons:
             if btn_name == name:
                 btn.configure(fg_color=["#3a7ebf", "#1f538d"], text_color="white")
             else:
                 btn.configure(fg_color="transparent", text_color=["black", "white"])
 
+        # Ocultar frame actual
         if self.current_frame:
-            self.current_frame.destroy()
+            self.current_frame.grid_remove()
 
-        self.current_frame = FrameClass(self.content, self.db, corner_radius=15)
-        self.current_frame.grid(row=0, column=0, sticky="nswe")
+        # Crear solo la primera vez
+        if name not in self.frames:
+            self.frames[name] = FrameClass(self.content, self.db, corner_radius=15)
+            self.frames[name].grid(row=0, column=0, sticky="nswe")
+
+        # Mostrar frame cacheado
+        frame = self.frames[name]
+        frame.grid()
+
+        # Refrescar datos si el panel implementa refresh()
+        if hasattr(frame, "refresh"):
+            frame.refresh()
+
+        self.current_frame = frame
+        self.current_name = name
 
     def toggle_theme(self):
         mode = "Dark" if self.theme_switch.get() else "Light"

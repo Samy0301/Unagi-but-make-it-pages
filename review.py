@@ -642,3 +642,10 @@ class ReviewFrame(CTkFrame):
         setattr(self, f"_{prefix}foto_path", None)
         setattr(self, f"_{prefix}preview_img", None)
         getattr(self, f"{prefix}preview").configure(image=None, text="")
+
+    def refresh(self):
+        self.close_add_panel()
+        self.close_edit_panel()
+        self.close_detail_panel()
+        self._cover_cache.clear()
+        self.render_reviews()
