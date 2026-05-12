@@ -363,9 +363,11 @@ class BookshelfFrame(CTkFrame):
 
         # Solo permitir colocar desde el segundo estante en adelante
         valid_shelves = shelves[1:]
-        shelf_y = min(valid_shelves, key=lambda s: abs(s - event.y))
+        click_y = self.canvas.canvasy(event.y)
+        shelf_y = min(valid_shelves, key=lambda s: abs(s - click_y))
 
-        x = self._find_slot(shelf_y, event.x, width)
+        click_x = self.canvas.canvasx(event.x)
+        x = self._find_slot(shelf_y, click_x, width)
         if x is None:
             messagebox.showinfo("Espacio ocupado", "Ya hay un libro en esa posición.")
             return
@@ -392,10 +394,10 @@ class BookshelfFrame(CTkFrame):
         if len(shelves) < 2:
             return
 
-        # Solo permitir interactuar desde el segundo estante en adelante
         valid_shelves = shelves[1:]
-        shelf_y = min(valid_shelves, key=lambda s: abs(s - event.y))
-        if abs(shelf_y - event.y) > 130:
+        click_y = self.canvas.canvasy(event.y)
+        shelf_y = min(valid_shelves, key=lambda s: abs(s - click_y))
+        if abs(shelf_y - click_y) > 130:
             return
 
         grid = self.shelf_grid.get(shelf_y, {})
@@ -404,14 +406,16 @@ class BookshelfFrame(CTkFrame):
 
         closest_item = None
         closest_dist = float("inf")
+        click_x = self.canvas.canvasx(event.x)
 
         for x, item in grid.items():
             width = item.get("width", 40)
             center_x = x + width / 2
-            dist = abs(center_x - event.x)
+            dist = abs(center_x - click_x)
             if dist < closest_dist and dist < width / 2 + 5:
                 closest_dist = dist
                 closest_item = item
+        # ... resto igual
 
         if closest_item:
             book_title = closest_item.get("title", "este libro")
