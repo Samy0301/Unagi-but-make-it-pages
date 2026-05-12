@@ -85,7 +85,33 @@
             "formato": "digital"
         }
     ],
-    "reviews": [],
+    "reviews": [
+        {
+            "id": "2026-05-09T16:40:19.093876",
+            "titulo": "Good of Ruin",
+            "autor": "Rina Kent",
+            "fecha_inicio": "4/5/2025",
+            "fecha_final": "6/5/2025",
+            "paginas": 450,
+            "formato": "digital",
+            "genero": "DarkRomance",
+            "rating": 5,
+            "personaje_fav": "Nikolai Sokolov",
+            "personaje_odiado": "Editora de Astrid",
+            "sentimientos": {
+                "amor": 5,
+                "enojo": 4,
+                "tristeza": 4,
+                "plot": 2,
+                "reflexion": 3,
+                "felicidad": 5,
+                "hot": 3
+            },
+            "frases": "-Even if you hate yourself I love you for the bouth of us\n-You beter remember who the fuck you belong to Nikolai",
+            "resena": "Una puta obra de arte",
+            "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg"
+        }
+    ],
     "tracker": {
         "2026-05": {
             "1": 34,
@@ -109,12 +135,15 @@
             "start": "2026-05-06",
             "end": "2026-05-08",
             "length": 3
+        },
+        {
+            "start": "2026-05-10",
+            "end": "2026-05-10",
+            "length": 1
         }
     ],
     "current_streak": {
-        "start": "2026-05-10",
-        "last_date": "2026-05-10",
-        "count": 1
+        "count": 0
     },
     "tbr": [],
     "shelf_config": {
