@@ -278,6 +278,10 @@ class ReviewFrame(CTkFrame):
     #  GRID DE TARJETAS
     # ------------------------------------------------------------------ #
     def render_reviews(self):
+        if hasattr(self, '_render_job') and self._render_job:
+            self.after_cancel(self._render_job)
+            self._render_job = None
+
         for w in self.scroll.winfo_children():
             w.destroy()
 
@@ -290,16 +294,22 @@ class ReviewFrame(CTkFrame):
         available_w = max(600, int(scroll_w) - 20)
         card_total_w = 200 + 20
         cols = max(1, available_w // card_total_w)
+        total = len(reviews)
+        chunk = 10
 
-        row, col = 0, 0
-        for rev in reviews:
-            card = self.create_review_card(self.scroll, rev)
-            card.grid(row=row, column=col, padx=10, pady=15)
-            self._bind_card_click(card, rev)
-            col += 1
-            if col >= cols:
-                col = 0
-                row += 1
+        def draw_batch(start):
+            end = min(start + chunk, total)
+            for idx in range(start, end):
+                row = idx // cols
+                col = idx % cols
+                card = self.create_review_card(self.scroll, reviews[idx])
+                card.grid(row=row, column=col, padx=10, pady=15)
+                self._bind_card_click(card, reviews[idx])
+
+            if end < total:
+                self._render_job = self.after(8, lambda: draw_batch(end))
+
+        draw_batch(0)
 
     def create_review_card(self, parent, review):
         card = CTkFrame(parent, width=200, height=340, corner_radius=12, border_width=2)

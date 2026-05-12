@@ -399,6 +399,12 @@ class BibliotecaFrame(CTkFrame):
         return books
 
     def render_books(self):
+        # Cancelar renderizado anterior si existe (evita acumulación)
+        if hasattr(self, '_render_job') and self._render_job:
+            self.after_cancel(self._render_job)
+            self._render_job = None
+
+        # Limpiar
         for w in self.scroll.winfo_children():
             w.destroy()
 
@@ -413,23 +419,25 @@ class BibliotecaFrame(CTkFrame):
             CTkLabel(self.scroll, text=msg, font=("Arial", 16)).pack(pady=50)
             return
 
-        # Usar el ancho configurado del scrollable frame (900) como base.
-        # winfo_width() no sirve porque CTkScrollableFrame devuelve el ancho
-        # del canvas interno que crece con el contenido.
         scroll_w = self.scroll.cget("width")
         available_w = max(600, int(scroll_w) - 20)
-        # Ancho de tarjeta + padding horizontal (padx=10 cada lado)
         card_total_w = 200 + 20
         cols = max(1, available_w // card_total_w)
+        total = len(books)
+        chunk = 10  # tarjetas por lote
 
-        row, col = 0, 0
-        for book in books:
-            card = self.create_book_card(self.scroll, book)
-            card.grid(row=row, column=col, padx=10, pady=15)
-            col += 1
-            if col >= cols:
-                col = 0
-                row += 1
+        def draw_batch(start):
+            end = min(start + chunk, total)
+            for idx in range(start, end):
+                row = idx // cols
+                col = idx % cols
+                card = self.create_book_card(self.scroll, books[idx])
+                card.grid(row=row, column=col, padx=10, pady=15)
+
+            if end < total:
+                self._render_job = self.after(8, lambda: draw_batch(end))
+
+        draw_batch(0)
 
     def _load_cover(self, path, size=(140, 200)):
         if not path or not os.path.exists(path):

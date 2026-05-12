@@ -167,40 +167,50 @@ class TrackerFrame(CTkFrame):
     def render_reading(self):
         for w in self.reading_scroll.winfo_children():
             w.destroy()
+
         books = [b for b in self.db.get("books") if b.get("estado") == "leyendo"]
         if not books:
             CTkLabel(self.reading_scroll, text="No estás leyendo nada ahora.", font=("Arial", 11)).pack(pady=10)
             return
-        for b in books:
-            row = CTkFrame(self.reading_scroll, corner_radius=10, border_width=1, height=70)
-            row.pack(fill="x", pady=4)
-            row.pack_propagate(False)
 
-            # Portada miniatura
-            cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#2b2b2b")
-            cover.pack(side="left", padx=(10, 8), pady=10)
-            cover.pack_propagate(False)
+        total = len(books)
+        chunk = 8
 
-            img = self._load_cover_mini(b.get("foto"))
-            if img:
-                CTkLabel(cover, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
-            else:
-                CTkLabel(cover, text="📕", font=("Arial", 16)).place(relx=0.5, rely=0.5, anchor="center")
+        def draw_batch(start):
+            end = min(start + chunk, total)
+            for i in range(start, end):
+                b = books[i]
+                row = CTkFrame(self.reading_scroll, corner_radius=10, border_width=1, height=70)
+                row.pack(fill="x", pady=4)
+                row.pack_propagate(False)
 
-            # Texto: título + autor
-            text_frame = CTkFrame(row, fg_color="transparent")
-            text_frame.pack(side="left", fill="y", expand=True, pady=8)
-            CTkLabel(text_frame, text=b.get("titulo", "Sin título"), font=("Arial", 12, "bold")).pack(anchor="w")
-            CTkLabel(text_frame, text=b.get("autor", ""), font=("Arial", 10), text_color="#888").pack(anchor="w")
+                cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#2b2b2b")
+                cover.pack(side="left", padx=(10, 8), pady=10)
+                cover.pack_propagate(False)
+
+                img = self._load_cover_mini(b.get("foto"))
+                if img:
+                    CTkLabel(cover, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
+                else:
+                    CTkLabel(cover, text="📕", font=("Arial", 16)).place(relx=0.5, rely=0.5, anchor="center")
+
+                text_frame = CTkFrame(row, fg_color="transparent")
+                text_frame.pack(side="left", fill="y", expand=True, pady=8)
+                CTkLabel(text_frame, text=b.get("titulo", "Sin título"), font=("Arial", 12, "bold")).pack(anchor="w")
+                CTkLabel(text_frame, text=b.get("autor", ""), font=("Arial", 10), text_color="#888").pack(anchor="w")
+
+            if end < total:
+                self.after(5, lambda: draw_batch(end))
+
+        draw_batch(0)
 
     def render_streaks(self):
         self.db.recalc_streaks()
         current = self.db.get("current_streak")
         count = current.get("count", 0) if current else 0
-        if count > 0:
-            self.streak_label.configure(text=f"🔥 Racha actual: {count} días")
-        else:
-            self.streak_label.configure(text="🔥 Racha actual: 0 días")
+        self.streak_label.configure(
+            text=f"🔥 Racha actual: {count} días" if count > 0 else "🔥 Racha actual: 0 días"
+        )
 
         for w in self.streaks_scroll.winfo_children():
             w.destroy()
@@ -209,6 +219,7 @@ class TrackerFrame(CTkFrame):
         if not streaks:
             CTkLabel(self.streaks_scroll, text="Aún no hay rachas registradas.", font=("Arial", 11)).pack(pady=10)
             return
+
         for s in reversed(streaks):
             row = CTkFrame(self.streaks_scroll, corner_radius=8, border_width=1)
             row.pack(fill="x", pady=3)
