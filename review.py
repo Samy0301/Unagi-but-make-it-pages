@@ -52,15 +52,17 @@ class EmojiRating(ctk.CTkFrame):
 
 
 class ReviewFrame(CTkFrame):
-    ...
-    # (todo lo demás de la clase sigue igual, solo cambia _build_form)
-    ...
     def __init__(self, master, db: Database, **kwargs):
         super().__init__(master, **kwargs)
         self.db = db
         self.configure(fg_color="transparent")
         self._cover_cache = {}
         self._current_review = None
+
+        # --- POOL DE TARJETAS ---
+        self._card_pool = []
+        self._visible_cards = []
+        self._render_job = None
 
         # ---------- HEADER ----------
         hdr = CTkFrame(self, fg_color="transparent")
@@ -275,64 +277,110 @@ class ReviewFrame(CTkFrame):
                 setattr(self, f"_{prefix}_preview_img", None)
 
     # ------------------------------------------------------------------ #
-    #  GRID DE TARJETAS
+    #  GRID DE TARJETAS (RENDERIZADO OPTIMIZADO)
     # ------------------------------------------------------------------ #
     def render_reviews(self):
-        if hasattr(self, '_render_job') and self._render_job:
+        if self._render_job:
             self.after_cancel(self._render_job)
             self._render_job = None
 
-        for w in self.scroll.winfo_children():
-            w.destroy()
-
         reviews = self.db.get("reviews")
+
+        # 1. Devolver tarjetas al pool
+        for card in self._visible_cards:
+            card.grid_remove()
+            self._card_pool.append(card)
+        self._visible_cards.clear()
+
+        # 2. Limpiar widgets huérfanos
+        for w in self.scroll.winfo_children():
+            if w not in self._card_pool:
+                w.destroy()
+
         if not reviews:
-            CTkLabel(self.scroll, text="Aún no hay reseñas guardadas.", font=("Arial", 16)).pack(pady=50)
+            lbl = CTkLabel(self.scroll, text="Aún no hay reseñas guardadas.", font=("Arial", 16))
+            lbl.pack(pady=50, fill="x")
+            lbl.configure(anchor="center")
             return
 
-        scroll_w = self.scroll.cget("width")
-        available_w = max(600, int(scroll_w) - 20)
+        # Calcular columnas según ancho configurado (estable)
+        scroll_w = int(self.scroll.cget("width"))
+        available_w = max(600, scroll_w - 60)
         card_total_w = 200 + 20
         cols = max(1, available_w // card_total_w)
+
         total = len(reviews)
-        chunk = 10
+        chunk = 6
+
+        if hasattr(self.scroll, '_parent_canvas'):
+            self.scroll._parent_canvas.yview_moveto(0)
 
         def draw_batch(start):
             end = min(start + chunk, total)
             for idx in range(start, end):
                 row = idx // cols
                 col = idx % cols
-                card = self.create_review_card(self.scroll, reviews[idx])
+
+                if self._card_pool:
+                    card = self._card_pool.pop()
+                    self._update_review_card(card, reviews[idx])
+                else:
+                    card = self.create_review_card(self.scroll, reviews[idx])
+
                 card.grid(row=row, column=col, padx=10, pady=15)
                 self._bind_card_click(card, reviews[idx])
+                self._visible_cards.append(card)
 
             if end < total:
-                self._render_job = self.after(8, lambda: draw_batch(end))
+                self._render_job = self.after(25, lambda: draw_batch(end))
+            else:
+                max_pool = max(cols * 3, 12)
+                while len(self._card_pool) > max_pool:
+                    c = self._card_pool.pop()
+                    c.destroy()
+                self.update_idletasks()
 
         draw_batch(0)
 
-    def create_review_card(self, parent, review):
+    def create_review_card(self, parent, review=None):
+        """Estructura exacta de la tarjeta original (place) para mantener el mismo ancho/visual."""
         card = CTkFrame(parent, width=200, height=340, corner_radius=12, border_width=2)
         card.grid_propagate(False)
         card.configure(cursor="hand2")
 
+        refs = {}
+        card._refs = refs
+
+        # Cover (place como en el original)
         cover = CTkFrame(card, width=140, height=190, corner_radius=8, fg_color="#2b2b2b")
         cover.place(relx=0.5, y=12, anchor="n")
+        refs['cover_img'] = CTkLabel(cover, text="")
+        refs['cover_img'].place(relx=0.5, rely=0.5, anchor="center")
+
+        # Textos con place (posiciones exactas del original)
+        refs['title'] = CTkLabel(card, text="", font=("Arial", 13, "bold"))
+        refs['title'].place(relx=0.5, y=214, anchor="n")
+
+        refs['author'] = CTkLabel(card, text="", font=("Arial", 11), text_color="#888")
+        refs['author'].place(relx=0.5, y=238, anchor="n")
+
+        refs['stars'] = StarRating(card, rating=0, size=16, readonly=True)
+        refs['stars'].place(relx=0.5, y=262, anchor="n")
+
+        if review:
+            self._update_review_card(card, review)
+        return card
+
+    def _update_review_card(self, card, review):
+        refs = card._refs
         img = self._load_cover(review.get("foto"), size=(140, 190))
         if img:
-            CTkLabel(cover, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
+            refs['cover_img'].configure(image=img, text="")
         else:
-            CTkLabel(cover, text="📕", font=("Arial", 48)).place(relx=0.5, rely=0.5, anchor="center")
-
-        y = 214
-        CTkLabel(card, text=review.get("titulo", "Sin título")[:22], font=("Arial", 13, "bold")).place(relx=0.5, y=y, anchor="n")
-        y += 24
-        CTkLabel(card, text=review.get("autor", "")[:20], font=("Arial", 11), text_color="#888").place(relx=0.5, y=y, anchor="n")
-        y += 24
-        stars = StarRating(card, rating=review.get("rating", 0), size=16, readonly=True)
-        stars.place(relx=0.5, y=y, anchor="n")
-
-        return card
+            refs['cover_img'].configure(image=None, text="📕", font=("Arial", 48))
+        refs['title'].configure(text=review.get("titulo", "Sin título")[:22])
+        refs['author'].configure(text=review.get("autor", "")[:20])
+        refs['stars'].set_rating(review.get("rating", 0))
 
     def _bind_card_click(self, widget, review):
         widget.bind("<Button-1>", lambda e, r=review: self.open_detail_panel(r))
@@ -400,7 +448,7 @@ class ReviewFrame(CTkFrame):
                 CTkLabel(chars, text=f"💀  Odiado: {review['personaje_odiado']}",
                          font=("Arial", 15, "bold"), text_color="#888").pack(side="left")
 
-        # ===== SENTIMIENTOS (más compactos, multilinea) =====
+        # ===== SENTIMIENTOS =====
         sent = review.get("sentimientos", {})
         active_sent = {k: v for k, v in sent.items() if v > 0}
         if active_sent:
@@ -424,7 +472,7 @@ class ReviewFrame(CTkFrame):
             ]
 
             col_idx, row_idx = 0, 0
-            max_cols = 4  # <-- salta a nueva fila cada 4 tarjetas
+            max_cols = 4
 
             for name, icon, key, color in feelings:
                 val = active_sent.get(key, 0)

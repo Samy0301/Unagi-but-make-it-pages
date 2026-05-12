@@ -20,11 +20,11 @@ class StarRating(CTkFrame):
         self.update_stars()
 
     def set_rating(self, value):
-        if self.readonly:
-            return
+        # Actualizar SIEMPRE la UI, incluso en modo readonly
         self.rating = value
         self.update_stars()
-        if self.command:
+        # Solo disparar el callback si NO es readonly
+        if self.command and not self.readonly:
             self.command(value)
 
     def update_stars(self):

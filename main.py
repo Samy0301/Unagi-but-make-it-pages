@@ -45,7 +45,7 @@ class BookJournalApp(CTk):
             ("Challenges", "🏆", ChallengesFrame)
         ]
 
-        self.frames = {}        # <-- CACHEO DE FRAMES
+        self.frames = {}
         self.current_frame = None
         self.current_name = None
 
@@ -94,9 +94,13 @@ class BookJournalApp(CTk):
         frame = self.frames[name]
         frame.grid()
 
-        # Refrescar datos si el panel implementa refresh()
+        # Refrescar datos SOLO si la base de datos cambió desde la última vez
         if hasattr(frame, "refresh"):
-            frame.refresh()
+            current_v = self.db.get_version()
+            last_v = getattr(frame, '_last_db_version', -1)
+            if current_v != last_v:
+                frame.refresh()
+                frame._last_db_version = current_v
 
         self.current_frame = frame
         self.current_name = name

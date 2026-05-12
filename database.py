@@ -11,6 +11,7 @@ class Database:
         self.filepath = filepath
         self.data = self._load()
         self._ensure_structure()
+        self._version = 0
 
     def _load(self):
         if os.path.exists(self.filepath):
@@ -52,7 +53,11 @@ class Database:
 
     def set(self, key, value):
         self.data[key] = value
+        self._version += 1
         self.save()
+
+    def get_version(self):
+        return self._version
 
     @staticmethod
     def generate_id():
@@ -94,7 +99,6 @@ class Database:
                 current_start = dates[i]
                 current_end = dates[i]
 
-        # La última racha es la actual
         last_streak = {
             "start": current_start.isoformat(),
             "end": current_end.isoformat(),
@@ -104,8 +108,6 @@ class Database:
         today = datetime.now().date()
         last_end = current_end
 
-        # Si la última racha terminó hace más de 1 día, se rompió
-        # Se guarda en historial y la racha actual se resetea a 0
         if last_end < today - timedelta(days=1):
             streaks.append(last_streak)
             self.set("current_streak", {"count": 0})

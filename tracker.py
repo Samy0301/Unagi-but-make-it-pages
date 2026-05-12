@@ -149,6 +149,11 @@ class TrackerFrame(CTkFrame):
         self.streaks_scroll = CTkScrollableFrame(right, width=280, height=200, fg_color="transparent")
         self.streaks_scroll.pack(fill="x", pady=5)
 
+        # Pool para filas de "leyendo"
+        self._reading_pool = []
+        self._reading_visible = []
+        self._reading_job = None
+
         self.render_tracker()
         self.render_reading()
         self.render_streaks()
@@ -165,44 +170,85 @@ class TrackerFrame(CTkFrame):
         return None
 
     def render_reading(self):
-        for w in self.reading_scroll.winfo_children():
-            w.destroy()
+        if self._reading_job:
+            self.after_cancel(self._reading_job)
+            self._reading_job = None
 
         books = [b for b in self.db.get("books") if b.get("estado") == "leyendo"]
+
+        # Devolver al pool
+        for row in self._reading_visible:
+            row.pack_forget()
+            self._reading_pool.append(row)
+        self._reading_visible.clear()
+
+        # Limpiar huérfanos
+        for w in self.reading_scroll.winfo_children():
+            if w not in self._reading_pool:
+                w.destroy()
+
         if not books:
             CTkLabel(self.reading_scroll, text="No estás leyendo nada ahora.", font=("Arial", 11)).pack(pady=10)
             return
 
         total = len(books)
-        chunk = 8
+        chunk = 4
 
         def draw_batch(start):
             end = min(start + chunk, total)
             for i in range(start, end):
                 b = books[i]
-                row = CTkFrame(self.reading_scroll, corner_radius=10, border_width=1, height=70)
-                row.pack(fill="x", pady=4)
-                row.pack_propagate(False)
-
-                cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#2b2b2b")
-                cover.pack(side="left", padx=(10, 8), pady=10)
-                cover.pack_propagate(False)
-
-                img = self._load_cover_mini(b.get("foto"))
-                if img:
-                    CTkLabel(cover, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
+                if self._reading_pool:
+                    row = self._reading_pool.pop()
+                    self._update_reading_row(row, b)
                 else:
-                    CTkLabel(cover, text="📕", font=("Arial", 16)).place(relx=0.5, rely=0.5, anchor="center")
-
-                text_frame = CTkFrame(row, fg_color="transparent")
-                text_frame.pack(side="left", fill="y", expand=True, pady=8)
-                CTkLabel(text_frame, text=b.get("titulo", "Sin título"), font=("Arial", 12, "bold")).pack(anchor="w")
-                CTkLabel(text_frame, text=b.get("autor", ""), font=("Arial", 10), text_color="#888").pack(anchor="w")
+                    row = self._create_reading_row(self.reading_scroll, b)
+                row.pack(fill="x", pady=4)
+                self._reading_visible.append(row)
 
             if end < total:
-                self.after(5, lambda: draw_batch(end))
+                self._reading_job = self.after(20, lambda: draw_batch(end))
+            else:
+                while len(self._reading_pool) > 8:
+                    r = self._reading_pool.pop()
+                    r.destroy()
+                self.update_idletasks()
 
         draw_batch(0)
+
+    def _create_reading_row(self, parent, book=None):
+        row = CTkFrame(parent, corner_radius=10, border_width=1, height=70)
+        row.pack_propagate(False)
+
+        refs = {}
+        row._refs = refs
+
+        cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#2b2b2b")
+        cover.pack(side="left", padx=(10, 8), pady=10)
+        cover.pack_propagate(False)
+        refs['cover_img'] = CTkLabel(cover, text="")
+        refs['cover_img'].place(relx=0.5, rely=0.5, anchor="center")
+
+        text_frame = CTkFrame(row, fg_color="transparent")
+        text_frame.pack(side="left", fill="y", expand=True, pady=8)
+        refs['title'] = CTkLabel(text_frame, text="", font=("Arial", 12, "bold"))
+        refs['title'].pack(anchor="w")
+        refs['author'] = CTkLabel(text_frame, text="", font=("Arial", 10), text_color="#888")
+        refs['author'].pack(anchor="w")
+
+        if book:
+            self._update_reading_row(row, book)
+        return row
+
+    def _update_reading_row(self, row, book):
+        refs = row._refs
+        img = self._load_cover_mini(book.get("foto"))
+        if img:
+            refs['cover_img'].configure(image=img, text="")
+        else:
+            refs['cover_img'].configure(image=None, text="📕", font=("Arial", 16))
+        refs['title'].configure(text=book.get("titulo", "Sin título"))
+        refs['author'].configure(text=book.get("autor", ""))
 
     def render_streaks(self):
         self.db.recalc_streaks()
@@ -266,7 +312,7 @@ class TrackerFrame(CTkFrame):
                 self.canvas.create_text(x2, y2, text=str(pages), fill="white",
                                         font=("Arial", 8, "bold"))
 
-        # Círculo central con color del mes (más oscuro para legibilidad)
+        # Círculo central con color del mes
         self.canvas.create_oval(cx - 70, cy - 70, cx + 70, cy + 70,
                                 fill=month_color, outline="#444", width=2)
         total = sum(int(v) for v in tracker_data.values() if str(v).isdigit())

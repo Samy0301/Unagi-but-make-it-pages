@@ -51,6 +51,11 @@ class BibliotecaFrame(CTkFrame):
         self._preview_img = None
         self._foto_path = None
 
+        # --- POOL DE TARJETAS (reciclaje) ---
+        self._card_pool = []
+        self._visible_cards = []
+        self._render_job = None
+
         # Header
         hdr = CTkFrame(self, fg_color="transparent")
         hdr.pack(fill="x", pady=(15, 5), padx=20)
@@ -398,17 +403,26 @@ class BibliotecaFrame(CTkFrame):
 
         return books
 
+    # ------------------------------------------------------------------ #
+    #  RENDERIZADO OPTIMIZADO CON POOL DE TARJETAS
+    # ------------------------------------------------------------------ #
     def render_books(self):
-        # Cancelar renderizado anterior si existe (evita acumulación)
-        if hasattr(self, '_render_job') and self._render_job:
+        if self._render_job:
             self.after_cancel(self._render_job)
             self._render_job = None
 
-        # Limpiar
-        for w in self.scroll.winfo_children():
-            w.destroy()
-
         books = self._filtrar_y_ordenar(self.db.get("books"))
+
+        # 1. Devolver tarjetas visibles al pool (ocultar, no destruir)
+        for card in self._visible_cards:
+            card.grid_remove()
+            self._card_pool.append(card)
+        self._visible_cards.clear()
+
+        # 2. Destruir widgets huérfanos (mensajes "vacío", etc.)
+        for w in self.scroll.winfo_children():
+            if w not in self._card_pool:
+                w.destroy()
 
         if not books:
             msg = "No hay libros en esta vista."
@@ -416,26 +430,50 @@ class BibliotecaFrame(CTkFrame):
                 msg = "Tu TBR está vacío 📭"
             elif self.filtro_actual == "leidos":
                 msg = "Aún no has marcado ningún libro como leído."
-            CTkLabel(self.scroll, text=msg, font=("Arial", 16)).pack(pady=50)
+            lbl = CTkLabel(self.scroll, text=msg, font=("Arial", 16))
+            lbl.pack(pady=50, fill="x")
+            lbl.configure(anchor="center")
             return
 
-        scroll_w = self.scroll.cget("width")
-        available_w = max(600, int(scroll_w) - 20)
-        card_total_w = 200 + 20
+        # Calcular columnas según ancho configurado (más estable que winfo_width)
+        scroll_w = int(self.scroll.cget("width"))
+        # Restamos 60px para la scrollbar vertical, bordes y márgenes de seguridad
+        available_w = max(600, scroll_w - 60)
+        card_total_w = 200 + 20  # ancho tarjeta + padx(10+10)
         cols = max(1, available_w // card_total_w)
+
         total = len(books)
-        chunk = 10  # tarjetas por lote
+        chunk = 6  # Lotes pequeños para no bloquear la UI
+
+        # Reset scroll al inicio
+        if hasattr(self.scroll, '_parent_canvas'):
+            self.scroll._parent_canvas.yview_moveto(0)
 
         def draw_batch(start):
             end = min(start + chunk, total)
             for idx in range(start, end):
                 row = idx // cols
                 col = idx % cols
-                card = self.create_book_card(self.scroll, books[idx])
+
+                # Reutilizar del pool o crear nueva tarjeta
+                if self._card_pool:
+                    card = self._card_pool.pop()
+                    self._update_book_card(card, books[idx])
+                else:
+                    card = self.create_book_card(self.scroll, books[idx])
+
                 card.grid(row=row, column=col, padx=10, pady=15)
+                self._visible_cards.append(card)
 
             if end < total:
-                self._render_job = self.after(8, lambda: draw_batch(end))
+                self._render_job = self.after(25, lambda: draw_batch(end))
+            else:
+                # Limpiar pool excedente (mantener buffer de ~3 filas)
+                max_pool = max(cols * 3, 12)
+                while len(self._card_pool) > max_pool:
+                    c = self._card_pool.pop()
+                    c.destroy()
+                self.update_idletasks()
 
         draw_batch(0)
 
@@ -455,61 +493,89 @@ class BibliotecaFrame(CTkFrame):
             pass
         return None
 
-    def create_book_card(self, parent, book):
-        card = CTkFrame(parent, width=200, height=380, corner_radius=12, border_width=2)
+    def create_book_card(self, parent, book=None):
+        """Crea la estructura vacía de una tarjeta. El contenido se llena en _update_book_card."""
+        card = CTkFrame(parent, width=200, height=360, corner_radius=12, border_width=2)
         card.grid_propagate(False)
 
+        refs = {}
+        card._refs = refs
+
+        # Cover
         cover = CTkFrame(card, width=140, height=160, corner_radius=8, fg_color="#2b2b2b")
-        cover.place(relx=0.5, y=10, anchor="n")
+        cover.pack(pady=(10, 6))
+        cover.pack_propagate(False)
+        refs['cover_img'] = CTkLabel(cover, text="")
+        refs['cover_img'].place(relx=0.5, rely=0.5, anchor="center")
 
-        img = self._load_cover(book.get("foto"))
-        if img:
-            CTkLabel(cover, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
-        else:
-            CTkLabel(cover, text="📕", font=("Arial", 48)).place(relx=0.5, rely=0.5, anchor="center")
+        # Texto
+        refs['title'] = CTkLabel(card, text="", font=("Arial", 14, "bold"))
+        refs['title'].pack(pady=(0, 2))
+        refs['author'] = CTkLabel(card, text="", font=("Arial", 11))
+        refs['author'].pack(pady=(0, 2))
+        refs['meta'] = CTkLabel(card, text="", font=("Arial", 10))
+        refs['meta'].pack(pady=(0, 2))
+        refs['location'] = CTkLabel(card, text="", font=("Arial", 10))
+        refs['location'].pack(pady=(0, 2))
 
-        # Layout vertical con espaciado generoso para evitar solapamientos
-        # Cover termina en y=10+160=170
-        y = 188
-        CTkLabel(card, text=book.get("titulo", "Sin título")[:22], font=("Arial", 14, "bold")).place(relx=0.5, y=y, anchor="center")
-        y += 24
-        CTkLabel(card, text=book.get("autor", "")[:20], font=("Arial", 11)).place(relx=0.5, y=y, anchor="center")
-        y += 22
-        CTkLabel(card, text=f"{book.get('paginas', '?')} pág. | {book.get('genero', '')[:15]}", font=("Arial", 10)).place(relx=0.5, y=y, anchor="center")
-        y += 20
-        CTkLabel(card, text=f"📍 {book.get('ubicacion', '')[:18]}", font=("Arial", 10)).place(relx=0.5, y=y, anchor="center")
-        y += 24
+        # Estado / Rating / Formato (contenedor fijo)
+        refs['estado_frame'] = CTkFrame(card, fg_color="transparent", height=60)
+        refs['estado_frame'].pack(pady=(0, 4))
+        refs['estado_frame'].pack_propagate(False)
 
+        # Botones
+        btn_row = CTkFrame(card, fg_color="transparent")
+        btn_row.pack(pady=(0, 10))
+        refs['btn_edit'] = CTkButton(btn_row, text="✏️", width=30, height=20, font=("Arial", 9))
+        refs['btn_edit'].pack(side="left", padx=3)
+        refs['btn_del'] = CTkButton(btn_row, text="🗑", width=30, height=20, fg_color="red", hover_color="darkred")
+        refs['btn_del'].pack(side="left", padx=3)
+
+        if book:
+            self._update_book_card(card, book)
+        return card
+
+    def _update_book_card(self, card, book):
+        """Actualiza una tarjeta reciclada con los datos de un libro."""
+        refs = card._refs
         estado = self.normalize_estado(book.get("estado", "no_leido"))
 
+        # Portada
+        img = self._load_cover(book.get("foto"))
+        if img:
+            refs['cover_img'].configure(image=img, text="")
+        else:
+            refs['cover_img'].configure(image=None, text="📕", font=("Arial", 48))
+
+        # Textos
+        refs['title'].configure(text=book.get("titulo", "Sin título")[:22])
+        refs['author'].configure(text=book.get("autor", "")[:20])
+        refs['meta'].configure(text=f"{book.get('paginas', '?')} pág. | {book.get('genero', '')[:15]}")
+        refs['location'].configure(text=f"📍 {book.get('ubicacion', '')[:18]}")
+
+        # Limpiar y reconstruir zona de estado (pocos widgets, destrucción barata)
+        for w in refs['estado_frame'].winfo_children():
+            w.destroy()
+
         if estado != "leido":
-            menu = CTkOptionMenu(card, values=list(self.ESTADOS.values()),
+            menu = CTkOptionMenu(refs['estado_frame'], values=list(self.ESTADOS.values()),
                                  command=lambda v, b=book: self.cambiar_estado(b, v),
                                  width=160)
             menu.set(self.ESTADOS[estado])
-            menu.place(relx=0.5, y=y, anchor="center")
-            y += 38  # altura del OptionMenu + margen
+            menu.place(relx=0.5, rely=0.5, anchor="center")
         else:
-            CTkLabel(card, text=self.ESTADOS.get(estado, ""), font=("Arial", 10, "bold"),
-                     text_color="#888").place(relx=0.5, y=y, anchor="center")
-            y += 22
-            stars = StarRating(card, rating=book.get("rating", 0), size=16, readonly=True)
-            stars.place(relx=0.5, y=y, anchor="center")
-            y += 24
+            CTkLabel(refs['estado_frame'], text=self.ESTADOS.get(estado, ""),
+                     font=("Arial", 10, "bold"), text_color="#888").place(relx=0.5, y=10, anchor="center")
+            stars = StarRating(refs['estado_frame'], rating=book.get("rating", 0), size=16, readonly=True)
+            stars.place(relx=0.5, y=28, anchor="center")
             fmt = book.get("formato", "fisico")
             fmt_text = {"fisico": "📖 Físico", "digital": "💻 Digital", "audiolibro": "🎧 Audio"}
-            CTkLabel(card, text=fmt_text.get(fmt, ""), font=("Arial", 10)).place(relx=0.5, y=y, anchor="center")
-            y += 22
+            CTkLabel(refs['estado_frame'], text=fmt_text.get(fmt, ""),
+                     font=("Arial", 10)).place(relx=0.5, y=46, anchor="center")
 
-        # Botones siempre al final, fijos en y=355 para que nunca salgan del marco
-        btn_row = CTkFrame(card, fg_color="transparent")
-        btn_row.place(relx=0.5, y=355, anchor="center")
-        CTkButton(btn_row, text="✏️", width=30, height=20, font=("Arial", 9),
-                  command=lambda b=book: self.edit_book(b)).pack(side="left", padx=3)
-        CTkButton(btn_row, text="🗑", width=30, height=20, fg_color="red", hover_color="darkred",
-                  command=lambda b=book: self.delete_book(b)).pack(side="left", padx=3)
-
-        return card
+        # Botones
+        refs['btn_edit'].configure(command=lambda b=book: self.edit_book(b))
+        refs['btn_del'].configure(command=lambda b=book: self.delete_book(b))
 
     def cambiar_estado(self, book, valor_texto):
         inv = {v: k for k, v in self.ESTADOS.items()}
