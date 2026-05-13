@@ -160,7 +160,7 @@ class BibliotecaFrame(CTkFrame):
 
         # Extras para "leído"
         self.extras_frame = CTkFrame(self.add_scroll, fg_color="transparent")
-        self.extras_frame.pack(fill="x", pady=(6, 0))
+        self.extras_frame.pack(fill="x", padx=30, pady=(6, 0))
         self.extras_frame.pack_forget()
 
         row_extras = CTkFrame(self.extras_frame, fg_color="transparent")
@@ -494,27 +494,27 @@ class BibliotecaFrame(CTkFrame):
 
     def create_book_card(self, parent, book=None):
         """Tarjeta de 180px para caber 5 fijas sin cortarse."""
-        card = CTkFrame(parent, width=self.CARD_WIDTH, height=340, corner_radius=12, border_width=2)
+        card = CTkFrame(parent, width=self.CARD_WIDTH, height=360, corner_radius=12, border_width=2)
         card.grid_propagate(False)
 
         refs = {}
         card._refs = refs
 
         # Cover (ligeramente más pequeño para la tarjeta de 180)
-        cover = CTkFrame(card, width=120, height=160, corner_radius=8, fg_color="#2b2b2b")
+        cover = CTkFrame(card, width=120, height=150, corner_radius=8, fg_color="#2b2b2b")
         cover.pack(pady=(10, 6))
         cover.pack_propagate(False)
         refs['cover_img'] = CTkLabel(cover, text="")
         refs['cover_img'].place(relx=0.5, rely=0.5, anchor="center")
 
-        # Texto
-        refs['title'] = CTkLabel(card, text="", font=("Arial", 13, "bold"))
+        # Texto con wraplength para que no se corte y se ajuste a varias líneas
+        refs['title'] = CTkLabel(card, text="", font=("Arial", 13, "bold"), wraplength=160)
         refs['title'].pack(pady=(0, 2))
-        refs['author'] = CTkLabel(card, text="", font=("Arial", 10))
+        refs['author'] = CTkLabel(card, text="", font=("Arial", 10), wraplength=160)
         refs['author'].pack(pady=(0, 2))
-        refs['meta'] = CTkLabel(card, text="", font=("Arial", 9))
+        refs['meta'] = CTkLabel(card, text="", font=("Arial", 9), wraplength=160)
         refs['meta'].pack(pady=(0, 2))
-        refs['location'] = CTkLabel(card, text="", font=("Arial", 9))
+        refs['location'] = CTkLabel(card, text="", font=("Arial", 9), wraplength=160)
         refs['location'].pack(pady=(0, 2))
 
         # Estado / Rating / Formato (contenedor fijo)
@@ -546,11 +546,11 @@ class BibliotecaFrame(CTkFrame):
         else:
             refs['cover_img'].configure(image=None, text="📕", font=("Arial", 40))
 
-        # Textos (truncados para tarjeta más angosta)
-        refs['title'].configure(text=book.get("titulo", "Sin título")[:18])
-        refs['author'].configure(text=book.get("autor", "")[:16])
-        refs['meta'].configure(text=f"{book.get('paginas', '?')} pág. | {book.get('genero', '')[:12]}")
-        refs['location'].configure(text=f"📍 {book.get('ubicacion', '')[:14]}")
+        # Textos completos (sin truncar) — el wraplength se encarga de ajustar
+        refs['title'].configure(text=book.get("titulo", "Sin título"))
+        refs['author'].configure(text=book.get("autor", ""))
+        refs['meta'].configure(text=f"{book.get('paginas', '?')} pág. | {book.get('genero', '')}")
+        refs['location'].configure(text=f"📍 {book.get('ubicacion', '')}")
 
         # Limpiar y reconstruir zona de estado
         for w in refs['estado_frame'].winfo_children():

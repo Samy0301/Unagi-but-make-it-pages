@@ -44,9 +44,9 @@
             "genero": "Romance",
             "ubicacion": "Books",
             "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg",
-            "estado": "leyendo",
-            "rating": 0,
-            "formato": "fisico"
+            "estado": "leido",
+            "rating": 4,
+            "formato": "digital"
         },
         {
             "id": "2026-05-07T22:12:16.226147",
