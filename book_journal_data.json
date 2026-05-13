@@ -68,7 +68,7 @@
             "genero": "SportDarkRomance",
             "ubicacion": "Books",
             "foto": "C:/Users/pc/Pictures/daac48dd-84e4-4986-b67e-f0064b3a3ba7.jpg",
-            "estado": "no_leido",
+            "estado": "leyendo",
             "rating": 0,
             "formato": "fisico"
         },
@@ -126,77 +126,11 @@
     },
     "bookshelf": [
         {
-            "id": "2026-05-12T19:17:17.821846",
+            "id": "2026-05-12T19:47:31.945561",
             "book_id": "2026-05-08T14:40:49.537209",
             "title": "Amos y Mazmorras",
-            "x": 450.0,
+            "x": 511.0,
             "y": 300,
-            "color": "#e74c3c",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-12T19:17:21.717105",
-            "book_id": "2026-05-08T14:56:25.981774",
-            "title": "El Heroe Perdido",
-            "x": 481.0,
-            "y": 300,
-            "color": "#3498db",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-12T19:17:25.002355",
-            "book_id": "2026-05-08T14:44:37.243156",
-            "title": "God of Fury",
-            "x": 451.0,
-            "y": 460,
-            "color": "#f1c40f",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-12T19:17:29.005064",
-            "book_id": "2026-05-07T22:13:43.944853",
-            "title": "Love Song",
-            "x": 622.0,
-            "y": 460,
-            "color": "#3498db",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-12T19:17:32.528111",
-            "book_id": "2026-05-07T22:12:16.226147",
-            "title": "Prohibido Enamorarse",
-            "x": 598.0,
-            "y": 460,
-            "color": "#2ecc71",
-            "width": 18,
-            "height": 134,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-12T19:17:36.423227",
-            "book_id": "2026-05-07T22:19:15.989810",
-            "title": "Sweet Venom",
-            "x": 504.0,
-            "y": 300,
-            "color": "#9b59b6",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-12T19:17:39.406085",
-            "book_id": "2026-05-07T22:20:03.321279",
-            "title": "The Mistake",
-            "x": 647.0,
-            "y": 460,
             "color": "#3498db",
             "width": 18,
             "height": 130,
@@ -229,12 +163,7 @@
             140,
             300,
             460,
-            620,
-            780,
-            940,
-            1100,
-            1260,
-            1420
+            620
         ]
     }
 }
