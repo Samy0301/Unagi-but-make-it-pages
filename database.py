@@ -38,7 +38,8 @@ class Database:
             "reading_streaks": [],
             "current_streak": {"count": 0},
             "tbr": [],
-            "shelf_config": {"shelves": [140, 300, 460]}
+            "shelf_config": {"shelves": [140, 300, 460]},
+            "challenges": {"reto_lector": {}, "collect_colors": {}, "bracket": {}}
         }
         changed = False
         for key, val in defaults.items():

@@ -135,6 +135,50 @@
             "width": 18,
             "height": 130,
             "tilt": 0
+        },
+        {
+            "id": "2026-05-14T13:38:30.759743",
+            "book_id": "2026-05-08T14:56:25.981774",
+            "title": "El Heroe Perdido",
+            "x": 627.0,
+            "y": 300,
+            "color": "#e74c3c",
+            "width": 18,
+            "height": 130,
+            "tilt": 0
+        },
+        {
+            "id": "2026-05-14T13:38:31.564139",
+            "book_id": "2026-05-08T14:44:37.243156",
+            "title": "God of Fury",
+            "x": 566.0,
+            "y": 300,
+            "color": "#e74c3c",
+            "width": 18,
+            "height": 130,
+            "tilt": 0
+        },
+        {
+            "id": "2026-05-14T13:38:32.123294",
+            "book_id": "2026-05-07T22:13:43.944853",
+            "title": "Love Song",
+            "x": 590.0,
+            "y": 300,
+            "color": "#e74c3c",
+            "width": 18,
+            "height": 130,
+            "tilt": 0
+        },
+        {
+            "id": "2026-05-14T13:38:38.875739",
+            "book_id": "2026-05-07T22:12:16.226147",
+            "title": "Prohibido Enamorarse",
+            "x": 741.0,
+            "y": 300,
+            "color": "#2ecc71",
+            "width": 18,
+            "height": 134,
+            "tilt": 0
         }
     ],
     "reading_streaks": [
@@ -165,5 +209,39 @@
             460,
             620
         ]
+    },
+    "challenges": {
+        "reto_lector": {
+            "2": {
+                "titulo": "The Graham Effect",
+                "autor": "Elle Kennedy",
+                "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
+            }
+        },
+        "collect_colors": {
+            "green": {
+                "titulo": "The Deal",
+                "autor": "Elle Kennedy",
+                "foto": "C:/Users/pc/Pictures/etg.jpg"
+            },
+            "light_blue": {
+                "titulo": "WSr",
+                "autor": "eth",
+                "foto": "C:/Users/pc/Pictures/Screenshot 2025-11-21 160844.png"
+            },
+            "blue": {
+                "titulo": "eth",
+                "autor": "EAth",
+                "foto": "C:/Users/pc/Pictures/download (8).jpg"
+            }
+        },
+        "bracket": {
+            "jan": {
+                "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
+            },
+            "feb": {
+                "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg"
+            }
+        }
     }
 }
