@@ -113,6 +113,44 @@ BINGO_DATA = [
     "Blow-your-mind\nplot twist",
     "Libro que hable de libros",
 ]
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  YEARLY READING CHALLENGE DATA (31 retos + 5 bonus)
+# ═══════════════════════════════════════════════════════════════════
+YEARLY_DATA = [
+    "Libro favorito de un miembro del club de lectura",
+    "El título contiene un número",
+    "Un libro con magia",
+    "Un libro con vampiros",
+    "El protagonista es un atleta",
+    "Un libro fuera de tu zona de confort",
+    "Una flor en la portada",
+    "No lo descubriste en BookTok",
+    "Un libro con un levantamiento o rebelión",
+    "Portada de tu color favorito",
+    "Juzga un libro por su portada",
+    "Autor nuevo para ti",
+    "Múltiples puntos de vista",
+    "Un libro viral en BookTok",
+    "El título tiene 5+ palabras",
+    "Un arma en la portada",
+    "Publicado este año",
+    "Un libro sobre una biblioteca",
+    "Un libro en la lista de prohibidos",
+    "Publicado antes del año actual",
+    "Un libro que te regalaron",
+    "Un libro que te haga llorar",
+    "Un libro sin personaje en la portada",
+    "Publicado en el mes de tu nacimiento",
+    "Humo en la portada",
+    "Un libro que tiene dragones",
+    "Novela gráfica",
+    "Una duología",
+    "Llevaba 3+ años en tu TBR",
+    "Una reimaginación",
+    "600+ páginas",
+]
 # ═══════════════════════════════════════════════════════════════════
 #  WIDGET AUXILIAR: Tarjeta-Carpeta visual
 # ═══════════════════════════════════════════════════════════════════
@@ -231,6 +269,19 @@ class ChallengesFrame(CTkFrame):
         self.bingo_scroll = CTkScrollableFrame(self.bingo_panel, width=900, height=650,
                                                 fg_color="transparent")
         self.bingo_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # ── Yearly Challenge ──
+        self.yearly_panel = CTkFrame(self, fg_color="transparent")
+        h7 = CTkFrame(self.yearly_panel, fg_color="transparent")
+        h7.pack(fill="x", padx=20, pady=(15, 5))
+        CTkButton(h7, text="← Volver", width=90, command=self.show_folders).pack(side="left")
+        CTkLabel(h7, text="YEARLY", font=("Helvetica", 28, "bold"), text_color="#ccc").pack(side="left", padx=(15, 4))
+        CTkLabel(h7, text="READING", font=("Helvetica", 28, "bold"), text_color="#888").pack(side="left", padx=(0, 4))
+        CTkLabel(h7, text="CHALLENGE", font=("Helvetica", 28, "bold"), text_color="#ccc").pack(side="left")
+
+        self.yearly_scroll = CTkScrollableFrame(self.yearly_panel, width=900, height=650,
+                                                 fg_color="transparent")
+        self.yearly_scroll.pack(fill="both", expand=True, padx=10, pady=10)
 
         # ── Formulario (reutilizable) ──
         self.form_panel = CTkFrame(self, fg_color="#1e1e1e", corner_radius=16,
@@ -366,6 +417,12 @@ class ChallengesFrame(CTkFrame):
                         command=self.show_bingo)
         f6.grid(row=1, column=3, padx=15, pady=20)
 
+        f7 = FolderCard(container, title="Yearly Challenge",
+                        subtitle="31 retos · Portadas",
+                        icon="📅", color="#D4EFDF",
+                        command=self.show_yearly)
+        f7.grid(row=2, column=1, columnspan=2, padx=15, pady=20)
+
     def show_folders(self):
         self.reto_panel.pack_forget()
         self.collect_panel.pack_forget()
@@ -373,6 +430,7 @@ class ChallengesFrame(CTkFrame):
         self.day30_panel.pack_forget()
         self.alpha_panel.pack_forget()
         self.bingo_panel.pack_forget()
+        self.yearly_panel.pack_forget()
         self.form_panel.pack_forget()
         self._alpha_editing = None
         self.folders_panel.pack(fill="both", expand=True, padx=10, pady=10)
@@ -916,6 +974,7 @@ class ChallengesFrame(CTkFrame):
         main.pack(expand=True, fill="both")
         main.grid_columnconfigure(0, weight=1)
         main.grid_columnconfigure(1, weight=1)
+        main.grid_columnconfigure(2, weight=0)
 
         # Dividir en dos columnas: A-M (13) y N-Z (13)
         left_col = CTkFrame(main, fg_color="transparent")
@@ -1161,6 +1220,170 @@ class ChallengesFrame(CTkFrame):
         cell.bind("<Button-3>", lambda e, i=index: self._on_bingo_right_click(i, e))
         cell.configure(cursor="hand2")
 
+    # ═══════════════════════════════════════════════════════════════
+    #  YEARLY READING CHALLENGE
+    # ═══════════════════════════════════════════════════════════════
+    def _get_yearly_data(self):
+        ch = self._ensure_challenges()
+        return ch.get("yearly", {})
+
+    def _set_yearly_data(self, data):
+        ch = self._ensure_challenges()
+        ch["yearly"] = data
+        self.db.set("challenges", ch)
+
+    def show_yearly(self):
+        self.folders_panel.pack_forget()
+        self.reto_panel.pack_forget()
+        self.collect_panel.pack_forget()
+        self.bracket_panel.pack_forget()
+        self.day30_panel.pack_forget()
+        self.alpha_panel.pack_forget()
+        self.bingo_panel.pack_forget()
+        self.form_panel.pack_forget()
+        self.render_yearly()
+        self.yearly_panel.pack(fill="both", expand=True, padx=10, pady=10)
+
+    def render_yearly(self):
+        for w in self.yearly_scroll.winfo_children():
+            w.destroy()
+
+        container = CTkFrame(self.yearly_scroll, fg_color="transparent")
+        container.pack(expand=True, fill="both")
+
+        saved = self._get_yearly_data()
+
+        main = CTkFrame(container, fg_color="transparent")
+        main.pack(fill="both", expand=True, padx=20, pady=10)
+        main.grid_columnconfigure(0, weight=1)
+        main.grid_columnconfigure(1, weight=1)
+        main.grid_columnconfigure(2, weight=0)
+
+        # --- COLUMNA IZQUIERDA: Lista de retos 1-16 ---
+        left_col = CTkFrame(main, fg_color="transparent")
+        left_col.grid(row=0, column=0, sticky="nsew", padx=(0, 15))
+
+        for idx in range(16):
+            num = idx + 1
+            text = YEARLY_DATA[idx]
+            has_cover = str(num) in saved and saved[str(num)].get("foto")
+            self._build_yearly_list_row(left_col, num, text, has_cover)
+
+        # --- COLUMNA CENTRO: Lista de retos 17-31 ---
+        mid_col = CTkFrame(main, fg_color="transparent")
+        mid_col.grid(row=0, column=1, sticky="nsew", padx=(15, 15))
+
+        for idx in range(16, 31):
+            num = idx + 1
+            text = YEARLY_DATA[idx]
+            has_cover = str(num) in saved and saved[str(num)].get("foto")
+            self._build_yearly_list_row(mid_col, num, text, has_cover)
+
+        # --- COLUMNA DERECHA: Grid de números ---
+        right_col = CTkFrame(main, fg_color="transparent")
+        right_col.grid(row=0, column=2, sticky="nsew", padx=(15, 0))
+
+        # Grid 7x5 de números
+        grid_frame = CTkFrame(right_col, fg_color="transparent")
+        grid_frame.pack(expand=True, fill="both")
+
+        for c in range(5):
+            grid_frame.grid_columnconfigure(c, weight=1)
+
+        for idx in range(31):
+            row = idx // 5
+            col = idx % 5
+            num = idx + 1
+            has_cover = str(num) in saved and saved[str(num)].get("foto")
+            cell = self._build_yearly_number_cell(grid_frame, num, has_cover)
+            cell.grid(row=row, column=col, padx=4, pady=4, sticky="nsew")
+
+    def _build_yearly_list_row(self, parent, num, text, has_cover):
+        row = CTkFrame(parent, fg_color="transparent", height=38)
+        row.pack(fill="x", pady=2)
+        row.pack_propagate(False)
+
+        # Número
+        num_lbl = CTkLabel(row, text=f"{num}.", font=("Arial", 13, "bold"),
+                           text_color="#8b7355" if not has_cover else "#a08060",
+                           width=32)
+        num_lbl.pack(side="left", padx=(0, 8))
+
+        # Texto con línea de tachado sutil si tiene portada
+        if has_cover:
+            text_lbl = CTkLabel(row, text=text, font=("Arial", 13),
+                                text_color="#a09080", wraplength=280, justify="left")
+            text_lbl.pack(side="left", fill="x", expand=True)
+            # Línea de tachado
+            strike = CTkFrame(row, height=1, fg_color="#b0a090")
+            strike.place(relx=0.10, rely=0.55, relwidth=0.86)
+        else:
+            text_lbl = CTkLabel(row, text=text, font=("Arial", 13),
+                                text_color="#5c4a3a", wraplength=280, justify="left")
+            text_lbl.pack(side="left", fill="x", expand=True)
+
+    def _build_yearly_number_cell(self, parent, num, has_cover):
+        w, h = 72, 96  # Rectangular vertical para portadas de libros
+        bg = "#d4c4a8" if has_cover else "#e8dcc8"
+        border = "#b0a080" if has_cover else "#c8b8a0"
+
+        cell = CTkFrame(parent, width=w, height=h, corner_radius=2,
+                        fg_color=bg, border_width=2, border_color=border)
+        cell.grid_propagate(False)
+        cell._num = num
+        cell._has_cover = has_cover
+
+        if has_cover:
+            # Mostrar portada en vez de número
+            img = self._load_yearly_cover(num)
+            if img:
+                CTkLabel(cell, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
+            else:
+                CTkLabel(cell, text=str(num), font=("Helvetica", 18, "bold"),
+                         text_color="#8b7355").place(relx=0.5, rely=0.5, anchor="center")
+        else:
+            CTkLabel(cell, text=str(num), font=("Helvetica", 22, "bold"),
+                     text_color="#5c4a3a").place(relx=0.5, rely=0.5, anchor="center")
+
+        # Click para cargar portada
+        cell.bind("<Button-1>", lambda e, n=num: self._on_yearly_click(n))
+        for w in cell.winfo_children():
+            w.bind("<Button-1>", lambda e, n=num: self._on_yearly_click(n))
+        cell.configure(cursor="hand2")
+
+        return cell
+
+    def _load_yearly_cover(self, num):
+        saved = self._get_yearly_data()
+        data = saved.get(str(num), {})
+        path = data.get("foto")
+        if not path or not os.path.exists(path):
+            return None
+        cache_key = (path, (60, 84))
+        if cache_key in self._cover_cache:
+            return self._cover_cache[cache_key]
+        try:
+            img = Image.open(path).resize((60, 84), Image.LANCZOS)
+            if CTkImage:
+                ctk_img = CTkImage(light_image=img, dark_image=img, size=(60, 84))
+                self._cover_cache[cache_key] = ctk_img
+                return ctk_img
+        except Exception:
+            pass
+        return None
+
+    def _on_yearly_click(self, num):
+        path = filedialog.askopenfilename(
+            title=f"Seleccionar portada para el reto #{num}",
+            filetypes=[("Imágenes", "*.png *.jpg *.jpeg *.gif *.bmp"), ("Todos", "*.*")]
+        )
+        if path:
+            saved = self._get_yearly_data()
+            saved[str(num)] = {"foto": path}
+            self._set_yearly_data(saved)
+            self._cover_cache.clear()
+            self.render_yearly()
+
     def refresh(self):
         self._cover_cache.clear()
         self.show_folders()
@@ -1171,3 +1394,4 @@ class ChallengesFrame(CTkFrame):
         self.render_day30()
         self.render_alpha()
         self.render_bingo()
+        self.render_yearly()
