@@ -35,13 +35,14 @@ def lerp_color(c1, c2, t):
 
 def color_for_pages(pages):
     if pages == 0 or pages == "None" or pages == "":
-        return "#C8E0F0"
+        return PALETA["bg_panel"]
     try:
         p = int(pages)
     except (ValueError, TypeError):
-        return "#C8E0F0"
+        return PALETA["bg_panel"]
     if p <= 0:
-        return "#C8E0F0"
+        return PALETA["bg_panel"]
+    # Colores vibrantes que contrasten en fondo oscuro
     stops = [
         (1,   "#29B6F6"),
         (10,  "#00E5FF"),
@@ -82,7 +83,8 @@ class TrackerFrame(CTkFrame):
         self.db = db
         self.configure(fg_color="transparent")
 
-        CTkLabel(self, text="Reading Tracker", font=("Helvetica", 28, "bold")).pack(pady=(15, 5))
+        CTkLabel(self, text="Reading Tracker", font=("Helvetica", 28, "bold"),
+                 text_color=PALETA["text_main"]).pack(pady=(15, 5))
 
         main = CTkFrame(self, fg_color="transparent")
         main.pack(fill="both", expand=True, padx=20, pady=10)
@@ -97,11 +99,24 @@ class TrackerFrame(CTkFrame):
         ctrl.pack(pady=5)
         self.month_var = ctk.StringVar(value=str(date.today().month))
         self.year_var = ctk.StringVar(value=str(date.today().year))
-        CTkOptionMenu(ctrl, values=[str(i) for i in range(1, 13)], variable=self.month_var, width=80).pack(side="left", padx=5)
-        CTkOptionMenu(ctrl, values=[str(i) for i in range(2026, 2036)], variable=self.year_var, width=100).pack(side="left", padx=5)
-        CTkButton(ctrl, text="Cargar", command=self.render_tracker, width=80).pack(side="left", padx=10)
+        CTkOptionMenu(ctrl, values=[str(i) for i in range(1, 13)], variable=self.month_var,
+                      width=80, fg_color=PALETA["bg_input"],
+                      button_color=PALETA["ocean"],
+                      button_hover_color=PALETA["coral"],
+                      text_color=PALETA["text_main"]).pack(side="left", padx=5)
+        CTkOptionMenu(ctrl, values=[str(i) for i in range(2026, 2036)], variable=self.year_var,
+                      width=100, fg_color=PALETA["bg_input"],
+                      button_color=PALETA["ocean"],
+                      button_hover_color=PALETA["coral"],
+                      text_color=PALETA["text_main"]).pack(side="left", padx=5)
+        CTkButton(ctrl, text="Cargar", command=self.render_tracker, width=80,
+                  fg_color=PALETA["coral"],
+                  hover_color=PALETA["coral_light"],
+                  text_color=PALETA["bg_main"]).pack(side="left", padx=10)
 
-        self.canvas = Canvas(left, width=520, height=520, bg="#D0EBF5", highlightthickness=0)
+        # Canvas con fondo azul noche
+        self.canvas = Canvas(left, width=520, height=520,
+                             bg=PALETA["bg_panel"], highlightthickness=0)
         self.canvas.pack(pady=10)
 
         legend = CTkFrame(left, fg_color="transparent")
@@ -111,33 +126,50 @@ class TrackerFrame(CTkFrame):
             c = color_for_pages(p)
             box = CTkFrame(legend, width=25, height=15, fg_color=c, corner_radius=3)
             box.pack(side="left", padx=2)
-            CTkLabel(legend, text=f"{p}", font=("Arial", 9)).pack(side="left", padx=(0, 10))
+            CTkLabel(legend, text=f"{p}", font=("Arial", 9),
+                     text_color=PALETA["text_secondary"]).pack(side="left", padx=(0, 10))
 
         inp = CTkFrame(left, fg_color="transparent")
         inp.pack(pady=10)
-        CTkLabel(inp, text="Dia:").pack(side="left", padx=5)
-        self.entry_day = CTkEntry(inp, width=50)
+        CTkLabel(inp, text="Dia:", text_color=PALETA["text_secondary"]).pack(side="left", padx=5)
+        self.entry_day = CTkEntry(inp, width=50,
+                                  fg_color=PALETA["bg_input"],
+                                  text_color=PALETA["text_main"],
+                                  border_color=PALETA["border"])
         self.entry_day.pack(side="left", padx=5)
-        CTkLabel(inp, text="Paginas:").pack(side="left", padx=5)
-        self.entry_pages = CTkEntry(inp, width=80)
+        CTkLabel(inp, text="Paginas:", text_color=PALETA["text_secondary"]).pack(side="left", padx=5)
+        self.entry_pages = CTkEntry(inp, width=80,
+                                    fg_color=PALETA["bg_input"],
+                                    text_color=PALETA["text_main"],
+                                    border_color=PALETA["border"])
         self.entry_pages.pack(side="left", padx=5)
-        CTkButton(inp, text="Registrar", command=self.log_day).pack(side="left", padx=10)
+        CTkButton(inp, text="Registrar", command=self.log_day,
+                  fg_color=PALETA["coral"],
+                  hover_color=PALETA["coral_light"],
+                  text_color=PALETA["bg_main"]).pack(side="left", padx=10)
 
         right = CTkFrame(main, fg_color="transparent")
         right.grid(row=0, column=1, sticky="nsew")
 
-        CTkLabel(right, text="Leyendo ahora", font=("Helvetica", 16, "bold")).pack(anchor="w", pady=(0, 5))
-        self.reading_scroll = CTkScrollableFrame(right, width=280, height=180, fg_color="transparent")
+        CTkLabel(right, text="Leyendo ahora", font=("Helvetica", 16, "bold"),
+                 text_color=PALETA["text_main"]).pack(anchor="w", pady=(0, 5))
+        self.reading_scroll = CTkScrollableFrame(right, width=280, height=180,
+                                                  fg_color="transparent")
         self.reading_scroll.pack(fill="x", pady=5)
 
+        # Racha con acento coral
         self.streak_frame = CTkFrame(right, corner_radius=10, border_width=2,
-                                     border_color="#2E86C1", fg_color="#FFFFFF")
+                                     border_color=PALETA["coral"], fg_color=PALETA["bg_card"])
         self.streak_frame.pack(fill="x", pady=15)
-        self.streak_label = CTkLabel(self.streak_frame, text="Racha actual: 0 dias", font=("Arial", 14, "bold"))
+        self.streak_label = CTkLabel(self.streak_frame, text="Racha actual: 0 dias",
+                                     font=("Arial", 14, "bold"),
+                                     text_color=PALETA["coral"])
         self.streak_label.pack(pady=10)
 
-        CTkLabel(right, text="Historial de rachas", font=("Helvetica", 14, "bold")).pack(anchor="w", pady=(5, 5))
-        self.streaks_scroll = CTkScrollableFrame(right, width=280, height=200, fg_color="transparent")
+        CTkLabel(right, text="Historial de rachas", font=("Helvetica", 14, "bold"),
+                 text_color=PALETA["text_main"]).pack(anchor="w", pady=(5, 5))
+        self.streaks_scroll = CTkScrollableFrame(right, width=280, height=200,
+                                                  fg_color="transparent")
         self.streaks_scroll.pack(fill="x", pady=5)
 
         self.render_tracker()
@@ -156,34 +188,38 @@ class TrackerFrame(CTkFrame):
         return None
 
     def render_reading(self):
-        """Render simple sin pool: tipicamente 0-3 libros."""
         for w in list(self.reading_scroll.winfo_children()):
             w.destroy()
 
         books = [b for b in self.db.get("books") if b.get("estado") == "leyendo"]
         if not books:
-            CTkLabel(self.reading_scroll, text="No estas leyendo nada ahora.", font=("Arial", 11)).pack(pady=10)
+            CTkLabel(self.reading_scroll, text="No estas leyendo nada ahora.",
+                     font=("Arial", 11), text_color=PALETA["text_muted"]).pack(pady=10)
             return
 
         for b in books:
             row = CTkFrame(self.reading_scroll, corner_radius=10, border_width=1,
-                           height=70, border_color="#2E86C1", fg_color="#FFFFFF")
+                           height=70, border_color=PALETA["border"], fg_color=PALETA["bg_card"])
             row.pack(fill="x", pady=4)
             row.pack_propagate(False)
 
-            cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#FFFFFF")
+            cover = CTkFrame(row, width=35, height=50, corner_radius=4,
+                             fg_color=PALETA["bg_input"])
             cover.pack(side="left", padx=(10, 8), pady=10)
             cover.pack_propagate(False)
             img = self._load_cover_mini(b.get("foto"))
             if img:
                 CTkLabel(cover, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
             else:
-                CTkLabel(cover, text="Libro", font=("Arial", 16)).place(relx=0.5, rely=0.5, anchor="center")
+                CTkLabel(cover, text="Libro", font=("Arial", 16),
+                         text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
 
             text_frame = CTkFrame(row, fg_color="transparent")
             text_frame.pack(side="left", fill="y", expand=True, pady=8)
-            CTkLabel(text_frame, text=b.get("titulo", "Sin titulo"), font=("Arial", 12, "bold")).pack(anchor="w")
-            CTkLabel(text_frame, text=b.get("autor", ""), font=("Arial", 10), text_color="#5DADE2").pack(anchor="w")
+            CTkLabel(text_frame, text=b.get("titulo", "Sin titulo"),
+                     font=("Arial", 12, "bold"), text_color=PALETA["text_main"]).pack(anchor="w")
+            CTkLabel(text_frame, text=b.get("autor", ""),
+                     font=("Arial", 10), text_color=PALETA["text_secondary"]).pack(anchor="w")
 
     def render_streaks(self):
         self.db.recalc_streaks()
@@ -198,16 +234,20 @@ class TrackerFrame(CTkFrame):
 
         streaks = self.db.get("reading_streaks")
         if not streaks:
-            CTkLabel(self.streaks_scroll, text="Aun no hay rachas registradas.", font=("Arial", 11)).pack(pady=10)
+            CTkLabel(self.streaks_scroll, text="Aun no hay rachas registradas.",
+                     font=("Arial", 11), text_color=PALETA["text_muted"]).pack(pady=10)
             return
 
         for s in reversed(streaks):
-            row = CTkFrame(self.streaks_scroll, corner_radius=8, border_width=1)
+            row = CTkFrame(self.streaks_scroll, corner_radius=8, border_width=1,
+                           border_color=PALETA["border"], fg_color=PALETA["bg_card"])
             row.pack(fill="x", pady=3)
             start = datetime.fromisoformat(s["start"]).strftime("%d/%m/%Y")
             end = datetime.fromisoformat(s["end"]).strftime("%d/%m/%Y")
-            CTkLabel(row, text=f"{start} -> {end}", font=("Arial", 10)).pack(side="left", padx=10, pady=5)
-            CTkLabel(row, text=f"{s['length']} dias", font=("Arial", 10, "bold")).pack(side="right", padx=10, pady=5)
+            CTkLabel(row, text=f"{start} -> {end}",
+                     font=("Arial", 10), text_color=PALETA["text_main"]).pack(side="left", padx=10, pady=5)
+            CTkLabel(row, text=f"{s['length']} dias",
+                     font=("Arial", 10, "bold"), text_color=PALETA["coral"]).pack(side="right", padx=10, pady=5)
 
     def render_tracker(self):
         self.canvas.delete("all")
@@ -241,23 +281,25 @@ class TrackerFrame(CTkFrame):
             x = cx + rad * 0.85 * math.cos(math.radians(mid_angle))
             y = cy + rad * 0.85 * math.sin(math.radians(mid_angle))
 
-            self.canvas.create_text(x, y, text=str(day), fill="#2C3E50", font=("Arial", 9, "bold"))
+            self.canvas.create_text(x, y, text=str(day), fill=PALETA["text_main"],
+                                    font=("Arial", 9, "bold"))
 
             if pages and str(pages).isdigit() and int(pages) > 0:
                 x2 = cx + (r_inner - 25) * math.cos(math.radians(mid_angle))
                 y2 = cy + (r_inner - 25) * math.sin(math.radians(mid_angle))
-                self.canvas.create_text(x2, y2, text=str(pages), fill="#2C3E50",
+                self.canvas.create_text(x2, y2, text=str(pages),
+                                        fill=PALETA["text_main"],
                                         font=("Arial", 8, "bold"))
 
         # Circulo central
         self.canvas.create_oval(cx - 70, cy - 70, cx + 70, cy + 70,
-                                fill=month_color, outline="#2E86C1", width=2)
+                                fill=month_color, outline=PALETA["border_accent"], width=2)
         total = sum(int(v) for v in tracker_data.values() if str(v).isdigit())
 
         self.canvas.create_text(cx, cy - 18, text=MONTH_NAMES.get(month, ""),
-                                fill="#2C3E50", font=("Arial", 16, "bold"))
-        self.canvas.create_text(cx, cy + 12, text=f"{total} pag.", fill="#2C3E50",
-                                font=("Arial", 11, "bold"))
+                                fill=PALETA["bg_main"], font=("Arial", 16, "bold"))
+        self.canvas.create_text(cx, cy + 12, text=f"{total} pag.",
+                                fill=PALETA["bg_main"], font=("Arial", 11, "bold"))
 
     def _draw_arc(self, cx, cy, r_out, r_in, a1, a2, color):
         points = []

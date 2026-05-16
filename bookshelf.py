@@ -10,10 +10,14 @@ from database import Database, PALETA
 LOMO_H_MIN = 70
 LOMO_H_MAX = 130
 COLORS = [
-    "#FF1744", "#F50057", "#D500F9", "#651FFF", "#3D5AFE",
-    "#2979FF", "#00B0FF", "#00E5FF", "#1DE9B6", "#00E676",
-    "#76FF03", "#C6FF00", "#FFEA00", "#FFC400", "#FF9100",
-    "#FF6D00", "#FF3D00", "#DD2C00", "#5D4037", "#78909C"
+    "#2979FF",  # azul
+    "#E53935",  # rojo
+    "#FDD835",  # amarillo
+    "#43A047",  # verde
+    "#FB8C00",  # naranja
+    "#8E24AA",  # morado
+    "#00B0FF",  # celeste
+    "#CE93D8",  # lila
 ]
 
 DEFAULT_SHELVES = [140, 300, 460]
@@ -26,50 +30,84 @@ class BookshelfFrame(CTkFrame):
         self.db = db
         self.configure(fg_color="transparent")
 
-        CTkLabel(self, text="The Bookshelf", font=("Helvetica", 28, "bold")).pack(pady=(15, 5))
+        CTkLabel(self, text="The Bookshelf", font=("Helvetica", 28, "bold"),
+                 text_color=PALETA["text_main"]).pack(pady=(15, 5))
 
         # Controles superiores
         ctrl = CTkFrame(self, fg_color="transparent")
         ctrl.pack(fill="x", padx=20, pady=5)
 
-        CTkLabel(ctrl, text="Libro:").pack(side="left", padx=5)
+        CTkLabel(ctrl, text="Libro:", text_color=PALETA["text_secondary"]).pack(side="left", padx=5)
         self.book_var = ctk.StringVar()
-        self.book_menu = CTkOptionMenu(ctrl, variable=self.book_var, width=200, values=self._book_titles())
+        self.book_menu = CTkOptionMenu(ctrl, variable=self.book_var, width=200,
+                                       values=self._book_titles(),
+                                       fg_color=PALETA["bg_input"],
+                                       button_color=PALETA["ocean"],
+                                       button_hover_color=PALETA["coral"],
+                                       text_color=PALETA["text_main"],
+                                       dropdown_fg_color=PALETA["bg_card"],
+                                       dropdown_text_color=PALETA["text_main"],
+                                       dropdown_hover_color=PALETA["coral"])
         self.book_menu.pack(side="left", padx=5)
 
-        CTkLabel(ctrl, text="Color:").pack(side="left", padx=(15, 5))
+        CTkLabel(ctrl, text="Color:", text_color=PALETA["text_secondary"]).pack(side="left", padx=(15, 5))
         self.color_var = ctk.StringVar(value=COLORS[0])
-        self.color_preview = CTkFrame(ctrl, width=25, height=25, fg_color=COLORS[0], corner_radius=4)
+        self.color_preview = CTkFrame(ctrl, width=25, height=25,
+                                      fg_color=COLORS[0], corner_radius=4,
+                                      border_width=2, border_color=PALETA["border"])
         self.color_preview.pack(side="left", padx=5)
         self.color_preview.bind("<Button-1>", self.pick_color)
 
         for c in COLORS[:5]:
-            btn = CTkFrame(ctrl, width=20, height=20, fg_color=c, corner_radius=3)
+            btn = CTkFrame(ctrl, width=20, height=20, fg_color=c, corner_radius=3,
+                           border_width=1, border_color=PALETA["border"])
+            btn.pack(side="left", padx=2)
+            btn.bind("<Button-1>", lambda e, col=c: self.set_color(col))
+        # Mostrar los 3 restantes en segunda fila visual (pack continúa)
+        for c in COLORS[5:]:
+            btn = CTkFrame(ctrl, width=20, height=20, fg_color=c, corner_radius=3,
+                           border_width=1, border_color=PALETA["border"])
             btn.pack(side="left", padx=2)
             btn.bind("<Button-1>", lambda e, col=c: self.set_color(col))
 
-        CTkButton(ctrl, text="Refrescar", command=self.refresh_books, width=100).pack(side="left", padx=10)
+        CTkButton(ctrl, text="Refrescar", command=self.refresh_books, width=100,
+                  fg_color=PALETA["ocean"],
+                  hover_color=PALETA["coral"],
+                  text_color=PALETA["text_main"]).pack(side="left", padx=10)
         CTkButton(ctrl, text="Limpiar", command=self.clear_shelf,
-                  fg_color="#E74C3C", hover_color="#C0392B", width=100).pack(side="left", padx=5)
+                  fg_color=PALETA["error"],
+                  hover_color=PALETA["coral"],
+                  text_color=PALETA["text_main"], width=100).pack(side="left", padx=5)
 
         # Controles de estantes
         shelf_ctrl = CTkFrame(self, fg_color="transparent")
         shelf_ctrl.pack(fill="x", padx=20, pady=(0, 5))
         CTkButton(shelf_ctrl, text="Anadir estante", command=self.add_shelf,
-                  width=130, corner_radius=8).pack(side="left", padx=5)
+                  width=130, corner_radius=8,
+                  fg_color=PALETA["coral"],
+                  hover_color=PALETA["coral_light"],
+                  text_color=PALETA["bg_main"]).pack(side="left", padx=5)
         CTkButton(shelf_ctrl, text="Quitar estante", command=self.remove_shelf,
-                  width=130, corner_radius=8, fg_color="#1A5276", hover_color="#5DADE2").pack(side="left", padx=5)
-        self.shelf_count_label = CTkLabel(shelf_ctrl, text=f"Estantes: {len(self.get_shelves())}", font=("Arial", 11))
+                  width=130, corner_radius=8,
+                  fg_color=PALETA["ocean"],
+                  hover_color=PALETA["coral"],
+                  text_color=PALETA["text_main"]).pack(side="left", padx=5)
+        self.shelf_count_label = CTkLabel(shelf_ctrl,
+                                          text=f"Estantes: {len(self.get_shelves())}",
+                                          font=("Arial", 11),
+                                          text_color=PALETA["text_secondary"])
         self.shelf_count_label.pack(side="left", padx=15)
 
-        self.status_label = CTkLabel(self, text="Click en la estanteria para colocar el lomo. Click derecho en un lomo para eliminarlo.", font=("Arial", 11))
+        self.status_label = CTkLabel(self,
+            text="Click en la estanteria para colocar el lomo. Click derecho en un lomo para eliminarlo.",
+            font=("Arial", 11), text_color=PALETA["text_muted"])
         self.status_label.pack(pady=2)
 
         # Canvas
         self.canvas_frame = CTkFrame(self, fg_color="transparent")
         self.canvas_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
-        self.canvas = Canvas(self.canvas_frame, bg="#D0EBF5", highlightthickness=0)
+        self.canvas = Canvas(self.canvas_frame, bg=PALETA["bg_panel"], highlightthickness=0)
         self.canvas.pack(side="left", fill="both", expand=True)
         self.canvas.bind("<Button-1>", self.on_canvas_click)
         self.canvas.bind("<Button-3>", self.on_canvas_right_click)
@@ -83,10 +121,8 @@ class BookshelfFrame(CTkFrame):
         self.canvas.bind("<Button-4>", self._on_mousewheel)
         self.canvas.bind("<Button-5>", self._on_mousewheel)
 
-        # Grid de ocupacion: shelf_y -> set de x ocupadas
+        # Grid de ocupacion
         self._shelf_grid = {}
-
-        # Cache de items del canvas: item_id -> datos del libro
         self._canvas_items = {}
 
         self._last_canvas_width = 0
@@ -214,46 +250,63 @@ class BookshelfFrame(CTkFrame):
         left_inner = furniture_x + frame_thickness
         right_inner = right_frame - frame_thickness
 
-        # Marco del mueble (efecto 3D)
+        # Marco del mueble - efecto 3D en tonos azul oscuro
+        # Sombra
         self.canvas.create_rectangle(
             furniture_x + 6, furniture_top + 6,
             right_frame + 6, furniture_bottom + 6,
-            fill="#5DADE2", outline="", stipple="gray25"
-        )
-        self.canvas.create_rectangle(
-            furniture_x, furniture_top, right_frame, furniture_bottom,
-            fill="#D0EBF5", outline="#1A5276", width=2
-        )
-        self.canvas.create_line(
-            furniture_x + 2, furniture_top + 2, right_frame - 2, furniture_top + 2,
-            fill="#2E86C1", width=2
-        )
-        self.canvas.create_line(
-            furniture_x + 2, furniture_top + 2, furniture_x + 2, furniture_bottom - 2,
-            fill="#2E86C1", width=2
-        )
-        self.canvas.create_line(
-            furniture_x + 2, furniture_bottom - 2, right_frame - 2, furniture_bottom - 2,
-            fill="#1A5276", width=2
-        )
-        self.canvas.create_line(
-            right_frame - 2, furniture_top + 2, right_frame - 2, furniture_bottom - 2,
-            fill="#1A5276", width=2
+            fill=PALETA["shadow"], outline="", stipple="gray25"
         )
 
-        # Estantes
+        # Marco exterior
+        self.canvas.create_rectangle(
+            furniture_x, furniture_top,
+            right_frame, furniture_bottom,
+            fill=PALETA["bg_card"], outline=PALETA["border_accent"], width=2
+        )
+
+        # Borde claro superior (efecto 3D)
+        self.canvas.create_line(
+            furniture_x + 2, furniture_top + 2,
+            right_frame - 2, furniture_top + 2,
+            fill=PALETA["wave"], width=2
+        )
+        self.canvas.create_line(
+            furniture_x + 2, furniture_top + 2,
+            furniture_x + 2, furniture_bottom - 2,
+            fill=PALETA["wave"], width=2
+        )
+
+        # Borde oscuro inferior (efecto 3D)
+        self.canvas.create_line(
+            furniture_x + 2, furniture_bottom - 2,
+            right_frame - 2, furniture_bottom - 2,
+            fill=PALETA["bg_header"], width=2
+        )
+        self.canvas.create_line(
+            right_frame - 2, furniture_top + 2,
+            right_frame - 2, furniture_bottom - 2,
+            fill=PALETA["bg_header"], width=2
+        )
+
+        # Estantes (tablones de madera azulada)
         for y in shelves:
             self.canvas.create_rectangle(
-                left_inner - 2, y - 4, right_inner + 2, y + 4,
-                fill="#1A5276", outline="#2E86C1", width=1
+                left_inner - 2, y - 4,
+                right_inner + 2, y + 4,
+                fill=PALETA["bg_header"], outline=PALETA["border_accent"], width=1
             )
+            # Borde claro arriba
             self.canvas.create_line(
-                left_inner - 2, y - 3, right_inner + 2, y - 3,
-                fill="#5D8AA8", width=1
+                left_inner - 2, y - 3,
+                right_inner + 2, y - 3,
+                fill=PALETA["wave"], width=1
             )
+            # Borde oscuro abajo
             self.canvas.create_line(
-                left_inner - 2, y + 3, right_inner + 2, y + 3,
-                fill="#2E86C1", width=1
+                left_inner - 2, y + 3,
+                right_inner + 2, y + 3,
+                fill=PALETA["ocean"], width=1
             )
 
         # Lomos
@@ -271,35 +324,33 @@ class BookshelfFrame(CTkFrame):
         shelf_y = min(self.get_shelves(), key=lambda s: abs(s - y_base))
         y_top = shelf_y - height
 
-        # IDs del canvas para este lomo
         ids = []
 
-        # Sombra
+        # Sombra sutil
         ids.append(self.canvas.create_rectangle(
             x + 2, y_top + 2, x + width + 2, shelf_y + 2,
-            fill="#CFD8DC", outline="", stipple="gray50"
+            fill=PALETA["shadow"], outline="", stipple="gray50"
         ))
 
         # Lomo principal
         ids.append(self.canvas.create_rectangle(
             x, y_top, x + width, shelf_y,
-            fill=color, outline="#2E86C1", width=1
+            fill=color, outline=PALETA["border_accent"], width=1
         ))
 
-        # Borde superior
+        # Borde superior claro
         ids.append(self.canvas.create_line(
             x + 1, y_top + 1, x + width - 1, y_top + 1,
-            fill="#2C3E50", width=1, stipple="gray50"
+            fill=PALETA["text_main"], width=1, stipple="gray50"
         ))
 
         # Texto
         ids.append(self.canvas.create_text(
             x + width / 2, (y_top + shelf_y) / 2,
-            text=title, fill="#2C3E50", font=("Arial", 8),
+            text=title, fill=PALETA["text_main"], font=("Arial", 8),
             angle=90, anchor="center"
         ))
 
-        # Guardar referencia para click derecho
         for iid in ids:
             self._canvas_items[iid] = item
 
@@ -313,7 +364,7 @@ class BookshelfFrame(CTkFrame):
         x = max(left_margin, min(x_click - width // 2, right_margin - width))
 
         for ox in grid:
-            ow = 18  # width fijo
+            ow = 18
             if not (x + width <= ox or x >= ox + ow):
                 return None
         return x
@@ -370,7 +421,6 @@ class BookshelfFrame(CTkFrame):
         shelf.append(new_item)
         self.db.set("bookshelf", shelf)
         self.refresh_books()
-        # Redibujar solo el nuevo lomo en vez de todo el canvas
         self._rebuild_grid()
         self._draw_spine(new_item,
                         (max(950, self.canvas.winfo_width()) - (800 + 36)) / 2 + 18 + 5,

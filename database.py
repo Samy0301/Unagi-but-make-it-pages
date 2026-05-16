@@ -5,31 +5,30 @@ import threading
 from datetime import datetime, timedelta
 
 # ═══════════════════════════════════════════════════════════════════
-#  PALETA DE COLORES - PLAYA & CIELO
+#  PALETA - OCÉANO PROFUNDO CON CORAL
 # ═══════════════════════════════════════════════════════════════════
 PALETA = {
-    "bg_main": "#C8E0F0",
-    "bg_panel": "#A8D4E8",
-    "bg_card": "#E0F0F5",
-    "bg_input": "#F0F8FB",
-    "bg_header": "#8FB8D8",
-    "bg_dark": "#0F3A5C",
-    "ocean": "#1E6BA8",
-    "sky": "#3D8BC8",
-    "sand": "#E89C20",
-    "sun": "#E08000",
-    "coral": "#D06010",
-    "seafoam": "#2AB8B0",
-    "wave_dark": "#0F3A5C",
-    "sand_light": "#F0D060",
-    "rose": "#F0B0A8",
-    "text_main": "#1A2D3D",
-    "text_secondary": "#3D6A88",
-    "text_light": "#C8E0F0",
-    "text_muted": "#607080",
-    "border": "#88B8D8",
-    "border_accent": "#3D8BC8",
-    "shadow": "#A0B0B8",
+    "bg_main": "#0A1628",
+    "bg_panel": "#0F1D32",
+    "bg_card": "#162544",
+    "bg_input": "#1E2F4D",
+    "bg_header": "#1A3A5C",
+    "ocean": "#2E5A87",
+    "sky": "#4A7FB5",
+    "wave": "#5D9BC9",
+    "text_main": "#E8F1F8",
+    "text_secondary": "#A8C6E0",
+    "text_muted": "#6B8FA8",
+    "border": "#2E5A87",
+    "border_accent": "#4A7FB5",
+    "coral": "#E8915F",
+    "coral_light": "#F0A87A",
+    "coral_dark": "#D67A4A",
+    "sand": "#F5C6A0",
+    "sun": "#FFB088",
+    "shadow": "#070F1A",
+    "error": "#E85D5D",
+    "success": "#5DBE8A",
 }
 
 DATA_FILE = "book_journal_data.json"

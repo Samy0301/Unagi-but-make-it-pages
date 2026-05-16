@@ -12,7 +12,7 @@ from bookshelf import BookshelfFrame
 from review import ReviewFrame
 from challenges import ChallengesFrame
 
-ctk.set_appearance_mode("Light")
+ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
 
@@ -22,24 +22,26 @@ class BookJournalApp(CTk):
         self.title("Book Journal v2")
         self.geometry("1250x850")
         self.minsize(1100, 750)
+        self.configure(fg_color=PALETA["bg_main"])
 
         self.db = Database()
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        # Sidebar
+        # Sidebar azul noche profundo
         self.sidebar = CTkFrame(self, width=220, corner_radius=0,
                                 fg_color=PALETA["bg_header"], border_width=0)
         self.sidebar.grid(row=0, column=0, sticky="nswe")
         self.sidebar.grid_rowconfigure(8, weight=1)
 
-        # Glow superior
-        CTkFrame(self.sidebar, height=3, fg_color=PALETA["seafoam"],
+        # Glow superior coral suave
+        CTkFrame(self.sidebar, height=3, fg_color=PALETA["coral"],
                  corner_radius=0).place(x=0, y=0, relwidth=1)
 
         CTkLabel(self.sidebar, text="Book\nJournal",
-                 font=("Helvetica", 24, "bold")).grid(
+                 font=("Helvetica", 24, "bold"),
+                 text_color=PALETA["text_main"]).grid(
             row=0, column=0, pady=(30, 20), padx=20)
 
         # Navegacion
@@ -60,15 +62,15 @@ class BookJournalApp(CTk):
                 self.sidebar, text=name, font=("Arial", 14),
                 anchor="w", height=42, width=180,
                 fg_color="transparent",
-                hover_color=PALETA["sky"],
-                text_color=PALETA["ocean"],
+                hover_color=PALETA["coral"],
+                text_color=PALETA["text_secondary"],
                 command=lambda n=name, fc=FrameClass: self.show_frame(n, fc)
             )
             btn.grid(row=idx, column=0, pady=8, padx=15)
             self.nav_buttons[name] = btn
 
-        # Contenedor unico para todos los frames (stacking)
-        self.content = CTkFrame(self, corner_radius=0, fg_color="transparent")
+        # Contenedor unico para todos los frames
+        self.content = CTkFrame(self, corner_radius=0, fg_color=PALETA["bg_main"])
         self.content.grid(row=0, column=1, sticky="nswe", padx=10, pady=10)
         self.content.grid_columnconfigure(0, weight=1)
         self.content.grid_rowconfigure(0, weight=1)
@@ -80,12 +82,16 @@ class BookJournalApp(CTk):
         self.show_frame("Biblioteca", BibliotecaFrame)
 
     def show_frame(self, name, FrameClass):
-        # Actualizar sidebar
+        # Actualizar sidebar: activo en coral, inactivo en transparente
         for n, btn in self.nav_buttons.items():
             if n == name:
-                btn.configure(fg_color=PALETA["sand"], text_color=PALETA["text_main"])
+                btn.configure(fg_color=PALETA["coral"], 
+                             text_color=PALETA["bg_main"],
+                             hover_color=PALETA["coral_light"])
             else:
-                btn.configure(fg_color="transparent", text_color=PALETA["text_main"])
+                btn.configure(fg_color="transparent", 
+                             text_color=PALETA["text_secondary"],
+                             hover_color=PALETA["coral"])
 
         # Crear solo la primera vez
         if name not in self.frames:
@@ -93,10 +99,10 @@ class BookJournalApp(CTk):
             frame.grid(row=0, column=0, sticky="nswe")
             self.frames[name] = frame
 
-        # Levantar el frame seleccionado (sin destruir ni recrear nada)
+        # Levantar el frame seleccionado
         self.frames[name].lift()
 
-        # Refrescar solo si la DB cambio desde la ultima visita
+        # Refrescar solo si la DB cambio
         frame = self.frames[name]
         if hasattr(frame, "refresh"):
             current_v = self.db.get_version()
@@ -108,7 +114,7 @@ class BookJournalApp(CTk):
         self.current_name = name
 
     def on_close(self):
-        self.db.save()  # flush sincrono antes de morir
+        self.db.save()
         self.destroy()
 
 
