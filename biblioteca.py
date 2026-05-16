@@ -90,7 +90,7 @@ class BibliotecaFrame(CTkFrame):
         self.btn_toggle_add.pack(side="right", padx=5)
 
         # --- PANEL EMBEBIDO AÑADIR LIBRO ---
-        self.add_panel = CTkFrame(self, fg_color="#1e1e1e", corner_radius=16, border_width=2, border_color="#3a3a3a")
+        self.add_panel = CTkFrame(self, fg_color="#0B1B2B", corner_radius=16, border_width=2, border_color="#1E5F8E")
 
         CTkLabel(self.add_panel, text="✨ NUEVO LIBRO", font=("Helvetica", 22, "bold")).pack(pady=(20, 15))
 
@@ -184,10 +184,10 @@ class BibliotecaFrame(CTkFrame):
         CTkButton(btn_add_row, text="💾 Guardar Libro", command=self.save_book,
                   height=38, font=("Arial", 14, "bold"), corner_radius=10).pack(side="left", padx=8)
         CTkButton(btn_add_row, text="✕ Cancelar", command=self.close_add_panel,
-                  height=38, font=("Arial", 14), corner_radius=10, fg_color="#555", hover_color="#666").pack(side="left", padx=8)
+                  height=38, font=("Arial", 14), corner_radius=10, fg_color="#0D3B5C", hover_color="#4A90A4").pack(side="left", padx=8)
 
         # --- PANEL EMBEBIDO EDITAR LIBRO ---
-        self.edit_panel = CTkFrame(self, fg_color="#1e1e1e", corner_radius=16, border_width=2, border_color="#3a3a3a")
+        self.edit_panel = CTkFrame(self, fg_color="#0B1B2B", corner_radius=16, border_width=2, border_color="#1E5F8E")
         self.edit_book_id = None
 
         CTkLabel(self.edit_panel, text="✏️ EDITAR LIBRO", font=("Helvetica", 22, "bold")).pack(pady=(20, 15))
@@ -284,7 +284,7 @@ class BibliotecaFrame(CTkFrame):
         CTkButton(btn_edit_row, text="💾 Guardar cambios", command=self.save_edit_book,
                   height=38, font=("Arial", 14, "bold"), corner_radius=10).pack(side="left", padx=8)
         CTkButton(btn_edit_row, text="✕ Cancelar", command=self.close_edit_panel,
-                  height=38, font=("Arial", 14), corner_radius=10, fg_color="#555", hover_color="#666").pack(side="left", padx=8)
+                  height=38, font=("Arial", 14), corner_radius=10, fg_color="#0D3B5C", hover_color="#4A90A4").pack(side="left", padx=8)
 
         self.scroll = CTkScrollableFrame(self, width=900, height=500, fg_color="transparent")
         self.scroll.pack(padx=20, pady=10, fill="both", expand=True)
@@ -501,7 +501,7 @@ class BibliotecaFrame(CTkFrame):
         card._refs = refs
 
         # Cover (ligeramente más pequeño para la tarjeta de 180)
-        cover = CTkFrame(card, width=120, height=150, corner_radius=8, fg_color="#2b2b2b")
+        cover = CTkFrame(card, width=120, height=150, corner_radius=8, fg_color="#162F4A")
         cover.pack(pady=(10, 6))
         cover.pack_propagate(False)
         refs['cover_img'] = CTkLabel(cover, text="")
@@ -564,7 +564,7 @@ class BibliotecaFrame(CTkFrame):
             menu.place(relx=0.5, rely=0.5, anchor="center")
         else:
             CTkLabel(refs['estado_frame'], text=self.ESTADOS.get(estado, ""),
-                     font=("Arial", 9, "bold"), text_color="#888").place(relx=0.5, y=8, anchor="center")
+                     font=("Arial", 9, "bold"), text_color="#4A90A4").place(relx=0.5, y=8, anchor="center")
             stars = StarRating(refs['estado_frame'], rating=book.get("rating", 0), size=14, readonly=True)
             stars.place(relx=0.5, y=24, anchor="center")
             fmt = book.get("formato", "fisico")

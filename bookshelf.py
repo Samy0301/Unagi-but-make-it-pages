@@ -9,9 +9,9 @@ from database import Database
 
 LOMO_H_MIN = 70
 LOMO_H_MAX = 130
-COLORS = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6",
-          "#1abc9c", "#e67e22", "#34495e", "#d35400", "#8e44ad",
-          "#c0392b", "#2980b9", "#27ae60", "#f39c12", "#8e44ad"]
+COLORS = ["#FF8A65", "#40E0D0", "#4DD0E1", "#FFD54F", "#7C4DFF",
+          "#40E0D0", "#FF8A65", "#112240", "#FF7043", "#651FFF",
+          "#FF5252", "#00BCD4", "#27ae60", "#FFB74D", "#651FFF"]
 
 # Configuración por defecto de estantes
 DEFAULT_SHELVES = [140, 300, 460]
@@ -55,7 +55,7 @@ class BookshelfFrame(CTkFrame):
         CTkButton(shelf_ctrl, text="➕ Añadir estante", command=self.add_shelf,
                   width=130, corner_radius=8).pack(side="left", padx=5)
         CTkButton(shelf_ctrl, text="➖ Quitar estante", command=self.remove_shelf,
-                  width=130, corner_radius=8, fg_color="#555", hover_color="#666").pack(side="left", padx=5)
+                  width=130, corner_radius=8, fg_color="#0D3B5C", hover_color="#4A90A4").pack(side="left", padx=5)
         self.shelf_count_label = CTkLabel(shelf_ctrl, text=f"Estantes: {len(self.get_shelves())}", font=("Arial", 11))
         self.shelf_count_label.pack(side="left", padx=15)
 
@@ -66,7 +66,7 @@ class BookshelfFrame(CTkFrame):
         self.canvas_frame = CTkFrame(self, fg_color="transparent")
         self.canvas_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
-        self.canvas = Canvas(self.canvas_frame, bg="#1a1a1a", highlightthickness=0)
+        self.canvas = Canvas(self.canvas_frame, bg="#0B1B2B", highlightthickness=0)
         self.canvas.pack(side="left", fill="both", expand=True)
         self.canvas.bind("<Button-1>", self.on_canvas_click)
         self.canvas.bind("<Button-3>", self.on_canvas_right_click)
@@ -227,38 +227,38 @@ class BookshelfFrame(CTkFrame):
         self.canvas.create_rectangle(
             furniture_x + 6, furniture_top + 6,
             right_frame + 6, furniture_bottom + 6,
-            fill="#8B7355", outline="", stipple="gray25"
+            fill="#4A90A4", outline="", stipple="gray25"
         )
 
         # Marco exterior (madera oscura)
         self.canvas.create_rectangle(
             furniture_x, furniture_top,
             right_frame, furniture_bottom,
-            fill="#6B4423", outline="#4A2F1A", width=2
+            fill="#0B1B2B", outline="#0D3B5C", width=2
         )
 
         # Borde claro superior (efecto 3D)
         self.canvas.create_line(
             furniture_x + 2, furniture_top + 2,
             right_frame - 2, furniture_top + 2,
-            fill="#A0785A", width=2
+            fill="#1E5F8E", width=2
         )
         self.canvas.create_line(
             furniture_x + 2, furniture_top + 2,
             furniture_x + 2, furniture_bottom - 2,
-            fill="#A0785A", width=2
+            fill="#1E5F8E", width=2
         )
 
         # Borde oscuro inferior (efecto 3D)
         self.canvas.create_line(
             furniture_x + 2, furniture_bottom - 2,
             right_frame - 2, furniture_bottom - 2,
-            fill="#4A2F1A", width=2
+            fill="#0D3B5C", width=2
         )
         self.canvas.create_line(
             right_frame - 2, furniture_top + 2,
             right_frame - 2, furniture_bottom - 2,
-            fill="#4A2F1A", width=2
+            fill="#0D3B5C", width=2
         )
 
         # ─── ESTANTES (tablones de madera) ───
@@ -267,19 +267,19 @@ class BookshelfFrame(CTkFrame):
             self.canvas.create_rectangle(
                 left_inner - 2, y - 4,
                 right_inner + 2, y + 4,
-                fill="#8B6914", outline="#5C3A21", width=1
+                fill="#0D3B5C", outline="#1E5F8E", width=1
             )
             # Borde claro arriba del tablón
             self.canvas.create_line(
                 left_inner - 2, y - 3,
                 right_inner + 2, y - 3,
-                fill="#C4A882", width=1
+                fill="#81D4FA", width=1
             )
             # Borde oscuro abajo del tablón
             self.canvas.create_line(
                 left_inner - 2, y + 3,
                 right_inner + 2, y + 3,
-                fill="#5C3A21", width=1
+                fill="#1E5F8E", width=1
             )
 
         # Dibujar lomos
@@ -289,7 +289,7 @@ class BookshelfFrame(CTkFrame):
     def _draw_spine(self, item, left_x=30, right_x=920):
         x = item["x"]
         y_base = item["y"]
-        color = item.get("color", "#3498db")
+        color = item.get("color", "#40E0D0")
         title = item.get("title", "")
         width = item.get("width", 18)
         height = item.get("height", 100)
@@ -303,7 +303,7 @@ class BookshelfFrame(CTkFrame):
 
         # Lomo principal
         self.canvas.create_rectangle(x, y_top, x + width, shelf_y,
-                                     fill=color, outline="#333", width=1)
+                                     fill=color, outline="#1A5A6F", width=1)
 
         # Borde superior claro
         self.canvas.create_line(x + 1, y_top + 1, x + width - 1, y_top + 1,
@@ -311,7 +311,7 @@ class BookshelfFrame(CTkFrame):
 
         # Texto vertical rotado 90°
         self.canvas.create_text(x + width / 2, (y_top + shelf_y) / 2,
-                                text=title, fill="white", font=("Arial", 8),
+                                text=title, fill="#E0F7FA", font=("Arial", 8),
                                 angle=90, anchor="center")
 
     def _find_slot(self, shelf_y, x_click, width):

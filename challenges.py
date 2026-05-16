@@ -37,18 +37,18 @@ RETO_LECTOR_DATA = {
 }
 
 COLLECT_COLORS_DATA = [
-    {"key": "red",        "name": "Red",        "color": "#E74C3C", "bg": "#FDEDEC"},
+    {"key": "red",        "name": "Red",        "color": "#FF8A65", "bg": "#FDEDEC"},
     {"key": "orange",     "name": "Orange",     "color": "#E67E22", "bg": "#FEF5E7"},
     {"key": "yellow",     "name": "Yellow",     "color": "#F1C40F", "bg": "#FCF3CF"},
-    {"key": "green",      "name": "Green",      "color": "#27AE60", "bg": "#EAFAF1"},
+    {"key": "green",      "name": "Green",      "color": "#4DD0E1", "bg": "#EAFAF1"},
     {"key": "light_blue", "name": "Light Blue", "color": "#5DADE2", "bg": "#EBF5FB"},
     {"key": "blue",       "name": "Blue",       "color": "#2980B9", "bg": "#D6EAF8"},
     {"key": "purple",     "name": "Purple",     "color": "#8E44AD", "bg": "#F4ECF7"},
     {"key": "pink",       "name": "Pink",       "color": "#FF69B4", "bg": "#FDEBF7"},
     {"key": "brown",      "name": "Brown",      "color": "#8B4513", "bg": "#F6ECE1"},
-    {"key": "black",      "name": "Black",      "color": "#2C3E50", "bg": "#EAECEE"},
+    {"key": "black",      "name": "Black",      "color": "#0B3A5C", "bg": "#EAECEE"},
     {"key": "grey",       "name": "Grey",       "color": "#7F8C8D", "bg": "#F2F4F4"},
-    {"key": "white",      "name": "White",      "color": "#BDC3C7", "bg": "#FBFCFC"},
+    {"key": "#E0F7FA",      "name": "White",      "color": "#BDC3C7", "bg": "#FBFCFC"},
 ]
 
 
@@ -57,12 +57,12 @@ COLLECT_COLORS_DATA = [
 #  GENRE TRACKER DATA
 # ═══════════════════════════════════════════════════════════════════
 GENRE_TRACKER_DATA = [
-    {"key": "thriller", "name": "Thriller", "color": "#C0392B"},
+    {"key": "thriller", "name": "Thriller", "color": "#FF7043"},
     {"key": "ciencia_ficcion", "name": "Ciencia\nFicción", "color": "#00CED1"},
     {"key": "fantasia", "name": "Fantasía", "color": "#8E44AD"},
-    {"key": "terror", "name": "Terror", "color": "#2C3E50"},
+    {"key": "terror", "name": "Terror", "color": "#0B3A5C"},
     {"key": "romantico", "name": "Romántico", "color": "#FF69B4"},
-    {"key": "aventura", "name": "Aventura", "color": "#27AE60"},
+    {"key": "aventura", "name": "Aventura", "color": "#4DD0E1"},
     {"key": "distopia", "name": "Distopía", "color": "#7D3C98"},
     {"key": "historica", "name": "Histórica", "color": "#D2691E"},
     {"key": "biografia", "name": "Biografía", "color": "#2980B9"},
@@ -172,7 +172,7 @@ class FolderCard(CTkFrame):
         CTkLabel(self.body, text=icon, font=("Arial", 52)).pack(pady=(18, 4))
         CTkLabel(self.body, text=title, font=("Arial", 15, "bold"), text_color="#2c3e50").pack()
         if subtitle:
-            CTkLabel(self.body, text=subtitle, font=("Arial", 10), text_color="#555").pack(pady=(2, 0))
+            CTkLabel(self.body, text=subtitle, font=("Arial", 10), text_color="#0D3B5C").pack(pady=(2, 0))
 
         for widget in (self, self.tab, self.body):
             widget.bind("<Button-1>", lambda e: self._invoke())
@@ -235,7 +235,7 @@ class ChallengesFrame(CTkFrame):
                                                   fg_color="transparent")
         self.bracket_scroll.pack(fill="both", expand=True, padx=10, pady=10)
         self.bracket_canvas = self.bracket_scroll._parent_canvas
-        self.bracket_canvas.configure(bg="#1a1a1a", highlightthickness=0)
+        self.bracket_canvas.configure(bg="#0B1B2B", highlightthickness=0)
 
         # ── 30 Day Challenge ──
         self.day30_panel = CTkFrame(self, fg_color="transparent")
@@ -275,30 +275,30 @@ class ChallengesFrame(CTkFrame):
         h7 = CTkFrame(self.yearly_panel, fg_color="transparent")
         h7.pack(fill="x", padx=20, pady=(15, 5))
         CTkButton(h7, text="← Volver", width=90, command=self.show_folders).pack(side="left")
-        CTkLabel(h7, text="YEARLY", font=("Helvetica", 28, "bold"), text_color="#ccc").pack(side="left", padx=(15, 4))
-        CTkLabel(h7, text="READING", font=("Helvetica", 28, "bold"), text_color="#888").pack(side="left", padx=(0, 4))
-        CTkLabel(h7, text="CHALLENGE", font=("Helvetica", 28, "bold"), text_color="#ccc").pack(side="left")
+        CTkLabel(h7, text="YEARLY", font=("Helvetica", 28, "bold"), text_color="#81D4FA").pack(side="left", padx=(15, 4))
+        CTkLabel(h7, text="READING", font=("Helvetica", 28, "bold"), text_color="#4A90A4").pack(side="left", padx=(0, 4))
+        CTkLabel(h7, text="CHALLENGE", font=("Helvetica", 28, "bold"), text_color="#81D4FA").pack(side="left")
 
         self.yearly_scroll = CTkScrollableFrame(self.yearly_panel, width=900, height=650,
                                                  fg_color="transparent")
         self.yearly_scroll.pack(fill="both", expand=True, padx=10, pady=10)
 
         # ── Formulario (reutilizable) ──
-        self.form_panel = CTkFrame(self, fg_color="#1e1e1e", corner_radius=16,
-                                   border_width=2, border_color="#3a3a3a")
+        self.form_panel = CTkFrame(self, fg_color="#0B1B2B", corner_radius=16,
+                                   border_width=2, border_color="#1E5F8E")
         CTkLabel(self.form_panel, text="📝 Completar Reto", font=("Helvetica", 22, "bold")).pack(pady=(18, 12))
         self.form_scroll = CTkScrollableFrame(self.form_panel, width=800, height=500, fg_color="transparent")
         self.form_scroll.pack(padx=25, pady=5, fill="both", expand=True)
 
         self.cover_box = CTkFrame(self.form_scroll, width=160, height=200, corner_radius=10,
-                             fg_color="#2b2b2b", border_width=2, border_color="#444")
+                             fg_color="#162F4A", border_width=2, border_color="#1E5F8E")
         self.cover_box.pack(pady=(0, 10))
         self.cover_box.pack_propagate(False)
         CTkButton(self.form_scroll, text="📁 Examinar portada", width=160, height=34,
                   command=self.browse_form_photo).pack(pady=(0, 15))
 
         def form_row(label, attr_name, width=600):
-            CTkLabel(self.form_scroll, text=label, font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
+            CTkLabel(self.form_scroll, text=label, font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
             entry = CTkEntry(self.form_scroll, width=width, height=34, corner_radius=8, font=("Arial", 13))
             entry.pack(anchor="w", pady=(0, 12))
             setattr(self, attr_name, entry)
@@ -314,7 +314,7 @@ class ChallengesFrame(CTkFrame):
                   height=38, font=("Arial", 13, "bold"), corner_radius=10).pack(side="left", padx=8)
         CTkButton(btn_row, text="✕ Cancelar", command=self.close_form,
                   height=38, font=("Arial", 13), corner_radius=10,
-                  fg_color="#555", hover_color="#666").pack(side="left", padx=8)
+                  fg_color="#0D3B5C", hover_color="#4A90A4").pack(side="left", padx=8)
 
         self.build_folders()
         self.show_folders()
@@ -462,14 +462,14 @@ class ChallengesFrame(CTkFrame):
         saved = self._get_saved("reto_lector", mes_num)
         color = info["color"]
         card = CTkFrame(parent, width=280, height=340, corner_radius=14,
-                        border_width=2, border_color=color, fg_color="#252525")
+                        border_width=2, border_color=color, fg_color="#112240")
         card.grid_propagate(False)
         hdr = CTkFrame(card, fg_color=color, corner_radius=14, height=38)
         hdr.pack(fill="x", padx=0, pady=0)
         hdr.pack_propagate(False)
         CTkLabel(hdr, text=info["mes"], font=("Helvetica", 14, "bold"),
                  text_color="#2c3e50").place(relx=0.5, rely=0.5, anchor="center")
-        CTkLabel(card, text="📖 Libro favorito del mes", font=("Arial", 11, "bold"), text_color="#ccc").pack(pady=(10, 8), padx=10)
+        CTkLabel(card, text="📖 Libro favorito del mes", font=("Arial", 11, "bold"), text_color="#81D4FA").pack(pady=(10, 8), padx=10)
         content = CTkFrame(card, fg_color="transparent", height=210)
         content.pack(fill="x", padx=10, pady=(0, 8))
         content.pack_propagate(False)
@@ -482,10 +482,10 @@ class ChallengesFrame(CTkFrame):
             CTkLabel(content, text=saved.get("titulo", ""), font=("Arial", 12, "bold"),
                      wraplength=250).pack(pady=(4, 0))
             CTkLabel(content, text=saved.get("autor", ""), font=("Arial", 10),
-                     text_color="#888", wraplength=250).pack()
+                     text_color="#4A90A4", wraplength=250).pack()
         else:
             CTkLabel(content, text="Sin libro favorito", font=("Arial", 12),
-                     text_color="#666").place(relx=0.5, rely=0.4, anchor="center")
+                     text_color="#4A90A4").place(relx=0.5, rely=0.4, anchor="center")
             CTkButton(content, text="➕ Añadir favorito", width=140, height=30,
                       command=lambda m=mes_num: self.open_form("reto_lector", m)).place(relx=0.5, rely=0.7, anchor="center")
         if saved:
@@ -522,16 +522,16 @@ class ChallengesFrame(CTkFrame):
         saved = self._get_saved("collect_colors", cdata["key"])
         color = cdata["color"]
         card = CTkFrame(parent, width=200, height=280, corner_radius=14,
-                        border_width=2, border_color=color, fg_color="#252525")
+                        border_width=2, border_color=color, fg_color="#112240")
         card.grid_propagate(False)
         hdr = CTkFrame(card, fg_color=color, corner_radius=14, height=32)
         hdr.pack(fill="x", padx=0, pady=0)
         hdr.pack_propagate(False)
         CTkLabel(hdr, text=cdata["name"], font=("Helvetica", 13, "bold"),
-                 text_color="white" if cdata["key"] in ("black", "blue", "purple", "brown") else "#2c3e50"
+                 text_color="#E0F7FA" if cdata["key"] in ("black", "blue", "purple", "brown") else "#2c3e50"
                  ).place(relx=0.5, rely=0.5, anchor="center")
         slot = CTkFrame(card, width=120, height=160, corner_radius=10,
-                        border_width=4, border_color=color, fg_color="#1e1e1e")
+                        border_width=4, border_color=color, fg_color="#0B1B2B")
         slot.pack(pady=(15, 8))
         slot.pack_propagate(False)
         if saved:
@@ -543,9 +543,9 @@ class ChallengesFrame(CTkFrame):
             CTkLabel(card, text=saved.get("titulo", ""), font=("Arial", 11, "bold"),
                      wraplength=180).pack(pady=(2, 0))
             CTkLabel(card, text=saved.get("autor", ""), font=("Arial", 10),
-                     text_color="#888", wraplength=180).pack()
+                     text_color="#4A90A4", wraplength=180).pack()
         else:
-            CTkLabel(slot, text="📕", font=("Arial", 40), text_color="#444").place(relx=0.5, rely=0.5, anchor="center")
+            CTkLabel(slot, text="📕", font=("Arial", 40), text_color="#1E5F8E").place(relx=0.5, rely=0.5, anchor="center")
             CTkButton(card, text="➕ Añadir", width=120, height=28,
                       command=lambda k=cdata["key"]: self.open_form("collect_colors", k)).pack(pady=(8, 0))
         if saved:
@@ -585,7 +585,7 @@ class ChallengesFrame(CTkFrame):
 
         CTkLabel(container, text="🎨 Genre Tracker", font=("Helvetica", 26, "bold")).pack(pady=(0, 5))
         CTkLabel(container, text="Haz clic para marcar un libro leído · Clic derecho en un cuadro pintado para despintar",
-                 font=("Arial", 12), text_color="#888").pack(pady=(0, 20))
+                 font=("Arial", 12), text_color="#4A90A4").pack(pady=(0, 20))
 
         saved = self._get_genre_tracker()
 
@@ -601,7 +601,7 @@ class ChallengesFrame(CTkFrame):
             slot.pack(pady=1)
             if i in (0, 5, 10, 15):
                 num = 20 - i
-                CTkLabel(slot, text=str(num), font=("Arial", 10, "bold"), text_color="#777").place(relx=0.5, rely=0.5, anchor="center")
+                CTkLabel(slot, text=str(num), font=("Arial", 10, "bold"), text_color="#4A90A4").place(relx=0.5, rely=0.5, anchor="center")
 
         # Grid de géneros
         grid_frame = CTkFrame(main, fg_color="transparent")
@@ -631,7 +631,7 @@ class ChallengesFrame(CTkFrame):
 
     def _create_square(self, parent, genre_key, index, color, is_filled):
         size = 24
-        fg = color if is_filled else "#1a1a1a"
+        fg = color if is_filled else "#0B1B2B"
         border = color
 
         sq = CTkFrame(parent, width=size, height=size, corner_radius=2,
@@ -664,8 +664,8 @@ class ChallengesFrame(CTkFrame):
     def _on_square_right_click(self, sq, event):
         if not sq._filled:
             return
-        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#2b2b2b", fg="white",
-                            activebackground="#555", activeforeground="white",
+        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#162F4A", fg="#E0F7FA",
+                            activebackground="#0D3B5C", activeforeground="#E0F7FA",
                             font=("Arial", 11))
         menu.add_command(label="🧼 Despintar", command=lambda: self._on_square_unpaint(sq))
         menu.add_separator()
@@ -676,7 +676,7 @@ class ChallengesFrame(CTkFrame):
         if not sq._filled:
             return
         sq._filled = False
-        sq.configure(fg_color="#1a1a1a")
+        sq.configure(fg_color="#0B1B2B")
 
         saved = self._get_genre_tracker()
         if sq._genre_key in saved and sq._index in saved[sq._genre_key]:
@@ -727,7 +727,7 @@ class ChallengesFrame(CTkFrame):
 
         CTkLabel(container, text="🔥 30 Day Reading Challenge", font=("Helvetica", 26, "bold")).pack(pady=(0, 5))
         CTkLabel(container, text="Colorea los números consecutivamente. Si fallas la secuencia, ¡todo se reinicia!",
-                 font=("Arial", 12), text_color="#888").pack(pady=(0, 20))
+                 font=("Arial", 12), text_color="#4A90A4").pack(pady=(0, 20))
 
         saved = self._get_day30_data()
         saved = self._validate_day30(saved)
@@ -754,25 +754,25 @@ class ChallengesFrame(CTkFrame):
         if saved:
             self._day30_streak_label.configure(
                 text=f"Racha actual: {len(saved)} / 30 días",
-                text_color="#E74C3C"
+                text_color="#FF8A65"
             )
         else:
             self._day30_streak_label.configure(
                 text="Haz clic en el 1 para empezar",
-                text_color="#888"
+                text_color="#4A90A4"
             )
 
     def _build_day30_circle(self, parent, number, is_filled):
         size = 80
-        fg = "#E74C3C" if is_filled else "#1a1a1a"
-        border = "#E74C3C" if is_filled else "#888"
+        fg = "#FF8A65" if is_filled else "#0B1B2B"
+        border = "#FF8A65" if is_filled else "#4A90A4"
 
         circ = CTkFrame(parent, width=size, height=size, corner_radius=size // 2,
                       fg_color=fg, border_width=3, border_color=border)
         circ.grid_propagate(False)
 
         lbl = CTkLabel(circ, text=str(number), font=("Arial", 24, "bold"),
-                       text_color="white" if is_filled else "#aaa")
+                       text_color="#E0F7FA" if is_filled else "#aaa")
         lbl.place(relx=0.5, rely=0.5, anchor="center")
 
         circ._number = number
@@ -789,10 +789,10 @@ class ChallengesFrame(CTkFrame):
             return
         circ, lbl = self._day30_circles[number]
         if filled:
-            circ.configure(fg_color="#E74C3C", border_color="#E74C3C")
-            lbl.configure(text_color="white")
+            circ.configure(fg_color="#FF8A65", border_color="#FF8A65")
+            lbl.configure(text_color="#E0F7FA")
         else:
-            circ.configure(fg_color="#1a1a1a", border_color="#888")
+            circ.configure(fg_color="#0B1B2B", border_color="#4A90A4")
             lbl.configure(text_color="#aaa")
 
     def _on_day30_click(self, number):
@@ -833,8 +833,8 @@ class ChallengesFrame(CTkFrame):
         if number not in saved:
             return
 
-        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#2b2b2b", fg="white",
-                            activebackground="#555", activeforeground="white",
+        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#162F4A", fg="#E0F7FA",
+                            activebackground="#0D3B5C", activeforeground="#E0F7FA",
                             font=("Arial", 11))
         menu.add_command(label="🧼 Despintar", command=lambda: self._on_day30_unpaint(number))
         menu.add_separator()
@@ -874,7 +874,7 @@ class ChallengesFrame(CTkFrame):
             except Exception:
                 pass
         self._form_preview_img = None
-        CTkLabel(self.cover_box, text="📕", font=("Arial", 48), text_color="#555").place(relx=0.5, rely=0.5, anchor="center")
+        CTkLabel(self.cover_box, text="📕", font=("Arial", 48), text_color="#0D3B5C").place(relx=0.5, rely=0.5, anchor="center")
 
     def open_form(self, challenge_type, key):
         self._current_challenge_type = challenge_type
@@ -966,7 +966,7 @@ class ChallengesFrame(CTkFrame):
 
         CTkLabel(container, text="🔤 Alphabet Reading Challenge", font=("Helvetica", 26, "bold")).pack(pady=(0, 5))
         CTkLabel(container, text="Escribe un libro y autor para cada letra del abecedario",
-                 font=("Arial", 12), text_color="#888").pack(pady=(0, 25))
+                 font=("Arial", 12), text_color="#4A90A4").pack(pady=(0, 25))
 
         saved = self._get_alpha_data()
 
@@ -998,14 +998,14 @@ class ChallengesFrame(CTkFrame):
         row.pack_propagate(False)
 
         # Letra
-        badge_color = "#27AE60" if is_saved else "#2b2b2b"
-        border_color = "#2ecc71" if is_saved else "#444"
+        badge_color = "#4DD0E1" if is_saved else "#162F4A"
+        border_color = "#4DD0E1" if is_saved else "#1E5F8E"
         badge = CTkFrame(row, width=42, height=42, corner_radius=8,
                          fg_color=badge_color, border_width=2, border_color=border_color)
         badge.pack(side="left", padx=(10, 12))
         badge.pack_propagate(False)
         CTkLabel(badge, text=letter, font=("Helvetica", 18, "bold"),
-                 text_color="white" if is_saved else "#E67E22").place(relx=0.5, rely=0.5, anchor="center")
+                 text_color="#E0F7FA" if is_saved else "#E67E22").place(relx=0.5, rely=0.5, anchor="center")
 
         # Campos
         fields = CTkFrame(row, fg_color="transparent")
@@ -1014,13 +1014,13 @@ class ChallengesFrame(CTkFrame):
         if is_saved:
             # Modo solo lectura con estética de tarjeta guardada
             CTkLabel(fields, text=data.get("titulo", ""), font=("Arial", 13, "bold"),
-                     text_color="#eee").pack(anchor="w")
+                     text_color="#E0F7FA").pack(anchor="w")
             CTkLabel(fields, text=data.get("autor", ""), font=("Arial", 12),
                      text_color="#bbb").pack(anchor="w")
 
             # Botón editar
             btn_edit = CTkButton(row, text="✏️", width=36, height=36, corner_radius=8,
-                               fg_color="#3a3a3a", hover_color="#555",
+                               fg_color="#1E5F8E", hover_color="#0D3B5C",
                                command=lambda l=letter: self._on_alpha_edit(l))
             btn_edit.pack(side="right", padx=(8, 10))
         else:
@@ -1032,7 +1032,7 @@ class ChallengesFrame(CTkFrame):
                 titulo.insert(0, data["titulo"])
 
             autor = CTkEntry(fields, placeholder_text="Autor...", height=30,
-                             corner_radius=6, font=("Arial", 12), text_color="#ccc")
+                             corner_radius=6, font=("Arial", 12), text_color="#81D4FA")
             autor.pack(fill="x", pady=(0, 1))
             if data.get("autor"):
                 autor.insert(0, data["autor"])
@@ -1101,7 +1101,7 @@ class ChallengesFrame(CTkFrame):
 
         CTkLabel(container, text="🎀 Bookish Bingo", font=("Helvetica", 26, "bold")).pack(pady=(0, 5))
         CTkLabel(container, text="Haz clic en una casilla para marcarla como cumplida · Clic derecho para desmarcar",
-                 font=("Arial", 12), text_color="#888").pack(pady=(0, 20))
+                 font=("Arial", 12), text_color="#4A90A4").pack(pady=(0, 20))
 
         saved = set(self._get_bingo_data())
 
@@ -1121,9 +1121,9 @@ class ChallengesFrame(CTkFrame):
             self._bingo_cells[idx] = cell
 
     def _build_bingo_cell(self, parent, index, text, is_done):
-        bg_color = "#E8B4B8" if is_done else "#252525"
-        border_color = "#D4A5A9" if is_done else "#444"
-        text_color = "#4a2c2f" if is_done else "#ccc"
+        bg_color = "#E8B4B8" if is_done else "#112240"
+        border_color = "#D4A5A9" if is_done else "#1E5F8E"
+        text_color = "#4a2c2f" if is_done else "#81D4FA"
 
         cell = CTkFrame(parent, width=170, height=170, corner_radius=16,
                         fg_color=bg_color, border_width=3, border_color=border_color)
@@ -1139,9 +1139,9 @@ class ChallengesFrame(CTkFrame):
         # Checkmark si está hecho
         if is_done:
             check_bg = CTkFrame(cell, width=28, height=28, corner_radius=14,
-                                fg_color="#27AE60", border_width=0)
+                                fg_color="#4DD0E1", border_width=0)
             check_bg.place(relx=0.88, rely=0.12, anchor="center")
-            CTkLabel(check_bg, text="OK", font=("Arial", 10, "bold"), text_color="white").place(relx=0.5, rely=0.5, anchor="center")
+            CTkLabel(check_bg, text="OK", font=("Arial", 10, "bold"), text_color="#E0F7FA").place(relx=0.5, rely=0.5, anchor="center")
 
         # Bind clicks al frame y labels
         for widget in cell.winfo_children():
@@ -1166,8 +1166,8 @@ class ChallengesFrame(CTkFrame):
     def _on_bingo_right_click(self, index, event):
         if not self._bingo_cells[index]._done:
             return
-        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#2b2b2b", fg="white",
-                            activebackground="#555", activeforeground="white",
+        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#162F4A", fg="#E0F7FA",
+                            activebackground="#0D3B5C", activeforeground="#E0F7FA",
                             font=("Arial", 11))
         menu.add_command(label="Desmarcar", command=lambda: self._on_bingo_uncheck(index, menu))
         menu.add_separator()
@@ -1189,9 +1189,9 @@ class ChallengesFrame(CTkFrame):
             return
         cell._done = is_done
 
-        bg_color = "#E8B4B8" if is_done else "#252525"
-        border_color = "#D4A5A9" if is_done else "#444"
-        text_color = "#4a2c2f" if is_done else "#ccc"
+        bg_color = "#E8B4B8" if is_done else "#112240"
+        border_color = "#D4A5A9" if is_done else "#1E5F8E"
+        text_color = "#4a2c2f" if is_done else "#81D4FA"
 
         cell.configure(fg_color=bg_color, border_color=border_color)
 
@@ -1208,9 +1208,9 @@ class ChallengesFrame(CTkFrame):
 
         if is_done:
             check_bg = CTkFrame(cell, width=28, height=28, corner_radius=14,
-                                fg_color="#27AE60", border_width=0)
+                                fg_color="#4DD0E1", border_width=0)
             check_bg.place(relx=0.88, rely=0.12, anchor="center")
-            CTkLabel(check_bg, text="OK", font=("Arial", 10, "bold"), text_color="white").place(relx=0.5, rely=0.5, anchor="center")
+            CTkLabel(check_bg, text="OK", font=("Arial", 10, "bold"), text_color="#E0F7FA").place(relx=0.5, rely=0.5, anchor="center")
 
         for widget in cell.winfo_children():
             widget.bind("<Button-1>", lambda e, i=index: self._on_bingo_click(i))

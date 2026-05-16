@@ -31,7 +31,7 @@ class EmojiRating(ctk.CTkFrame):
         self.command = command
         self.labels = []
         for i in range(5):
-            lbl = CTkLabel(self, text=emoji, font=("Arial", size), text_color="#444")
+            lbl = CTkLabel(self, text=emoji, font=("Arial", size), text_color="#1E5F8E")
             lbl.bind("<Button-1>", lambda e, idx=i: self.set_value(idx + 1))
             lbl.pack(side="left", padx=1)
             self.labels.append(lbl)
@@ -48,7 +48,7 @@ class EmojiRating(ctk.CTkFrame):
 
     def update_ui(self):
         for i, lbl in enumerate(self.labels):
-            lbl.configure(text_color=self.color if i < self.value else "#444")
+            lbl.configure(text_color=self.color if i < self.value else "#1E5F8E")
 
 
 class ReviewFrame(CTkFrame):
@@ -76,14 +76,14 @@ class ReviewFrame(CTkFrame):
         self.scroll.pack(padx=20, pady=10, fill="both", expand=True)
 
         # ---------- PANEL DETALLE (LECTURA) ----------
-        self.detail_panel = CTkFrame(self, fg_color="#1e1e1e", corner_radius=16, border_width=2, border_color="#3a3a3a")
+        self.detail_panel = CTkFrame(self, fg_color="#0B1B2B", corner_radius=16, border_width=2, border_color="#1E5F8E")
         self.detail_container = CTkFrame(self.detail_panel, fg_color="transparent")
         self.detail_container.pack(expand=True, fill="both", padx=20, pady=10)
 
         detail_btns = CTkFrame(self.detail_panel, fg_color="transparent")
         detail_btns.pack(pady=(5, 15))
         CTkButton(detail_btns, text="✕ Salir", command=self.close_detail_panel,
-                  height=38, font=("Arial", 14), corner_radius=10, fg_color="#555", hover_color="#666").pack(side="left", padx=8)
+                  height=38, font=("Arial", 14), corner_radius=10, fg_color="#0D3B5C", hover_color="#4A90A4").pack(side="left", padx=8)
         CTkButton(detail_btns, text="✏️ Editar", command=self.detail_to_edit,
                   height=38, font=("Arial", 14, "bold"), corner_radius=10).pack(side="left", padx=8)
         CTkButton(detail_btns, text="🗑 Eliminar", command=self.detail_delete,
@@ -91,7 +91,7 @@ class ReviewFrame(CTkFrame):
                   fg_color="red", hover_color="darkred").pack(side="left", padx=8)
 
         # ---------- PANEL AÑADIR ----------
-        self.add_panel = CTkFrame(self, fg_color="#1e1e1e", corner_radius=16, border_width=2, border_color="#3a3a3a")
+        self.add_panel = CTkFrame(self, fg_color="#0B1B2B", corner_radius=16, border_width=2, border_color="#1E5F8E")
         CTkLabel(self.add_panel, text="✨ NUEVA RESEÑA", font=("Helvetica", 22, "bold")).pack(pady=(15, 10))
 
         # Scrollable con el formulario
@@ -105,10 +105,10 @@ class ReviewFrame(CTkFrame):
         CTkButton(add_btns, text="💾 Guardar", command=self.save_review,
                   height=40, font=("Arial", 13, "bold"), corner_radius=10).pack(side="left", expand=True, padx=(0, 8))
         CTkButton(add_btns, text="✕ Cancelar", command=self.close_add_panel,
-                  height=40, font=("Arial", 13), corner_radius=10, fg_color="#555", hover_color="#666").pack(side="left", expand=True, padx=(8, 0))
+                  height=40, font=("Arial", 13), corner_radius=10, fg_color="#0D3B5C", hover_color="#4A90A4").pack(side="left", expand=True, padx=(8, 0))
 
         # ---------- PANEL EDITAR ----------
-        self.edit_panel = CTkFrame(self, fg_color="#1e1e1e", corner_radius=16, border_width=2, border_color="#3a3a3a")
+        self.edit_panel = CTkFrame(self, fg_color="#0B1B2B", corner_radius=16, border_width=2, border_color="#1E5F8E")
         self.edit_review_id = None
         CTkLabel(self.edit_panel, text="✏️ EDITAR RESEÑA", font=("Helvetica", 22, "bold")).pack(pady=(15, 10))
 
@@ -123,7 +123,7 @@ class ReviewFrame(CTkFrame):
         CTkButton(edit_btns, text="💾 Guardar cambios", command=self.save_edit_review,
                   height=40, font=("Arial", 13, "bold"), corner_radius=10).pack(side="left", expand=True, padx=(0, 8))
         CTkButton(edit_btns, text="✕ Cancelar", command=self.close_edit_panel,
-                  height=40, font=("Arial", 13), corner_radius=10, fg_color="#555", hover_color="#666").pack(side="left", expand=True, padx=(8, 0))
+                  height=40, font=("Arial", 13), corner_radius=10, fg_color="#0D3B5C", hover_color="#4A90A4").pack(side="left", expand=True, padx=(8, 0))
 
         self.render_reviews()
 
@@ -142,7 +142,7 @@ class ReviewFrame(CTkFrame):
         left_col.pack(side="left", padx=(0, 20))
 
         # Portada
-        cover_box = CTkFrame(left_col, width=160, height=200, corner_radius=10, fg_color="#2b2b2b", border_width=2, border_color="#444")
+        cover_box = CTkFrame(left_col, width=160, height=200, corner_radius=10, fg_color="#162F4A", border_width=2, border_color="#1E5F8E")
         cover_box.pack(pady=(0, 10))
         cover_box.pack_propagate(False)
         setattr(self, f"{prefix}preview_box", cover_box)
@@ -163,12 +163,12 @@ class ReviewFrame(CTkFrame):
         right_col.pack(side="left", fill="both", expand=True)
 
         # Título
-        CTkLabel(right_col, text="TÍTULO", font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
+        CTkLabel(right_col, text="TÍTULO", font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
         setattr(self, f"{prefix}titulo", CTkEntry(right_col, width=600, height=36, corner_radius=10, font=("Arial", 13)))
         getattr(self, f"{prefix}titulo").pack(fill="x", pady=(0, 10))
 
         # Autor
-        CTkLabel(right_col, text="AUTOR", font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
+        CTkLabel(right_col, text="AUTOR", font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
         setattr(self, f"{prefix}autor", CTkEntry(right_col, width=600, height=36, corner_radius=10, font=("Arial", 13)))
         getattr(self, f"{prefix}autor").pack(fill="x", pady=(0, 12))
 
@@ -179,35 +179,35 @@ class ReviewFrame(CTkFrame):
         # Fecha inicio
         c1 = CTkFrame(meta_row, fg_color="transparent")
         c1.pack(side="left", padx=(0, 10))
-        CTkLabel(c1, text="FECHA DE INICIO", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c1, text="FECHA DE INICIO", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         setattr(self, f"{prefix}fecha_inicio", CTkEntry(c1, width=140, height=32, corner_radius=8, font=("Arial", 12)))
         getattr(self, f"{prefix}fecha_inicio").pack()
 
         # Fecha final
         c2 = CTkFrame(meta_row, fg_color="transparent")
         c2.pack(side="left", padx=(0, 10))
-        CTkLabel(c2, text="FECHA DE FINAL", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c2, text="FECHA DE FINAL", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         setattr(self, f"{prefix}fecha_final", CTkEntry(c2, width=140, height=32, corner_radius=8, font=("Arial", 12)))
         getattr(self, f"{prefix}fecha_final").pack()
 
         # Páginas
         c3 = CTkFrame(meta_row, fg_color="transparent")
         c3.pack(side="left", padx=(0, 10))
-        CTkLabel(c3, text="N° DE PÁGINAS", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c3, text="N° DE PÁGINAS", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         setattr(self, f"{prefix}paginas", CTkEntry(c3, width=100, height=32, corner_radius=8, font=("Arial", 12)))
         getattr(self, f"{prefix}paginas").pack()
 
         # Género
         c4 = CTkFrame(meta_row, fg_color="transparent")
         c4.pack(side="left", padx=(0, 10))
-        CTkLabel(c4, text="GÉNERO", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c4, text="GÉNERO", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         setattr(self, f"{prefix}genero", CTkEntry(c4, width=140, height=32, corner_radius=8, font=("Arial", 12)))
         getattr(self, f"{prefix}genero").pack()
 
         # Formato (físico, digital, audiolibro)
         fmt_frame = CTkFrame(right_col, fg_color="transparent")
         fmt_frame.pack(anchor="w", pady=(0, 5))
-        CTkLabel(fmt_frame, text="LO LEÍ EN:", font=("Arial", 10, "bold"), text_color="#888").pack(side="left", padx=(0, 10))
+        CTkLabel(fmt_frame, text="LO LEÍ EN:", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(side="left", padx=(0, 10))
         setattr(self, f"{prefix}formato", ctk.StringVar(value="fisico"))
         for val, txt in [("fisico", "📖 Físico"), ("digital", "💻 Digital"), ("audiolibro", "🎧 Audiolibro")]:
             CTkRadioButton(fmt_frame, text=txt, variable=getattr(self, f"{prefix}formato"),
@@ -219,13 +219,13 @@ class ReviewFrame(CTkFrame):
 
         c_fav = CTkFrame(chars_row, fg_color="transparent")
         c_fav.pack(side="left", padx=(0, 20))
-        CTkLabel(c_fav, text="PERSONAJE FAVORITO", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c_fav, text="PERSONAJE FAVORITO", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         setattr(self, f"{prefix}fav", CTkEntry(c_fav, width=280, height=34, corner_radius=8, font=("Arial", 12)))
         getattr(self, f"{prefix}fav").pack()
 
         c_hate = CTkFrame(chars_row, fg_color="transparent")
         c_hate.pack(side="left")
-        CTkLabel(c_hate, text="PERSONAJE ODIADO", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c_hate, text="PERSONAJE ODIADO", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         setattr(self, f"{prefix}hate", CTkEntry(c_hate, width=280, height=34, corner_radius=8, font=("Arial", 12)))
         getattr(self, f"{prefix}hate").pack()
 
@@ -234,19 +234,19 @@ class ReviewFrame(CTkFrame):
         bottom_row.pack(fill="both", expand=True, pady=(0, 10))
 
         # --- SENTIMIENTOS (columna izquierda) ---
-        sent_col = CTkFrame(bottom_row, fg_color="#252525", corner_radius=14)
+        sent_col = CTkFrame(bottom_row, fg_color="#112240", corner_radius=14)
         sent_col.pack(side="left", fill="y", padx=(0, 20), pady=5)
 
         CTkLabel(sent_col, text="SENTIMIENTOS", font=("Helvetica", 14, "bold")).pack(anchor="w", padx=15, pady=(15, 10))
 
         feelings = [
             ("AMOR", "♥", "amor", "#ff6b6b"),
-            ("ENOJO", "😠", "enojo", "#e74c3c"),
-            ("TRISTEZA", "💧", "tristeza", "#3498db"),
-            ("PLOT", "✦", "plot", "#f1c40f"),
-            ("REFLEXIÓN", "🧠", "reflexion", "#9b59b6"),
-            ("FELICIDAD", "☺", "felicidad", "#2ecc71"),
-            ("HOT", "🔥", "hot", "#e67e22")
+            ("ENOJO", "😠", "enojo", "#FF8A65"),
+            ("TRISTEZA", "💧", "tristeza", "#40E0D0"),
+            ("PLOT", "✦", "plot", "#FFD54F"),
+            ("REFLEXIÓN", "🧠", "reflexion", "#7C4DFF"),
+            ("FELICIDAD", "☺", "felicidad", "#4DD0E1"),
+            ("HOT", "🔥", "hot", "#FF8A65")
         ]
         setattr(self, f"{prefix}feelings", {})
 
@@ -263,13 +263,13 @@ class ReviewFrame(CTkFrame):
         text_col.pack(side="left", fill="both", expand=True)
 
         # Frases destacadas
-        CTkLabel(text_col, text="FRASES", font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
+        CTkLabel(text_col, text="FRASES", font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
         setattr(self, f"{prefix}frases", CTkTextbox(text_col, width=600, height=100,
                                                     corner_radius=10, font=("Arial", 13)))
         getattr(self, f"{prefix}frases").pack(fill="x", pady=(0, 12))
 
         # Reseña
-        CTkLabel(text_col, text="RESEÑA", font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
+        CTkLabel(text_col, text="RESEÑA", font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
         setattr(self, f"{prefix}resena", CTkTextbox(text_col, width=600, height=180,
                                                     corner_radius=10, font=("Arial", 13)))
         getattr(self, f"{prefix}resena").pack(fill="both", expand=True)
@@ -391,7 +391,7 @@ class ReviewFrame(CTkFrame):
         card._refs = refs
 
         # Cover (place como en el original)
-        cover = CTkFrame(card, width=140, height=190, corner_radius=8, fg_color="#2b2b2b")
+        cover = CTkFrame(card, width=140, height=190, corner_radius=8, fg_color="#162F4A")
         cover.place(relx=0.5, y=12, anchor="n")
         refs['cover_img'] = CTkLabel(cover, text="")
         refs['cover_img'].place(relx=0.5, rely=0.5, anchor="center")
@@ -400,7 +400,7 @@ class ReviewFrame(CTkFrame):
         refs['title'] = CTkLabel(card, text="", font=("Arial", 13, "bold"))
         refs['title'].place(relx=0.5, y=214, anchor="n")
 
-        refs['author'] = CTkLabel(card, text="", font=("Arial", 11), text_color="#888")
+        refs['author'] = CTkLabel(card, text="", font=("Arial", 11), text_color="#4A90A4")
         refs['author'].place(relx=0.5, y=238, anchor="n")
 
         refs['stars'] = StarRating(card, rating=0, size=16, readonly=True)
@@ -446,7 +446,7 @@ class ReviewFrame(CTkFrame):
         left_col.pack(side="left", padx=(0, 20))
 
         # Portada
-        cover_box = CTkFrame(left_col, width=240, height=320, corner_radius=14, fg_color="#2b2b2b")
+        cover_box = CTkFrame(left_col, width=240, height=320, corner_radius=14, fg_color="#162F4A")
         cover_box.pack(pady=(0, 10))
         cover_box.pack_propagate(False)
         img = self._load_cover(review.get("foto"), size=(240, 320))
@@ -464,11 +464,11 @@ class ReviewFrame(CTkFrame):
         right_col.pack(side="left", fill="both", expand=True, pady=25)
 
         # Título
-        CTkLabel(right_col, text="TÍTULO", font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
+        CTkLabel(right_col, text="TÍTULO", font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
         CTkLabel(right_col, text=review.get("titulo", "Sin título"), font=("Helvetica", 28, "bold")).pack(anchor="w", pady=(0, 10))
 
         # Autor
-        CTkLabel(right_col, text="AUTOR", font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
+        CTkLabel(right_col, text="AUTOR", font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
         CTkLabel(right_col, text=review.get("autor", "Autor desconocido"), font=("Arial", 18), text_color="#aaa").pack(anchor="w", pady=(0, 12))
 
         # Fechas + Páginas + Género (en una fila)
@@ -478,25 +478,25 @@ class ReviewFrame(CTkFrame):
         # Fecha inicio
         c1 = CTkFrame(meta_row, fg_color="transparent")
         c1.pack(side="left", padx=(0, 10))
-        CTkLabel(c1, text="FECHA DE INICIO", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c1, text="FECHA DE INICIO", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         CTkLabel(c1, text=review.get("fecha_inicio", "-"), font=("Arial", 12)).pack()
 
         # Fecha final
         c2 = CTkFrame(meta_row, fg_color="transparent")
         c2.pack(side="left", padx=(0, 10))
-        CTkLabel(c2, text="FECHA DE FINAL", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c2, text="FECHA DE FINAL", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         CTkLabel(c2, text=review.get("fecha_final", "-"), font=("Arial", 12)).pack()
 
         # Páginas
         c3 = CTkFrame(meta_row, fg_color="transparent")
         c3.pack(side="left", padx=(0, 10))
-        CTkLabel(c3, text="N° DE PÁGINAS", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c3, text="N° DE PÁGINAS", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         CTkLabel(c3, text=str(review.get("paginas", "?")), font=("Arial", 12)).pack()
 
         # Género
         c4 = CTkFrame(meta_row, fg_color="transparent")
         c4.pack(side="left", padx=(0, 10))
-        CTkLabel(c4, text="GÉNERO", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c4, text="GÉNERO", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         CTkLabel(c4, text=review.get("genero", "-"), font=("Arial", 12)).pack()
 
         # Formato
@@ -504,7 +504,7 @@ class ReviewFrame(CTkFrame):
         fmt_text = {"fisico": "📖 Físico", "digital": "💻 Digital", "audiolibro": "🎧 Audiolibro"}
         fmt_frame = CTkFrame(right_col, fg_color="transparent")
         fmt_frame.pack(anchor="w", pady=(0, 5))
-        CTkLabel(fmt_frame, text="LO LEÍ EN:", font=("Arial", 10, "bold"), text_color="#888").pack(side="left", padx=(0, 10))
+        CTkLabel(fmt_frame, text="LO LEÍ EN:", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(side="left", padx=(0, 10))
         CTkLabel(fmt_frame, text=fmt_text.get(fmt, fmt.capitalize()), font=("Arial", 12)).pack(side="left")
 
         # ===== PERSONAJES =====
@@ -513,13 +513,13 @@ class ReviewFrame(CTkFrame):
 
         c_fav = CTkFrame(chars_row, fg_color="transparent")
         c_fav.pack(side="left", padx=(0, 20))
-        CTkLabel(c_fav, text="PERSONAJE FAVORITO", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
+        CTkLabel(c_fav, text="PERSONAJE FAVORITO", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
         CTkLabel(c_fav, text=review.get("personaje_fav", "-") or "-", font=("Arial", 13, "bold"), text_color="#ff6b6b").pack()
 
         c_hate = CTkFrame(chars_row, fg_color="transparent")
         c_hate.pack(side="left")
-        CTkLabel(c_hate, text="PERSONAJE ODIADO", font=("Arial", 10, "bold"), text_color="#888").pack(anchor="w")
-        CTkLabel(c_hate, text=review.get("personaje_odiado", "-") or "-", font=("Arial", 13, "bold"), text_color="#888").pack()
+        CTkLabel(c_hate, text="PERSONAJE ODIADO", font=("Arial", 10, "bold"), text_color="#4A90A4").pack(anchor="w")
+        CTkLabel(c_hate, text=review.get("personaje_odiado", "-") or "-", font=("Arial", 13, "bold"), text_color="#4A90A4").pack()
 
         # ===== FILA INFERIOR: Sentimientos (izq) | Frases + Reseña (der) =====
         bottom_row = CTkFrame(scroll, fg_color="transparent")
@@ -529,19 +529,19 @@ class ReviewFrame(CTkFrame):
         sent = review.get("sentimientos", {})
         active_sent = {k: v for k, v in sent.items() if v > 0}
 
-        sent_col = CTkFrame(bottom_row, fg_color="#252525", corner_radius=14)
+        sent_col = CTkFrame(bottom_row, fg_color="#112240", corner_radius=14)
         sent_col.pack(side="left", fill="y", padx=(0, 20), pady=5)
 
         CTkLabel(sent_col, text="SENTIMIENTOS", font=("Helvetica", 14, "bold")).pack(anchor="w", padx=15, pady=(15, 10))
 
         feelings = [
             ("AMOR", "♥", "amor", "#ff6b6b"),
-            ("ENOJO", "😠", "enojo", "#e74c3c"),
-            ("TRISTEZA", "💧", "tristeza", "#3498db"),
-            ("PLOT", "✦", "plot", "#f1c40f"),
-            ("REFLEXIÓN", "🧠", "reflexion", "#9b59b6"),
-            ("FELICIDAD", "☺", "felicidad", "#2ecc71"),
-            ("HOT", "🔥", "hot", "#e67e22")
+            ("ENOJO", "😠", "enojo", "#FF8A65"),
+            ("TRISTEZA", "💧", "tristeza", "#40E0D0"),
+            ("PLOT", "✦", "plot", "#FFD54F"),
+            ("REFLEXIÓN", "🧠", "reflexion", "#7C4DFF"),
+            ("FELICIDAD", "☺", "felicidad", "#4DD0E1"),
+            ("HOT", "🔥", "hot", "#FF8A65")
         ]
 
         for name, icon, key, color in feelings:
@@ -554,7 +554,7 @@ class ReviewFrame(CTkFrame):
             icons_frm.pack(side="left")
             for i in range(5):
                 CTkLabel(icons_frm, text=icon, font=("Arial", 16),
-                         text_color=color if i < val else "#444").pack(side="left", padx=1)
+                         text_color=color if i < val else "#1E5F8E").pack(side="left", padx=1)
 
         # --- FRASES + RESEÑA (columna derecha) ---
         text_col = CTkFrame(bottom_row, fg_color="transparent")
@@ -562,18 +562,18 @@ class ReviewFrame(CTkFrame):
 
         # Frases destacadas
         if review.get("frases"):
-            CTkLabel(text_col, text="FRASES", font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
-            frases_box = CTkFrame(text_col, fg_color="#252525", corner_radius=10)
+            CTkLabel(text_col, text="FRASES", font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
+            frases_box = CTkFrame(text_col, fg_color="#112240", corner_radius=10)
             frases_box.pack(fill="x", pady=(0, 12))
-            CTkLabel(frases_box, text=review["frases"], font=("Arial", 14), text_color="#eee",
+            CTkLabel(frases_box, text=review["frases"], font=("Arial", 14), text_color="#E0F7FA",
                      wraplength=600, justify="left").pack(anchor="w", padx=15, pady=12)
 
         # Reseña
         if review.get("resena"):
-            CTkLabel(text_col, text="RESEÑA", font=("Arial", 11, "bold"), text_color="#888").pack(anchor="w", pady=(0, 2))
-            resena_box = CTkFrame(text_col, fg_color="#252525", corner_radius=10)
+            CTkLabel(text_col, text="RESEÑA", font=("Arial", 11, "bold"), text_color="#4A90A4").pack(anchor="w", pady=(0, 2))
+            resena_box = CTkFrame(text_col, fg_color="#112240", corner_radius=10)
             resena_box.pack(fill="both", expand=True)
-            CTkLabel(resena_box, text=review["resena"], font=("Arial", 14), text_color="#eee",
+            CTkLabel(resena_box, text=review["resena"], font=("Arial", 14), text_color="#E0F7FA",
                      wraplength=600, justify="left").pack(anchor="w", padx=15, pady=12)
 
         self.scroll.pack_forget()
