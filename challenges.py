@@ -52,15 +52,15 @@ COLLECT_COLORS_DATA = [
 
 GENRE_TRACKER_DATA = [
     {"key": "thriller",        "name": "Thriller",          "color": PALETA["coral"]},
-    {"key": "ciencia_ficcion", "name": "Ciencia\nFiccion", "color": PALETA["wave"]},
-    {"key": "fantasia",        "name": "Fantasia",          "color": PALETA["sky"]},
-    {"key": "terror",          "name": "Terror",            "color": PALETA["bg_header"]},
-    {"key": "romantico",       "name": "Romantico",         "color": PALETA["coral_light"]},
-    {"key": "aventura",        "name": "Aventura",          "color": PALETA["wave"]},
-    {"key": "distopia",        "name": "Distopia",          "color": PALETA["ocean"]},
-    {"key": "historica",       "name": "Historica",         "color": PALETA["coral"]},
-    {"key": "biografia",       "name": "Biografia",         "color": PALETA["sky"]},
-    {"key": "divulgacion",     "name": "Divulgacion\nCientifica", "color": PALETA["sun"]},
+    {"key": "ciencia_ficcion", "name": "Ciencia\nFiccion", "color": PALETA["ocean"]},
+    {"key": "fantasia",        "name": "Fantasia",          "color": PALETA["coral"]},
+    {"key": "terror",          "name": "Terror",            "color": PALETA["ocean"]},
+    {"key": "romantico",       "name": "Romantico",         "color": PALETA["coral"]},
+    {"key": "aventura",        "name": "Aventura",          "color": PALETA["ocean"]},
+    {"key": "distopia",        "name": "Distopia",          "color": PALETA["coral"]},
+    {"key": "historica",       "name": "Historica",         "color": PALETA["ocean"]},
+    {"key": "biografia",       "name": "Biografia",         "color": PALETA["coral"]},
+    {"key": "divulgacion",     "name": "Divulgacion\nCientifica", "color": PALETA["ocean"]},
 ]
 
 READING_30_DATA = list(range(1, 31))
@@ -71,28 +71,28 @@ BINGO_DATA = [
     "Titulo de una sola palabra", "Enemies to lovers", "Adaptado a pelicula/serie",
     "Protagonista con mascota", "Menos de 200 paginas", "Viaje en el tiempo",
     "Segunda oportunidad", "Basado en hechos reales", "Protagonista forma parte de una banda",
-    "Primera parte de saga", "Mas de 500 paginas", "Publicado este ano",
+    "Primera parte de saga", "Mas de 500 paginas", "Publicado este año",
     "Presencia de criaturas fantasticas", "Found family", "Only one bed",
-    "Ambientado en invierno", "De tu ano de nacimiento", "Slow burn",
+    "Ambientado en invierno", "De tu año de nacimiento", "Slow burn",
     "Autor debut", "Empieza con tu inicial", "Magia en el mundo real",
     "Numero en el titulo", "Pueblo secreto/misterioso", "Blow-your-mind\nplot twist",
     "Libro que hable de libros",
 ]
 
 YEARLY_DATA = [
-    "Libro favorito de un miembro del club de lectura", "El titulo contiene un numero",
+    "El autor es de tu pais", "El titulo contiene un numero",
     "Un libro con magia", "Un libro con vampiros", "El protagonista es un atleta",
     "Un libro fuera de tu zona de confort", "Una flor en la portada",
-    "No lo descubriste en BookTok", "Un libro con un levantamiento o rebelion",
+    "No lo descubriste en BookTok", "Un libro con una rebelion",
     "Portada de tu color favorito", "Juzga un libro por su portada",
     "Autor nuevo para ti", "Multiples puntos de vista", "Un libro viral en BookTok",
-    "El titulo tiene 5+ palabras", "Un arma en la portada", "Publicado este ano",
-    "Un libro sobre una biblioteca", "Un libro en la lista de prohibidos",
-    "Publicado antes del ano actual", "Un libro que te regalaron",
-    "Un libro que te haga llorar", "Un libro sin personaje en la portada",
+    "El titulo tiene 5+ palabras", "Un arma en la portada", "Publicado este año",
+    "Un libro sobre una biblioteca", "Una biografia",
+    "Publicado antes del año actual", "Un libro que te regalaron",
+    "Un libro que te haga llorar", "Un libro sin personajes en la portada",
     "Publicado en el mes de tu nacimiento", "Humo en la portada",
     "Un libro que tiene dragones", "Novela grafica", "Una duologia",
-    "Llevaba 3+ anos en tu TBR", "Una reimaginacion", "600+ paginas",
+    "Llevaba 3+ años en tu TBR", "Un retelling", "600+ paginas",
 ]
 
 
@@ -137,13 +137,13 @@ class FolderCard(CTkFrame):
 class ChallengesFrame(CTkFrame):
     # Todas las carpetas en azul ocean
     CHALLENGES = [
-        ("reto_lector",    "Reto Lector 2026",   "12 meses / 12 libros",       PALETA["ocean"]),
-        ("collect_colors", "Collect the Colors", "12 colores / 12 portadas",   PALETA["ocean"]),
-        ("genre_tracker",  "Genre Tracker",      "10 generos / 20 libros",     PALETA["ocean"]),
-        ("reading_30",     "30 Day Challenge",   "30 dias / Lectura",          PALETA["ocean"]),
-        ("alphabet",       "Alphabet Challenge", "A-Z / Un libro por letra",   PALETA["ocean"]),
-        ("bingo",          "Bookish Bingo",      "25 casillas / 5x5",          PALETA["ocean"]),
-        ("yearly",         "Yearly Challenge",   "31 retos / Portadas",        PALETA["ocean"]),
+        ("reto_lector",    "Monthly Books",  "",                               PALETA["ocean"]),
+        ("collect_colors", "Collect the Colors", "",                           PALETA["ocean"]),
+        ("genre_tracker",  "Genre Tracker",      "",                           PALETA["ocean"]),
+        ("reading_30",     "30 Day Challenge",   "",                           PALETA["ocean"]),
+        ("alphabet",       "Alphabet Challenge", "",                           PALETA["ocean"]),
+        ("bingo",          "Bookish Bingo",      "",                           PALETA["ocean"]),
+        ("yearly",         "Yearly Challenge",   "",                           PALETA["ocean"]),
     ]
 
     def __init__(self, master, db: Database, **kwargs):
@@ -470,10 +470,7 @@ class ChallengesFrame(CTkFrame):
         container = CTkFrame(self.challenge_scroll, fg_color="transparent")
         container.pack(expand=True, fill="both", padx=20, pady=20)
 
-        CTkLabel(container, text="Genre Tracker", font=("Helvetica", 26, "bold"),
-                 text_color=PALETA["text_main"]).pack(pady=(0, 5))
-        CTkLabel(container, text="Haz clic para marcar un libro leido / Clic derecho para despintar",
-                 font=("Arial", 12), text_color=PALETA["text_muted"]).pack(pady=(0, 20))
+        # Titulo y subtítulo movidos al header del panel
 
         saved = self._get_genre_tracker()
 
@@ -599,10 +596,7 @@ class ChallengesFrame(CTkFrame):
         container = CTkFrame(self.challenge_scroll, fg_color="transparent")
         container.pack(expand=True, fill="both", padx=20, pady=20)
 
-        CTkLabel(container, text="30 Day Reading Challenge", font=("Helvetica", 26, "bold"),
-                 text_color=PALETA["text_main"]).pack(pady=(0, 5))
-        CTkLabel(container, text="Colorea los numeros consecutivamente. Si fallas, todo se reinicia!",
-                 font=("Arial", 12), text_color=PALETA["text_muted"]).pack(pady=(0, 20))
+        # Titulo y subtítulo movidos al header del panel
 
         saved = self._get_day30_data()
         saved = self._validate_day30(saved)
@@ -799,10 +793,7 @@ class ChallengesFrame(CTkFrame):
         container = CTkFrame(self.challenge_scroll, fg_color="transparent")
         container.pack(expand=True, fill="both", padx=20, pady=20)
 
-        CTkLabel(container, text="Alphabet Reading Challenge", font=("Helvetica", 26, "bold"),
-                 text_color=PALETA["text_main"]).pack(pady=(0, 5))
-        CTkLabel(container, text="Escribe un libro y autor para cada letra del abecedario",
-                 font=("Arial", 12), text_color=PALETA["text_muted"]).pack(pady=(0, 25))
+        # Titulo y subtítulo movidos al header del panel
 
         saved = self._get_alpha_data()
 
@@ -905,10 +896,7 @@ class ChallengesFrame(CTkFrame):
         container = CTkFrame(self.challenge_scroll, fg_color="transparent")
         container.pack(expand=True, fill="both", padx=20, pady=20)
 
-        CTkLabel(container, text="Bookish Bingo", font=("Helvetica", 26, "bold"),
-                 text_color=PALETA["text_main"]).pack(pady=(0, 5))
-        CTkLabel(container, text="Haz clic para marcar / Clic derecho para desmarcar",
-                 font=("Arial", 12), text_color=PALETA["text_muted"]).pack(pady=(0, 20))
+        # Titulo y subtítulo movidos al header del panel
 
         saved = set(self._get_bingo_data())
         grid = CTkFrame(container, fg_color="transparent")
