@@ -1,5 +1,6 @@
 """Challenges - Retos literarios con estética de carpetas."""
 import os
+import tkinter
 from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
@@ -21,18 +22,18 @@ from database import Database
 #  DATOS DE RETOS
 # ═══════════════════════════════════════════════════════════════════
 RETO_LECTOR_DATA = {
-    1:  {"mes": "ENERO",      "reto": "Un libro de un autor que no hayas leído antes",                          "color": "#AED6F1"},
-    2:  {"mes": "FEBRERO",    "reto": "Un libro que sea parte de una saga que ya empezaste",                  "color": "#F5B7B1"},
-    3:  {"mes": "MARZO",      "reto": "Un libro de romance",                                                    "color": "#F9E79F"},
-    4:  {"mes": "ABRIL",      "reto": "Un libro que hable de libros",                                           "color": "#F5B7B1"},
-    5:  {"mes": "MAYO",       "reto": "Un clásico literario",                                                   "color": "#D4EFDF"},
-    6:  {"mes": "JUNIO",      "reto": "Un libro de menos de 100 páginas",                                       "color": "#AED6F1"},
-    7:  {"mes": "JULIO",      "reto": "Un libro que tengas en tu librero más de 2 años y que no hayas leído",   "color": "#FADBD8"},
-    8:  {"mes": "AGOSTO",     "reto": "Un libro basado en una historia real",                                   "color": "#FCF3CF"},
-    9:  {"mes": "SEPTIEMBRE", "reto": "Un libro de un premio novel",                                            "color": "#E8DAEF"},
-    10: {"mes": "OCTUBRE",    "reto": "Un libro de 300 páginas",                                                "color": "#D5F5E3"},
-    11: {"mes": "NOVIEMBRE",  "reto": "Un libro de poesía",                                                     "color": "#D6EAF8"},
-    12: {"mes": "DICIEMBRE",  "reto": "Un libro recomendado por un amigo",                                      "color": "#FADBD8"},
+    1:  {"mes": "ENERO",      "color": "#AED6F1"},
+    2:  {"mes": "FEBRERO",    "color": "#F5B7B1"},
+    3:  {"mes": "MARZO",      "color": "#F9E79F"},
+    4:  {"mes": "ABRIL",      "color": "#F5B7B1"},
+    5:  {"mes": "MAYO",       "color": "#D4EFDF"},
+    6:  {"mes": "JUNIO",      "color": "#AED6F1"},
+    7:  {"mes": "JULIO",      "color": "#FADBD8"},
+    8:  {"mes": "AGOSTO",     "color": "#FCF3CF"},
+    9:  {"mes": "SEPTIEMBRE", "color": "#E8DAEF"},
+    10: {"mes": "OCTUBRE",    "color": "#D5F5E3"},
+    11: {"mes": "NOVIEMBRE",  "color": "#D6EAF8"},
+    12: {"mes": "DICIEMBRE",  "color": "#FADBD8"},
 }
 
 COLLECT_COLORS_DATA = [
@@ -51,124 +52,67 @@ COLLECT_COLORS_DATA = [
 ]
 
 
+
 # ═══════════════════════════════════════════════════════════════════
-#  BRACKET DATA — VERTICAL (estructura clásica de torneo)
-#  Basado en la foto de inspiración
+#  GENRE TRACKER DATA
 # ═══════════════════════════════════════════════════════════════════
-SLOT_W, SLOT_H = 75, 100
-BEST_W, BEST_H = 140, 180
-
-# Coordenadas según la estructura de la foto
-# Izquierda: 3 columnas de slots, derecha: 3 columnas de slots
-# Centro: Best book grande
-
-# Columnas X
-X_LEFT_3 = 80    # meses arriba izq (Jan, Feb, Mar)
-X_LEFT_2 = 200   # round 2 izq
-X_LEFT_1 = 320   # round 3 izq / semifinal izq
-X_CENTER = 480   # final / best book
-X_RIGHT_1 = 700  # semifinal der / round 3 der
-X_RIGHT_2 = 820  # round 2 der
-X_RIGHT_3 = 940  # meses arriba der (Apr, May, Jun)
-
-# Meses abajo izq: Jul, Aug, Sep
-X_LEFT_3B = 80
-# Meses abajo der: Oct, Nov, Dec
-X_RIGHT_3B = 940
-
-# Filas Y
-Y_TOP = 40       # meses arriba
-Y_R2_TOP = 180   # round 2 arriba
-Y_R3_TOP = 300   # round 3 arriba
-Y_SEMI = 420     # semifinales
-Y_FINAL = 420    # final (misma altura que semis)
-Y_BEST = 380     # best book (centrado verticalmente)
-Y_R3_BOT = 540   # round 3 abajo
-Y_R2_BOT = 660   # round 2 abajo
-Y_BOT = 780      # meses abajo
-
-BRACKET_SLOTS = [
-    # ── Top left: Jan, Feb, Mar ──
-    {"id": "jan", "label": "Jan", "x": X_LEFT_3, "y": Y_TOP, "w": SLOT_W, "h": SLOT_H},
-    {"id": "feb", "label": "Feb", "x": X_LEFT_3 + 110, "y": Y_TOP, "w": SLOT_W, "h": SLOT_H},
-    {"id": "mar", "label": "Mar", "x": X_LEFT_3 + 220, "y": Y_TOP, "w": SLOT_W, "h": SLOT_H},
-    # ── Top left round 2 ──
-    {"id": "r2_tl", "label": "", "x": X_LEFT_3 + 55, "y": Y_R2_TOP, "w": SLOT_W, "h": SLOT_H},
-    {"id": "r2_tr", "label": "", "x": X_LEFT_3 + 165, "y": Y_R2_TOP, "w": SLOT_W, "h": SLOT_H},
-    # ── Top left round 3 ──
-    {"id": "r3_t", "label": "", "x": X_LEFT_3 + 110, "y": Y_R3_TOP, "w": SLOT_W, "h": SLOT_H},
-    # ── Left semifinal ──
-    {"id": "semi_l", "label": "", "x": X_LEFT_1, "y": Y_SEMI, "w": SLOT_W, "h": SLOT_H},
-
-    # ── Center: Best book (grande) ──
-    {"id": "best", "label": "Best book\nof the year", "x": X_CENTER, "y": Y_BEST, "w": BEST_W, "h": BEST_H},
-    # ── Final ──
-    {"id": "final", "label": "", "x": X_CENTER + 25, "y": Y_FINAL, "w": SLOT_W, "h": SLOT_H},
-
-    # ── Right semifinal ──
-    {"id": "semi_r", "label": "", "x": X_RIGHT_1, "y": Y_SEMI, "w": SLOT_W, "h": SLOT_H},
-    # ── Top right round 3 ──
-    {"id": "r3_rt", "label": "", "x": X_RIGHT_3 - 110, "y": Y_R3_TOP, "w": SLOT_W, "h": SLOT_H},
-    # ── Top right round 2 ──
-    {"id": "r2_rtl", "label": "", "x": X_RIGHT_3 - 165, "y": Y_R2_TOP, "w": SLOT_W, "h": SLOT_H},
-    {"id": "r2_rtr", "label": "", "x": X_RIGHT_3 - 55, "y": Y_R2_TOP, "w": SLOT_W, "h": SLOT_H},
-    # ── Top right: Apr, May, Jun ──
-    {"id": "apr", "label": "Apr", "x": X_RIGHT_3 - 220, "y": Y_TOP, "w": SLOT_W, "h": SLOT_H},
-    {"id": "may", "label": "May", "x": X_RIGHT_3 - 110, "y": Y_TOP, "w": SLOT_W, "h": SLOT_H},
-    {"id": "jun", "label": "Jun", "x": X_RIGHT_3, "y": Y_TOP, "w": SLOT_W, "h": SLOT_H},
-
-    # ── Bottom left: Jul, Aug, Sep ──
-    {"id": "jul", "label": "Jul", "x": X_LEFT_3B, "y": Y_BOT, "w": SLOT_W, "h": SLOT_H},
-    {"id": "aug", "label": "Aug", "x": X_LEFT_3B + 110, "y": Y_BOT, "w": SLOT_W, "h": SLOT_H},
-    {"id": "sep", "label": "Sep", "x": X_LEFT_3B + 220, "y": Y_BOT, "w": SLOT_W, "h": SLOT_H},
-    # ── Bottom left round 2 ──
-    {"id": "r2_bl", "label": "", "x": X_LEFT_3B + 55, "y": Y_R2_BOT, "w": SLOT_W, "h": SLOT_H},
-    {"id": "r2_br", "label": "", "x": X_LEFT_3B + 165, "y": Y_R2_BOT, "w": SLOT_W, "h": SLOT_H},
-    # ── Bottom left round 3 ──
-    {"id": "r3_b", "label": "", "x": X_LEFT_3B + 110, "y": Y_R3_BOT, "w": SLOT_W, "h": SLOT_H},
-
-    # ── Bottom right: Oct, Nov, Dec ──
-    {"id": "oct", "label": "Oct", "x": X_RIGHT_3B - 220, "y": Y_BOT, "w": SLOT_W, "h": SLOT_H},
-    {"id": "nov", "label": "Nov", "x": X_RIGHT_3B - 110, "y": Y_BOT, "w": SLOT_W, "h": SLOT_H},
-    {"id": "dec", "label": "Dec", "x": X_RIGHT_3B, "y": Y_BOT, "w": SLOT_W, "h": SLOT_H},
-    # ── Bottom right round 2 ──
-    {"id": "r2_bbl", "label": "", "x": X_RIGHT_3B - 165, "y": Y_R2_BOT, "w": SLOT_W, "h": SLOT_H},
-    {"id": "r2_bbr", "label": "", "x": X_RIGHT_3B - 55, "y": Y_R2_BOT, "w": SLOT_W, "h": SLOT_H},
-    # ── Bottom right round 3 ──
-    {"id": "r3_rb", "label": "", "x": X_RIGHT_3B - 110, "y": Y_R3_BOT, "w": SLOT_W, "h": SLOT_H},
-]
-
-# Conexiones según la estructura de la foto
-BRACKET_CONNECTIONS = [
-    # Top left side
-    ("jan", "r2_tl"), ("feb", "r2_tl"),
-    ("feb", "r2_tr"), ("mar", "r2_tr"),
-    ("r2_tl", "r3_t"), ("r2_tr", "r3_t"),
-    ("r3_t", "semi_l"),
-    # Bottom left side
-    ("jul", "r2_bl"), ("aug", "r2_bl"),
-    ("aug", "r2_br"), ("sep", "r2_br"),
-    ("r2_bl", "r3_b"), ("r2_br", "r3_b"),
-    ("r3_b", "semi_l"),
-    # Left to center
-    ("semi_l", "final"),
-    # Top right side
-    ("apr", "r2_rtl"), ("may", "r2_rtl"),
-    ("may", "r2_rtr"), ("jun", "r2_rtr"),
-    ("r2_rtl", "r3_rt"), ("r2_rtr", "r3_rt"),
-    ("r3_rt", "semi_r"),
-    # Bottom right side
-    ("oct", "r2_bbl"), ("nov", "r2_bbl"),
-    ("nov", "r2_bbr"), ("dec", "r2_bbr"),
-    ("r2_bbl", "r3_rb"), ("r2_bbr", "r3_rb"),
-    ("r3_rb", "semi_r"),
-    # Right to center
-    ("semi_r", "final"),
-    # Final to best
-    ("final", "best"),
+GENRE_TRACKER_DATA = [
+    {"key": "thriller", "name": "Thriller", "color": "#C0392B"},
+    {"key": "ciencia_ficcion", "name": "Ciencia\nFicción", "color": "#00CED1"},
+    {"key": "fantasia", "name": "Fantasía", "color": "#8E44AD"},
+    {"key": "terror", "name": "Terror", "color": "#2C3E50"},
+    {"key": "romantico", "name": "Romántico", "color": "#FF69B4"},
+    {"key": "aventura", "name": "Aventura", "color": "#27AE60"},
+    {"key": "distopia", "name": "Distopía", "color": "#7D3C98"},
+    {"key": "historica", "name": "Histórica", "color": "#D2691E"},
+    {"key": "biografia", "name": "Biografía", "color": "#2980B9"},
+    {"key": "divulgacion", "name": "Divulgación\nCientífica", "color": "#F1C40F"},
 ]
 
 
+# ═══════════════════════════════════════════════════════════════════
+#  30 DAY READING CHALLENGE DATA
+# ═══════════════════════════════════════════════════════════════════
+READING_30_DATA = list(range(1, 31))   # 1 … 30
+READING_30_COLS = 5
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  ALPHABET READING CHALLENGE DATA
+# ═══════════════════════════════════════════════════════════════════
+ALPHABET_LETTERS = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  BOOKISH BINGO CHALLENGE CHALLENGE DATA
+# ═══════════════════════════════════════════════════════════════════
+BINGO_DATA = [
+    "Título de una sola palabra",
+    "Enemies to lovers",
+    "Adaptado a película/serie",
+    "Protagonista con mascota",
+    "Menos de 200 páginas",
+    "Viaje en el tiempo",
+    "Segunda oportunidad",
+    "Basado en hechos reales",
+    "Protagonista forma parte de una banda",
+    "Primera parte de saga",
+    "Más de 500 páginas",
+    "Publicado este año",
+    "Presencia de criaturas fantásticas",
+    "Found family",
+    "Only one bed",
+    "Ambientado en invierno",
+    "De tu año de nacimiento",
+    "Slow burn",
+    "Autor debut",
+    "Empieza con tu inicial",
+    "Magia en el mundo real",
+    "Número en el título",
+    "Pueblo secreto/misterioso",
+    "Blow-your-mind\nplot twist",
+    "Libro que hable de libros",
+]
 # ═══════════════════════════════════════════════════════════════════
 #  WIDGET AUXILIAR: Tarjeta-Carpeta visual
 # ═══════════════════════════════════════════════════════════════════
@@ -218,6 +162,7 @@ class ChallengesFrame(CTkFrame):
         self._form_preview_img = None
         self._current_challenge_type = None
         self._current_challenge_key = None
+        self._alpha_editing = None   # letra actualmente en modo edición
 
         # ── Panel carpetas ──
         self.folders_panel = CTkScrollableFrame(self, fg_color="transparent")
@@ -245,7 +190,7 @@ class ChallengesFrame(CTkFrame):
         h3 = CTkFrame(self.bracket_panel, fg_color="transparent")
         h3.pack(fill="x", padx=20, pady=(15, 5))
         CTkButton(h3, text="← Volver", width=90, command=self.show_folders).pack(side="left")
-        CTkLabel(h3, text="🏆 Favorite Book of the Year", font=("Helvetica", 24, "bold")).pack(side="left", padx=15)
+        CTkLabel(h3, text="🏆 Genre Tracker", font=("Helvetica", 24, "bold")).pack(side="left", padx=15)
 
         # Scroll VERTICAL para el bracket (estructura vertical)
         self.bracket_scroll = CTkScrollableFrame(self.bracket_panel, width=900, height=650,
@@ -254,6 +199,39 @@ class ChallengesFrame(CTkFrame):
         self.bracket_canvas = self.bracket_scroll._parent_canvas
         self.bracket_canvas.configure(bg="#1a1a1a", highlightthickness=0)
 
+        # ── 30 Day Challenge ──
+        self.day30_panel = CTkFrame(self, fg_color="transparent")
+        h4 = CTkFrame(self.day30_panel, fg_color="transparent")
+        h4.pack(fill="x", padx=20, pady=(15, 5))
+        CTkButton(h4, text="← Volver", width=90, command=self.show_folders).pack(side="left")
+        CTkLabel(h4, text="🔥 30 Day Reading Challenge", font=("Helvetica", 24, "bold")).pack(side="left", padx=15)
+
+        self.day30_scroll = CTkScrollableFrame(self.day30_panel, width=900, height=650,
+                                                  fg_color="transparent")
+        self.day30_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # ── Alphabet Challenge ──
+        self.alpha_panel = CTkFrame(self, fg_color="transparent")
+        h5 = CTkFrame(self.alpha_panel, fg_color="transparent")
+        h5.pack(fill="x", padx=20, pady=(15, 5))
+        CTkButton(h5, text="← Volver", width=90, command=self.show_folders).pack(side="left")
+        CTkLabel(h5, text="🔤 Alphabet Reading Challenge", font=("Helvetica", 24, "bold")).pack(side="left", padx=15)
+
+        self.alpha_scroll = CTkScrollableFrame(self.alpha_panel, width=900, height=650,
+                                                fg_color="transparent")
+        self.alpha_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # ── Bookish Bingo ──
+        self.bingo_panel = CTkFrame(self, fg_color="transparent")
+        h6 = CTkFrame(self.bingo_panel, fg_color="transparent")
+        h6.pack(fill="x", padx=20, pady=(15, 5))
+        CTkButton(h6, text="← Volver", width=90, command=self.show_folders).pack(side="left")
+        CTkLabel(h6, text="🎀 Bookish Bingo", font=("Helvetica", 24, "bold")).pack(side="left", padx=15)
+
+        self.bingo_scroll = CTkScrollableFrame(self.bingo_panel, width=900, height=650,
+                                                fg_color="transparent")
+        self.bingo_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+
         # ── Formulario (reutilizable) ──
         self.form_panel = CTkFrame(self, fg_color="#1e1e1e", corner_radius=16,
                                    border_width=2, border_color="#3a3a3a")
@@ -261,12 +239,10 @@ class ChallengesFrame(CTkFrame):
         self.form_scroll = CTkScrollableFrame(self.form_panel, width=800, height=500, fg_color="transparent")
         self.form_scroll.pack(padx=25, pady=5, fill="both", expand=True)
 
-        cover_box = CTkFrame(self.form_scroll, width=160, height=200, corner_radius=10,
+        self.cover_box = CTkFrame(self.form_scroll, width=160, height=200, corner_radius=10,
                              fg_color="#2b2b2b", border_width=2, border_color="#444")
-        cover_box.pack(pady=(0, 10))
-        cover_box.pack_propagate(False)
-        self.form_preview = CTkLabel(cover_box, text="", width=160, height=200)
-        self.form_preview.place(relx=0.5, rely=0.5, anchor="center")
+        self.cover_box.pack(pady=(0, 10))
+        self.cover_box.pack_propagate(False)
         CTkButton(self.form_scroll, text="📁 Examinar portada", width=160, height=34,
                   command=self.browse_form_photo).pack(pady=(0, 15))
 
@@ -341,13 +317,7 @@ class ChallengesFrame(CTkFrame):
         )
         if path:
             self._form_foto_path = path
-            try:
-                img = Image.open(path).resize((140, 190), Image.LANCZOS)
-                if CTkImage:
-                    self._form_preview_img = CTkImage(light_image=img, dark_image=img, size=(140, 190))
-                    self.form_preview.configure(image=self._form_preview_img, text="")
-            except Exception:
-                self._form_preview_img = None
+            self._build_preview(path)
 
     # ═══════════════════════════════════════════════════════════════
     #  CARPETAS
@@ -372,17 +342,39 @@ class ChallengesFrame(CTkFrame):
                         command=self.show_collect_colors)
         f2.grid(row=0, column=2, padx=15, pady=20)
 
-        f3 = FolderCard(container, title="Favorite Book of the Year",
-                        subtitle="Bracket 2026 · Solo portadas",
+        f3 = FolderCard(container, title="Genre Tracker",
+                        subtitle="10 géneros · 20 libros cada uno",
                         icon="🏆", color="#FADBD8",
                         command=self.show_bracket)
         f3.grid(row=0, column=3, padx=15, pady=20)
+
+        f4 = FolderCard(container, title="30 Day Challenge",
+                        subtitle="30 días · Lectura consecutiva",
+                        icon="🔥", color="#F5B7B1",
+                        command=self.show_day30)
+        f4.grid(row=1, column=1, padx=15, pady=20)
+
+        f5 = FolderCard(container, title="Alphabet Challenge",
+                        subtitle="A-Z · Un libro por cada letra",
+                        icon="🔤", color="#D4EFDF",
+                        command=self.show_alpha)
+        f5.grid(row=1, column=2, padx=15, pady=20)
+
+        f6 = FolderCard(container, title="Bookish Bingo",
+                        subtitle="25 casillas · 5×5",
+                        icon="🎀", color="#FADBD8",
+                        command=self.show_bingo)
+        f6.grid(row=1, column=3, padx=15, pady=20)
 
     def show_folders(self):
         self.reto_panel.pack_forget()
         self.collect_panel.pack_forget()
         self.bracket_panel.pack_forget()
+        self.day30_panel.pack_forget()
+        self.alpha_panel.pack_forget()
+        self.bingo_panel.pack_forget()
         self.form_panel.pack_forget()
+        self._alpha_editing = None
         self.folders_panel.pack(fill="both", expand=True, padx=10, pady=10)
 
     # ═══════════════════════════════════════════════════════════════
@@ -419,8 +411,7 @@ class ChallengesFrame(CTkFrame):
         hdr.pack_propagate(False)
         CTkLabel(hdr, text=info["mes"], font=("Helvetica", 14, "bold"),
                  text_color="#2c3e50").place(relx=0.5, rely=0.5, anchor="center")
-        CTkLabel(card, text=info["reto"], font=("Arial", 11), text_color="#ccc",
-                 wraplength=250, justify="center").pack(pady=(10, 8), padx=10)
+        CTkLabel(card, text="📖 Libro favorito del mes", font=("Arial", 11, "bold"), text_color="#ccc").pack(pady=(10, 8), padx=10)
         content = CTkFrame(card, fg_color="transparent", height=210)
         content.pack(fill="x", padx=10, pady=(0, 8))
         content.pack_propagate(False)
@@ -435,9 +426,9 @@ class ChallengesFrame(CTkFrame):
             CTkLabel(content, text=saved.get("autor", ""), font=("Arial", 10),
                      text_color="#888", wraplength=250).pack()
         else:
-            CTkLabel(content, text="Pendiente", font=("Arial", 12),
+            CTkLabel(content, text="Sin libro favorito", font=("Arial", 12),
                      text_color="#666").place(relx=0.5, rely=0.4, anchor="center")
-            CTkButton(content, text="➕ Añadir libro", width=140, height=30,
+            CTkButton(content, text="➕ Añadir favorito", width=140, height=30,
                       command=lambda m=mes_num: self.open_form("reto_lector", m)).place(relx=0.5, rely=0.7, anchor="center")
         if saved:
             card.configure(cursor="hand2")
@@ -506,9 +497,19 @@ class ChallengesFrame(CTkFrame):
                 child.bind("<Button-1>", lambda e, k=cdata["key"]: self.open_form("collect_colors", k))
         return card
 
+
     # ═══════════════════════════════════════════════════════════════
-    #  BRACKET — VERTICAL (estructura clásica de torneo)
+    #  GENRE TRACKER
     # ═══════════════════════════════════════════════════════════════
+    def _get_genre_tracker(self):
+        ch = self._ensure_challenges()
+        return ch.get("genre_tracker", {})
+
+    def _set_genre_tracker(self, data):
+        ch = self._ensure_challenges()
+        ch["genre_tracker"] = data
+        self.db.set("challenges", ch)
+
     def show_bracket(self):
         self.folders_panel.pack_forget()
         self.reto_panel.pack_forget()
@@ -518,103 +519,305 @@ class ChallengesFrame(CTkFrame):
         self.bracket_panel.pack(fill="both", expand=True, padx=10, pady=10)
 
     def render_bracket(self):
-        canvas = self.bracket_canvas
-        canvas.delete("all")
-        canvas.configure(bg="#1a1a1a")
-        # Scroll vertical: ancho fijo, alto total del bracket
-        canvas.configure(scrollregion=(0, 0, 1100, 950))
+        for w in self.bracket_scroll.winfo_children():
+            w.destroy()
 
-        # Dibujar conexiones (líneas con flechas)
-        for src_id, dst_id in BRACKET_CONNECTIONS:
-            src = next((s for s in BRACKET_SLOTS if s["id"] == src_id), None)
-            dst = next((s for s in BRACKET_SLOTS if s["id"] == dst_id), None)
-            if not src or not dst:
-                continue
+        container = CTkFrame(self.bracket_scroll, fg_color="transparent")
+        container.pack(expand=True, fill="both", padx=20, pady=20)
 
-            # Punto de salida: centro del borde derecho/izquierdo del src
-            # Punto de entrada: centro del borde izquierdo/derecho del dst
-            if src["x"] < dst["x"]:
-                # Src está a la izquierda de dst
-                x1 = src["x"] + src["w"]
-                y1 = src["y"] + src["h"] / 2
-                x2 = dst["x"]
-                y2 = dst["y"] + dst["h"] / 2
-            else:
-                # Src está a la derecha de dst (conexión inversa)
-                x1 = src["x"]
-                y1 = src["y"] + src["h"] / 2
-                x2 = dst["x"] + dst["w"]
-                y2 = dst["y"] + dst["h"] / 2
+        CTkLabel(container, text="🎨 Genre Tracker", font=("Helvetica", 26, "bold")).pack(pady=(0, 5))
+        CTkLabel(container, text="Haz clic para marcar un libro leído · Clic derecho en un cuadro pintado para despintar",
+                 font=("Arial", 12), text_color="#888").pack(pady=(0, 20))
 
-            canvas.create_line(x1, y1, x2, y2, fill="white", width=1.5, dash=(3, 3))
-            # Flecha
-            canvas.create_polygon(
-                x2 - 5, y2 - 3,
-                x2 - 5, y2 + 3,
-                x2, y2,
-                fill="white"
+        saved = self._get_genre_tracker()
+
+        main = CTkFrame(container, fg_color="transparent")
+        main.pack(expand=True, fill="both")
+
+        # Números laterales
+        nums = CTkFrame(main, fg_color="transparent", width=35)
+        nums.pack(side="left", fill="y", padx=(0, 10))
+        for i in range(20):
+            slot = CTkFrame(nums, width=35, height=24)
+            slot.pack_propagate(False)
+            slot.pack(pady=1)
+            if i in (0, 5, 10, 15):
+                num = 20 - i
+                CTkLabel(slot, text=str(num), font=("Arial", 10, "bold"), text_color="#777").place(relx=0.5, rely=0.5, anchor="center")
+
+        # Grid de géneros
+        grid_frame = CTkFrame(main, fg_color="transparent")
+        grid_frame.pack(side="left", fill="both", expand=True)
+
+        for col_idx in range(len(GENRE_TRACKER_DATA)):
+            grid_frame.grid_columnconfigure(col_idx, weight=1)
+
+        for col_idx, gdata in enumerate(GENRE_TRACKER_DATA):
+            col = self._build_genre_column(grid_frame, gdata, saved.get(gdata["key"], []))
+            col.grid(row=0, column=col_idx, padx=4, pady=5, sticky="n")
+
+    def _build_genre_column(self, parent, gdata, filled_indices):
+        col = CTkFrame(parent, fg_color="transparent", width=70)
+        col.grid_propagate(False)
+
+        for i in range(20):
+            is_filled = i in filled_indices
+            sq = self._create_square(col, gdata["key"], i, gdata["color"], is_filled)
+            sq.pack(pady=1)
+
+        lbl = CTkLabel(col, text=gdata["name"], font=("Arial", 12, "bold"),
+                       text_color=gdata["color"], wraplength=65, justify="center")
+        lbl.pack(pady=(8, 0))
+
+        return col
+
+    def _create_square(self, parent, genre_key, index, color, is_filled):
+        size = 24
+        fg = color if is_filled else "#1a1a1a"
+        border = color
+
+        sq = CTkFrame(parent, width=size, height=size, corner_radius=2,
+                      fg_color=fg, border_width=2, border_color=border)
+        sq.pack_propagate(False)
+
+        sq._genre_key = genre_key
+        sq._index = index
+        sq._color = color
+        sq._filled = is_filled
+
+        sq.bind("<Button-1>", lambda e, s=sq: self._on_square_click(s))
+        sq.bind("<Button-3>", lambda e, s=sq: self._on_square_right_click(s, e))
+        return sq
+
+    def _on_square_click(self, sq):
+        if sq._filled:
+            return
+        sq._filled = True
+        sq.configure(fg_color=sq._color)
+
+        saved = self._get_genre_tracker()
+        if sq._genre_key not in saved:
+            saved[sq._genre_key] = []
+        if sq._index not in saved[sq._genre_key]:
+            saved[sq._genre_key].append(sq._index)
+            saved[sq._genre_key].sort()
+        self._set_genre_tracker(saved)
+
+    def _on_square_right_click(self, sq, event):
+        if not sq._filled:
+            return
+        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#2b2b2b", fg="white",
+                            activebackground="#555", activeforeground="white",
+                            font=("Arial", 11))
+        menu.add_command(label="🧼 Despintar", command=lambda: self._on_square_unpaint(sq))
+        menu.add_separator()
+        menu.add_command(label="Cancelar", command=menu.destroy)
+        menu.post(event.x_root, event.y_root)
+
+    def _on_square_unpaint(self, sq):
+        if not sq._filled:
+            return
+        sq._filled = False
+        sq.configure(fg_color="#1a1a1a")
+
+        saved = self._get_genre_tracker()
+        if sq._genre_key in saved and sq._index in saved[sq._genre_key]:
+            saved[sq._genre_key].remove(sq._index)
+            if not saved[sq._genre_key]:
+                del saved[sq._genre_key]
+        self._set_genre_tracker(saved)
+    # ═══════════════════════════════════════════════════════════════
+    #  30 DAY READING CHALLENGE
+    # ═══════════════════════════════════════════════════════════════
+    def _get_day30_data(self):
+        ch = self._ensure_challenges()
+        return ch.get("reading_30", [])
+
+    def _set_day30_data(self, data):
+        ch = self._ensure_challenges()
+        ch["reading_30"] = data
+        self.db.set("challenges", ch)
+
+    def _validate_day30(self, filled):
+        """Si no es consecutivo desde 1, devuelve lista vacía (reset)."""
+        if not filled:
+            return []
+        filled_sorted = sorted(filled)
+        expected = list(range(1, filled_sorted[-1] + 1))
+        if filled_sorted == expected:
+            return filled_sorted
+        return []
+
+    def show_day30(self):
+        self.folders_panel.pack_forget()
+        self.reto_panel.pack_forget()
+        self.collect_panel.pack_forget()
+        self.bracket_panel.pack_forget()
+        self.form_panel.pack_forget()
+        self.render_day30()
+        self.day30_panel.pack(fill="both", expand=True, padx=10, pady=10)
+
+    def render_day30(self):
+        for w in self.day30_scroll.winfo_children():
+            w.destroy()
+
+        self._day30_circles = {}
+        self._day30_streak_label = None
+
+        container = CTkFrame(self.day30_scroll, fg_color="transparent")
+        container.pack(expand=True, fill="both", padx=20, pady=20)
+
+        CTkLabel(container, text="🔥 30 Day Reading Challenge", font=("Helvetica", 26, "bold")).pack(pady=(0, 5))
+        CTkLabel(container, text="Colorea los números consecutivamente. Si fallas la secuencia, ¡todo se reinicia!",
+                 font=("Arial", 12), text_color="#888").pack(pady=(0, 20))
+
+        saved = self._get_day30_data()
+        saved = self._validate_day30(saved)
+        filled_set = set(saved)
+
+        grid = CTkFrame(container, fg_color="transparent")
+        grid.pack(expand=True, fill="both")
+
+        for c in range(READING_30_COLS):
+            grid.grid_columnconfigure(c, weight=1)
+
+        for idx, number in enumerate(READING_30_DATA):
+            row = idx // READING_30_COLS
+            col = idx % READING_30_COLS
+            circ, lbl = self._build_day30_circle(grid, number, number in filled_set)
+            circ.grid(row=row, column=col, padx=15, pady=15, sticky="n")
+            self._day30_circles[number] = (circ, lbl)
+
+        self._day30_streak_label = CTkLabel(container, text="", font=("Arial", 14, "bold"))
+        self._day30_streak_label.pack(pady=(15, 0))
+        self._update_day30_streak(saved)
+
+    def _update_day30_streak(self, saved):
+        if saved:
+            self._day30_streak_label.configure(
+                text=f"Racha actual: {len(saved)} / 30 días",
+                text_color="#E74C3C"
+            )
+        else:
+            self._day30_streak_label.configure(
+                text="Haz clic en el 1 para empezar",
+                text_color="#888"
             )
 
-        # Slots
-        for slot in BRACKET_SLOTS:
-            self._build_bracket_slot(canvas, slot)
+    def _build_day30_circle(self, parent, number, is_filled):
+        size = 80
+        fg = "#E74C3C" if is_filled else "#1a1a1a"
+        border = "#E74C3C" if is_filled else "#888"
 
-    def _build_bracket_slot(self, canvas, slot_def):
-        sid = slot_def["id"]
-        w, h = slot_def["w"], slot_def["h"]
-        saved = self._get_saved("bracket", sid)
+        circ = CTkFrame(parent, width=size, height=size, corner_radius=size // 2,
+                      fg_color=fg, border_width=3, border_color=border)
+        circ.grid_propagate(False)
 
-        # Contenedor: slot + espacio para label
-        container_h = h + 22
-        container = CTkFrame(canvas, width=w, height=container_h, fg_color="transparent")
+        lbl = CTkLabel(circ, text=str(number), font=("Arial", 24, "bold"),
+                       text_color="white" if is_filled else "#aaa")
+        lbl.place(relx=0.5, rely=0.5, anchor="center")
 
-        border_w = 3 if sid == "best" else 2
-        slot_frame = CTkFrame(container, width=w, height=h, corner_radius=4,
-                              fg_color="#252525", border_width=border_w, border_color="white")
-        slot_frame.place(x=0, y=18)
-        slot_frame.pack_propagate(False)
+        circ._number = number
+        # Bind al frame y al label para mayor sensibilidad
+        for widget in (circ, lbl):
+            widget.bind("<Button-1>", lambda e, n=number: self._on_day30_click(n))
+            widget.bind("<Button-3>", lambda e, n=number: self._on_day30_right_click(n, e))
+            widget.configure(cursor="hand2")
 
-        # Label del mes (dentro del contenedor, arriba del slot)
-        label = slot_def.get("label", "")
-        if label:
-            lbl = CTkLabel(container, text=label, font=("Arial", 10, "bold"), text_color="white")
-            lbl.place(x=w/2, y=2, anchor="n")
+        return circ, lbl
 
-        # Portada o placeholder
-        inner_w, inner_h = w - 8, h - 8
-        if saved and saved.get("foto"):
-            img = self._load_cover(saved["foto"], size=(inner_w, inner_h))
-            if img:
-                CTkLabel(slot_frame, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
-            else:
-                CTkLabel(slot_frame, text="📕", font=("Arial", 18)).place(relx=0.5, rely=0.5, anchor="center")
+    def _paint_day30_circle(self, number, filled):
+        if number not in self._day30_circles:
+            return
+        circ, lbl = self._day30_circles[number]
+        if filled:
+            circ.configure(fg_color="#E74C3C", border_color="#E74C3C")
+            lbl.configure(text_color="white")
         else:
-            sym = "♡" if sid == "best" else "+"
-            size = 18 if sid == "best" else 14
-            CTkLabel(slot_frame, text=sym, font=("Arial", size), text_color="#888").place(relx=0.5, rely=0.5, anchor="center")
+            circ.configure(fg_color="#1a1a1a", border_color="#888")
+            lbl.configure(text_color="#aaa")
 
-        # Click para cargar portada
-        slot_frame.configure(cursor="hand2")
-        slot_frame.bind("<Button-1>", lambda e, s=sid: self.load_bracket_photo(s))
-        for child in slot_frame.winfo_children():
-            child.bind("<Button-1>", lambda e, s=sid: self.load_bracket_photo(s))
-            child.configure(cursor="hand2")
+    def _on_day30_click(self, number):
+        saved = self._get_day30_data()
+        filled_set = set(saved)
 
-        canvas.create_window(slot_def["x"], slot_def["y"], window=container, anchor="nw")
+        if number in filled_set:
+            return
 
-    def load_bracket_photo(self, slot_id):
-        path = filedialog.askopenfilename(
-            title="Seleccionar portada",
-            filetypes=[("Imágenes", "*.png *.jpg *.jpeg *.gif *.bmp"), ("Todos", "*.*")]
-        )
-        if path:
-            self._set_saved("bracket", slot_id, {"foto": path})
-            self._cover_cache.clear()
-            self.render_bracket()
+        filled_sorted = sorted(filled_set)
+        # Regla: debe ser consecutivo desde 1
+        if not filled_sorted:
+            if number == 1:
+                saved.append(1)
+                self._set_day30_data(saved)
+                self._paint_day30_circle(1, True)
+                self._update_day30_streak(saved)
+                return
+            else:
+                return
+        else:
+            last = filled_sorted[-1]
+            if number == last + 1:
+                saved.append(number)
+                self._set_day30_data(saved)
+                self._paint_day30_circle(number, True)
+                self._update_day30_streak(saved)
+                return
+            else:
+                # ¡Rota la secuencia! Resetear todo
+                self._set_day30_data([])
+                messagebox.showinfo("Reto fallido", "No seguiste la secuencia consecutiva.\nEl reto se ha reiniciado. ¡Vuelve a empezar!")
+                self.render_day30()
+                return
+
+    def _on_day30_right_click(self, number, event):
+        saved = self._get_day30_data()
+        if number not in saved:
+            return
+
+        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#2b2b2b", fg="white",
+                            activebackground="#555", activeforeground="white",
+                            font=("Arial", 11))
+        menu.add_command(label="🧼 Despintar", command=lambda: self._on_day30_unpaint(number))
+        menu.add_separator()
+        menu.add_command(label="Cancelar", command=menu.destroy)
+        menu.post(event.x_root, event.y_root)
+
+    def _on_day30_unpaint(self, number):
+        saved = self._get_day30_data()
+        if number in saved:
+            saved.remove(number)
+        validated = self._validate_day30(saved)
+        self._set_day30_data(validated)
+
+        if not validated:
+            # Se rompió la secuencia al quitar → reset visual completo
+            self.render_day30()
+        else:
+            # Sigue válido → solo despintar este círculo y actualizar contador
+            self._paint_day30_circle(number, False)
+            self._update_day30_streak(validated)
 
     # ═══════════════════════════════════════════════════════════════
     #  FORMULARIO
     # ═══════════════════════════════════════════════════════════════
+    def _build_preview(self, img_path=None):
+        """Destruye el preview anterior y crea uno nuevo limpio."""
+        for w in self.cover_box.winfo_children():
+            w.destroy()
+        if img_path and os.path.exists(img_path):
+            try:
+                img = Image.open(img_path).resize((140, 190), Image.LANCZOS)
+                if CTkImage:
+                    ctk_img = CTkImage(light_image=img, dark_image=img, size=(140, 190))
+                    self._form_preview_img = ctk_img
+                    CTkLabel(self.cover_box, image=ctk_img, text="").place(relx=0.5, rely=0.5, anchor="center")
+                    return
+            except Exception:
+                pass
+        self._form_preview_img = None
+        CTkLabel(self.cover_box, text="📕", font=("Arial", 48), text_color="#555").place(relx=0.5, rely=0.5, anchor="center")
+
     def open_form(self, challenge_type, key):
         self._current_challenge_type = challenge_type
         self._current_challenge_key = key
@@ -623,24 +826,17 @@ class ChallengesFrame(CTkFrame):
         self.form_autor.delete(0, "end")
         self._form_foto_path = None
         self._form_preview_img = None
-        self.form_preview.configure(image=None, text="")
+        foto = saved.get("foto") if saved else None
+        self._build_preview(foto)
         if saved:
             self.form_titulo.insert(0, saved.get("titulo", ""))
             self.form_autor.insert(0, saved.get("autor", ""))
-            foto = saved.get("foto")
             if foto and os.path.exists(foto):
                 self._form_foto_path = foto
-                try:
-                    img = Image.open(foto).resize((140, 190), Image.LANCZOS)
-                    if CTkImage:
-                        self._form_preview_img = CTkImage(light_image=img, dark_image=img, size=(140, 190))
-                        self.form_preview.configure(image=self._form_preview_img, text="")
-                except Exception:
-                    pass
         if challenge_type == "reto_lector":
             info = RETO_LECTOR_DATA.get(int(key), {})
             self.form_context_label.configure(
-                text=f"Mes: {info.get('mes', '')}  |  {info.get('reto', '')}",
+                text=f"📖 Libro favorito de {info.get('mes', '')}",
                 text_color=info.get("color", "#aaa")
             )
         else:
@@ -681,6 +877,290 @@ class ChallengesFrame(CTkFrame):
         messagebox.showinfo("Éxito", "Reto guardado correctamente.")
         self.close_form()
 
+    # ═══════════════════════════════════════════════════════════════
+    #  ALPHABET READING CHALLENGE
+    # ═══════════════════════════════════════════════════════════════
+    def _get_alpha_data(self):
+        ch = self._ensure_challenges()
+        return ch.get("alphabet", {})
+
+    def _set_alpha_data(self, data):
+        ch = self._ensure_challenges()
+        ch["alphabet"] = data
+        self.db.set("challenges", ch)
+
+    def show_alpha(self):
+        self.folders_panel.pack_forget()
+        self.reto_panel.pack_forget()
+        self.collect_panel.pack_forget()
+        self.bracket_panel.pack_forget()
+        self.day30_panel.pack_forget()
+        self.form_panel.pack_forget()
+        self.render_alpha()
+        self.alpha_panel.pack(fill="both", expand=True, padx=10, pady=10)
+
+    def render_alpha(self):
+        for w in self.alpha_scroll.winfo_children():
+            w.destroy()
+
+        container = CTkFrame(self.alpha_scroll, fg_color="transparent")
+        container.pack(expand=True, fill="both", padx=20, pady=20)
+
+        CTkLabel(container, text="🔤 Alphabet Reading Challenge", font=("Helvetica", 26, "bold")).pack(pady=(0, 5))
+        CTkLabel(container, text="Escribe un libro y autor para cada letra del abecedario",
+                 font=("Arial", 12), text_color="#888").pack(pady=(0, 25))
+
+        saved = self._get_alpha_data()
+
+        main = CTkFrame(container, fg_color="transparent")
+        main.pack(expand=True, fill="both")
+        main.grid_columnconfigure(0, weight=1)
+        main.grid_columnconfigure(1, weight=1)
+
+        # Dividir en dos columnas: A-M (13) y N-Z (13)
+        left_col = CTkFrame(main, fg_color="transparent")
+        left_col.grid(row=0, column=0, sticky="nsew", padx=(0, 15))
+        right_col = CTkFrame(main, fg_color="transparent")
+        right_col.grid(row=0, column=1, sticky="nsew", padx=(15, 0))
+
+        for idx, letter in enumerate(ALPHABET_LETTERS):
+            is_left = idx < 13
+            parent = left_col if is_left else right_col
+            data = saved.get(letter, {"titulo": "", "autor": ""})
+            self._build_alpha_row(parent, letter, data)
+
+    def _build_alpha_row(self, parent, letter, data):
+        is_saved = bool(data.get("titulo") and data.get("autor")) and (self._alpha_editing != letter)
+
+        # Fondo distintivo para guardados
+        row_bg = "#1a2a1a" if is_saved else "transparent"
+        row = CTkFrame(parent, fg_color=row_bg, height=62, corner_radius=10)
+        row.pack(fill="x", pady=4)
+        row.pack_propagate(False)
+
+        # Letra
+        badge_color = "#27AE60" if is_saved else "#2b2b2b"
+        border_color = "#2ecc71" if is_saved else "#444"
+        badge = CTkFrame(row, width=42, height=42, corner_radius=8,
+                         fg_color=badge_color, border_width=2, border_color=border_color)
+        badge.pack(side="left", padx=(10, 12))
+        badge.pack_propagate(False)
+        CTkLabel(badge, text=letter, font=("Helvetica", 18, "bold"),
+                 text_color="white" if is_saved else "#E67E22").place(relx=0.5, rely=0.5, anchor="center")
+
+        # Campos
+        fields = CTkFrame(row, fg_color="transparent")
+        fields.pack(side="left", fill="both", expand=True, pady=4)
+
+        if is_saved:
+            # Modo solo lectura con estética de tarjeta guardada
+            CTkLabel(fields, text=data.get("titulo", ""), font=("Arial", 13, "bold"),
+                     text_color="#eee").pack(anchor="w")
+            CTkLabel(fields, text=data.get("autor", ""), font=("Arial", 12),
+                     text_color="#bbb").pack(anchor="w")
+
+            # Botón editar
+            btn_edit = CTkButton(row, text="✏️", width=36, height=36, corner_radius=8,
+                               fg_color="#3a3a3a", hover_color="#555",
+                               command=lambda l=letter: self._on_alpha_edit(l))
+            btn_edit.pack(side="right", padx=(8, 10))
+        else:
+            # Modo edición
+            titulo = CTkEntry(fields, placeholder_text="Título del libro...", height=30,
+                              corner_radius=6, font=("Arial", 13))
+            titulo.pack(fill="x", pady=(1, 2))
+            if data.get("titulo"):
+                titulo.insert(0, data["titulo"])
+
+            autor = CTkEntry(fields, placeholder_text="Autor...", height=30,
+                             corner_radius=6, font=("Arial", 12), text_color="#ccc")
+            autor.pack(fill="x", pady=(0, 1))
+            if data.get("autor"):
+                autor.insert(0, data["autor"])
+
+            # Guardar: Tab entre campos o Enter en el segundo campo
+            def on_titulo_tab(event, a=autor):
+                a.focus_set()
+                return "break"
+
+            def on_autor_tab(event, l=letter, t=titulo, a=autor):
+                self._try_alpha_save(l, t, a)
+                return "break"
+
+            def on_return(event, l=letter, t=titulo, a=autor):
+                self._try_alpha_save(l, t, a)
+                return "break"
+
+            titulo.bind("<Tab>", on_titulo_tab)
+            autor.bind("<Tab>", on_autor_tab)
+            titulo.bind("<Return>", lambda e, a=autor: (a.focus_set(), "break")[1])
+            autor.bind("<Return>", on_return)
+
+    def _try_alpha_save(self, letter, titulo_widget, autor_widget):
+        titulo = titulo_widget.get().strip()
+        autor = autor_widget.get().strip()
+        if titulo and autor:
+            saved = self._get_alpha_data()
+            saved[letter] = {"titulo": titulo, "autor": autor}
+            self._set_alpha_data(saved)
+            self._alpha_editing = None
+            self.render_alpha()
+
+    def _on_alpha_edit(self, letter):
+        self._alpha_editing = letter
+        self.render_alpha()
+
+    # ═══════════════════════════════════════════════════════════════
+    #  BOOKISH BINGO CHALLENGE
+    # ═══════════════════════════════════════════════════════════════
+    def _get_bingo_data(self):
+        ch = self._ensure_challenges()
+        return ch.get("bingo", [])
+
+    def _set_bingo_data(self, data):
+        ch = self._ensure_challenges()
+        ch["bingo"] = data
+        self.db.set("challenges", ch)
+
+    def show_bingo(self):
+        self.folders_panel.pack_forget()
+        self.reto_panel.pack_forget()
+        self.collect_panel.pack_forget()
+        self.bracket_panel.pack_forget()
+        self.day30_panel.pack_forget()
+        self.alpha_panel.pack_forget()
+        self.form_panel.pack_forget()
+        self.render_bingo()
+        self.bingo_panel.pack(fill="both", expand=True, padx=10, pady=10)
+
+    def render_bingo(self):
+        for w in self.bingo_scroll.winfo_children():
+            w.destroy()
+
+        container = CTkFrame(self.bingo_scroll, fg_color="transparent")
+        container.pack(expand=True, fill="both", padx=20, pady=20)
+
+        CTkLabel(container, text="🎀 Bookish Bingo", font=("Helvetica", 26, "bold")).pack(pady=(0, 5))
+        CTkLabel(container, text="Haz clic en una casilla para marcarla como cumplida · Clic derecho para desmarcar",
+                 font=("Arial", 12), text_color="#888").pack(pady=(0, 20))
+
+        saved = set(self._get_bingo_data())
+
+        grid = CTkFrame(container, fg_color="transparent")
+        grid.pack(expand=True, fill="both")
+
+        for c in range(5):
+            grid.grid_columnconfigure(c, weight=1)
+
+        self._bingo_cells = {}
+
+        for idx, text in enumerate(BINGO_DATA):
+            row = idx // 5
+            col = idx % 5
+            cell = self._build_bingo_cell(grid, idx, text, idx in saved)
+            cell.grid(row=row, column=col, padx=6, pady=6, sticky="nsew")
+            self._bingo_cells[idx] = cell
+
+    def _build_bingo_cell(self, parent, index, text, is_done):
+        bg_color = "#E8B4B8" if is_done else "#252525"
+        border_color = "#D4A5A9" if is_done else "#444"
+        text_color = "#4a2c2f" if is_done else "#ccc"
+
+        cell = CTkFrame(parent, width=170, height=170, corner_radius=16,
+                        fg_color=bg_color, border_width=3, border_color=border_color)
+        cell.grid_propagate(False)
+        cell._index = index
+        cell._done = is_done
+
+        # Texto normal con wrap
+        lbl = CTkLabel(cell, text=text, font=("Arial", 13 if is_done else 12, "bold" if is_done else "normal"),
+                       text_color=text_color, wraplength=150, justify="center")
+        lbl.place(relx=0.5, rely=0.5, anchor="center")
+
+        # Checkmark si está hecho
+        if is_done:
+            check_bg = CTkFrame(cell, width=28, height=28, corner_radius=14,
+                                fg_color="#27AE60", border_width=0)
+            check_bg.place(relx=0.88, rely=0.12, anchor="center")
+            CTkLabel(check_bg, text="OK", font=("Arial", 10, "bold"), text_color="white").place(relx=0.5, rely=0.5, anchor="center")
+
+        # Bind clicks al frame y labels
+        for widget in cell.winfo_children():
+            widget.bind("<Button-1>", lambda e, i=index: self._on_bingo_click(i))
+            widget.bind("<Button-3>", lambda e, i=index: self._on_bingo_right_click(i, e))
+            widget.configure(cursor="hand2")
+        cell.bind("<Button-1>", lambda e, i=index: self._on_bingo_click(i))
+        cell.bind("<Button-3>", lambda e, i=index: self._on_bingo_right_click(i, e))
+        cell.configure(cursor="hand2")
+
+        return cell
+
+    def _on_bingo_click(self, index):
+        if self._bingo_cells[index]._done:
+            return
+        saved = list(self._get_bingo_data())
+        if index not in saved:
+            saved.append(index)
+        self._set_bingo_data(saved)
+        self._update_bingo_cell(index, True)
+
+    def _on_bingo_right_click(self, index, event):
+        if not self._bingo_cells[index]._done:
+            return
+        menu = tkinter.Menu(self.winfo_toplevel(), tearoff=0, bg="#2b2b2b", fg="white",
+                            activebackground="#555", activeforeground="white",
+                            font=("Arial", 11))
+        menu.add_command(label="Desmarcar", command=lambda: self._on_bingo_uncheck(index, menu))
+        menu.add_separator()
+        menu.add_command(label="Cancelar", command=menu.destroy)
+        menu.post(event.x_root, event.y_root)
+
+    def _on_bingo_uncheck(self, index, menu=None):
+        if menu:
+            menu.destroy()
+        saved = list(self._get_bingo_data())
+        if index in saved:
+            saved.remove(index)
+        self._set_bingo_data(saved)
+        self._update_bingo_cell(index, False)
+
+    def _update_bingo_cell(self, index, is_done):
+        cell = self._bingo_cells.get(index)
+        if not cell:
+            return
+        cell._done = is_done
+
+        bg_color = "#E8B4B8" if is_done else "#252525"
+        border_color = "#D4A5A9" if is_done else "#444"
+        text_color = "#4a2c2f" if is_done else "#ccc"
+
+        cell.configure(fg_color=bg_color, border_color=border_color)
+
+        # Hide all existing children instead of destroying (avoids TclError)
+        for w in cell.winfo_children():
+            w.place_forget()
+            w.pack_forget()
+            w.grid_forget()
+
+        text = BINGO_DATA[index]
+        lbl = CTkLabel(cell, text=text, font=("Arial", 13 if is_done else 12, "bold" if is_done else "normal"),
+                       text_color=text_color, wraplength=150, justify="center")
+        lbl.place(relx=0.5, rely=0.5, anchor="center")
+
+        if is_done:
+            check_bg = CTkFrame(cell, width=28, height=28, corner_radius=14,
+                                fg_color="#27AE60", border_width=0)
+            check_bg.place(relx=0.88, rely=0.12, anchor="center")
+            CTkLabel(check_bg, text="OK", font=("Arial", 10, "bold"), text_color="white").place(relx=0.5, rely=0.5, anchor="center")
+
+        for widget in cell.winfo_children():
+            widget.bind("<Button-1>", lambda e, i=index: self._on_bingo_click(i))
+            widget.bind("<Button-3>", lambda e, i=index: self._on_bingo_right_click(i, e))
+            widget.configure(cursor="hand2")
+        cell.bind("<Button-1>", lambda e, i=index: self._on_bingo_click(i))
+        cell.bind("<Button-3>", lambda e, i=index: self._on_bingo_right_click(i, e))
+        cell.configure(cursor="hand2")
+
     def refresh(self):
         self._cover_cache.clear()
         self.show_folders()
@@ -688,3 +1168,6 @@ class ChallengesFrame(CTkFrame):
         self.render_reto_lector()
         self.render_collect_colors()
         self.render_bracket()
+        self.render_day30()
+        self.render_alpha()
+        self.render_bingo()

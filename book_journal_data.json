@@ -216,6 +216,11 @@
                 "titulo": "The Graham Effect",
                 "autor": "Elle Kennedy",
                 "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
+            },
+            "1": {
+                "titulo": "af",
+                "autor": "",
+                "foto": "C:/Users/pc/Pictures/,hfcx.png"
             }
         },
         "collect_colors": {
@@ -233,6 +238,51 @@
                 "titulo": "eth",
                 "autor": "EAth",
                 "foto": "C:/Users/pc/Pictures/download (8).jpg"
+            },
+            "yellow": {
+                "titulo": "c",
+                "autor": ",hg",
+                "foto": "C:/Users/pc/Pictures/akaashi.jpg"
+            },
+            "orange": {
+                "titulo": "jv",
+                "autor": "b",
+                "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg"
+            },
+            "red": {
+                "titulo": "b",
+                "autor": "j",
+                "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
+            },
+            "purple": {
+                "titulo": "f",
+                "autor": "",
+                "foto": "C:/Users/pc/Pictures/0c7ac980-00b8-43b2-9673-375b0bc1f47a.jpg"
+            },
+            "pink": {
+                "titulo": "n",
+                "autor": "",
+                "foto": "C:/Users/pc/Pictures/Can you hug me like that_.jpg"
+            },
+            "brown": {
+                "titulo": "k",
+                "autor": "",
+                "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg"
+            },
+            "black": {
+                "titulo": "j",
+                "autor": "",
+                "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg"
+            },
+            "white": {
+                "titulo": "d",
+                "autor": "",
+                "foto": "C:/Users/pc/Pictures/0c7ac980-00b8-43b2-9673-375b0bc1f47a.jpg"
+            },
+            "grey": {
+                "titulo": "d",
+                "autor": "",
+                "foto": "C:/Users/pc/Pictures/•HAIKYUU! •.jpg"
             }
         },
         "bracket": {
@@ -242,6 +292,67 @@
             "feb": {
                 "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg"
             }
-        }
+        },
+        "genre_tracker": {
+            "ciencia_ficcion": [
+                16,
+                17,
+                18,
+                19
+            ],
+            "fantasia": [
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19
+            ],
+            "terror": [
+                19
+            ],
+            "romantico": [
+                19
+            ],
+            "aventura": [
+                19
+            ],
+            "distopia": [
+                19
+            ],
+            "historica": [
+                19
+            ],
+            "biografia": [
+                19
+            ],
+            "divulgacion": [
+                19
+            ],
+            "thriller": [
+                19
+            ]
+        },
+        "reading_30": [
+            1,
+            2
+        ],
+        "alphabet": {
+            "G": {
+                "titulo": "God Of Fury",
+                "autor": "Rina Kent"
+            }
+        },
+        "bingo": [
+            11,
+            13,
+            17,
+            7,
+            12,
+            6
+        ]
     }
 }
