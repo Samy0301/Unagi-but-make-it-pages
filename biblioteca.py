@@ -1,4 +1,4 @@
-"""Biblioteca con grid de libros, estados y filtros TBR/Leídos."""
+"""Biblioteca con grid de libros, estados y filtros TBR/Leidos."""
 import os
 from tkinter import messagebox, filedialog
 
@@ -19,12 +19,13 @@ from widgets import StarRating
 
 
 class BibliotecaFrame(CTkFrame):
-    ESTADOS = {"no_leido": "No lo he leído", "leyendo": "Lo estoy leyendo", "leido": "Ya lo leí"}
-    FILTROS = {"todos": "Todos", "tbr": "TBR", "leidos": "Leídos"}
-    ORDEN = {
-        "titulo": "Título A-Z",
-        "rating": "Mejor valorados"
+    ESTADOS = {
+        "no_leido": "No lo he leido",
+        "leyendo": "Lo estoy leyendo",
+        "leido": "Ya lo lei"
     }
+    FILTROS = {"todos": "Todos", "tbr": "TBR", "leidos": "Leidos"}
+    ORDEN = {"titulo": "Titulo A-Z", "rating": "Mejor valorados"}
 
     ESTADO_MAP = {
         "por leer": "no_leido",
@@ -32,11 +33,10 @@ class BibliotecaFrame(CTkFrame):
         "no_leido": "no_leido",
         "leyendo": "leyendo",
         "leido": "leido",
-        "leído": "leido",
-        "ya lo leí": "leido",
+        "leido": "leido",
+        "ya lo lei": "leido",
     }
 
-    # 5 columnas fijas
     COLS = 5
     CARD_WIDTH = 180
     CARD_PADX = 10
@@ -56,10 +56,9 @@ class BibliotecaFrame(CTkFrame):
         self._preview_img = None
         self._foto_path = None
 
-        # --- POOL DE TARJETAS (reciclaje) ---
+        # Pool simple: tarjetas ocultas listas para reusar
         self._card_pool = []
         self._visible_cards = []
-        self._render_job = None
 
         # Header
         hdr = CTkFrame(self, fg_color="transparent")
@@ -75,7 +74,7 @@ class BibliotecaFrame(CTkFrame):
                       command=lambda k=key: self.set_filtro(k)).pack(side="left", padx=5)
 
         CTkLabel(tools, text="Buscar:", font=("Arial", 14)).pack(side="left", padx=(20, 2))
-        self.search_entry = CTkEntry(tools, width=200, placeholder_text="Buscar título o autor...")
+        self.search_entry = CTkEntry(tools, width=200, placeholder_text="Buscar titulo o autor...")
         self.search_entry.pack(side="left", padx=5)
         self.search_entry.bind("<KeyRelease>", lambda e: self.render_books())
         CTkButton(tools, text="X", width=30, command=self.clear_search).pack(side="left", padx=2)
@@ -86,51 +85,39 @@ class BibliotecaFrame(CTkFrame):
         self.orden_menu.set(self.ORDEN["titulo"])
         self.orden_menu.pack(side="left", padx=5)
 
-        self.btn_toggle_add = CTkButton(tools, text="+ Añadir Libro", command=self.toggle_add_panel)
+        self.btn_toggle_add = CTkButton(tools, text="+ Anadir Libro", command=self.toggle_add_panel)
         self.btn_toggle_add.pack(side="right", padx=5)
 
-        # --- PANEL EMBEBIDO AÑADIR LIBRO ---
-        self.add_panel = CTkFrame(self, fg_color="#D0EBF5", corner_radius=16, border_width=2, border_color="#2E86C1")
+        # --- PANEL EMBEBIDO ANADIR LIBRO ---
+        self.add_panel = CTkFrame(self, fg_color="#D0EBF5", corner_radius=16,
+                                  border_width=2, border_color="#2E86C1")
 
         CTkLabel(self.add_panel, text="NUEVO LIBRO", font=("Helvetica", 22, "bold")).pack(pady=(20, 15))
 
         self.add_container = CTkFrame(self.add_panel, fg_color="transparent")
         self.add_container.pack(expand=True, fill="both")
 
-        self.add_scroll = ctk.CTkScrollableFrame(self.add_container, width=700, height=420, fg_color="transparent")
+        self.add_scroll = ctk.CTkScrollableFrame(self.add_container, width=700, height=420,
+                                               fg_color="transparent")
         self.add_scroll.pack(padx=30, pady=5, fill="both", expand=True)
 
         self.entries = {}
 
-        def add_row(label_text, widget):
+        def add_row(label_text, widget_factory):
             row = CTkFrame(self.add_scroll, fg_color="transparent")
             row.pack(fill="x", pady=(6, 2))
             inner = CTkFrame(row, fg_color="transparent")
             inner.pack(expand=True)
             CTkLabel(inner, text=label_text, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 2))
-            widget(inner)
-            return inner
+            w = widget_factory(inner)
+            w.pack()
+            return w
 
-        add_row("Título *", lambda inner: (
-            self.entries.update({"titulo": CTkEntry(inner, width=600, height=32, corner_radius=8)}),
-            self.entries["titulo"].pack()
-        ))
-        add_row("Autor", lambda inner: (
-            self.entries.update({"autor": CTkEntry(inner, width=600, height=32, corner_radius=8)}),
-            self.entries["autor"].pack()
-        ))
-        add_row("N° Páginas", lambda inner: (
-            self.entries.update({"paginas": CTkEntry(inner, width=600, height=32, corner_radius=8)}),
-            self.entries["paginas"].pack()
-        ))
-        add_row("Género", lambda inner: (
-            self.entries.update({"genero": CTkEntry(inner, width=600, height=32, corner_radius=8)}),
-            self.entries["genero"].pack()
-        ))
-        add_row("Ubicación", lambda inner: (
-            self.entries.update({"ubicacion": CTkEntry(inner, width=600, height=32, corner_radius=8)}),
-            self.entries["ubicacion"].pack()
-        ))
+        self.entries["titulo"] = add_row("Titulo *", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
+        self.entries["autor"] = add_row("Autor", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
+        self.entries["paginas"] = add_row("N Paginas", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
+        self.entries["genero"] = add_row("Genero", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
+        self.entries["ubicacion"] = add_row("Ubicacion", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
 
         # Portada
         row_foto = CTkFrame(self.add_scroll, fg_color="transparent")
@@ -154,11 +141,11 @@ class BibliotecaFrame(CTkFrame):
         self.estado_var = ctk.StringVar(value="")
         self.add_row_est = CTkFrame(inner_est, fg_color="transparent")
         self.add_row_est.pack(anchor="w")
-        for val, txt in [("no_leido", "No leído"), ("leyendo", "Leyendo"), ("leido", "Leído")]:
+        for val, txt in [("no_leido", "No leido"), ("leyendo", "Leyendo"), ("leido", "Leido")]:
             CTkRadioButton(self.add_row_est, text=txt, variable=self.estado_var, value=val,
                            command=self.on_estado_change).pack(side="left", padx=10)
 
-        # Extras para "leído"
+        # Extras para "leido"
         self.extras_frame = CTkFrame(self.add_scroll, fg_color="transparent")
         self.extras_frame.pack(fill="x", padx=30, pady=(6, 0))
         self.extras_frame.pack_forget()
@@ -168,7 +155,7 @@ class BibliotecaFrame(CTkFrame):
         inner_extras = CTkFrame(row_extras, fg_color="transparent")
         inner_extras.pack(expand=True)
 
-        CTkLabel(inner_extras, text="Calificación", font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 2))
+        CTkLabel(inner_extras, text="Calificacion", font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 2))
         self.add_stars = StarRating(inner_extras, rating=0, size=26)
         self.add_stars.pack(anchor="w")
 
@@ -176,7 +163,7 @@ class BibliotecaFrame(CTkFrame):
         self.fmt_var = ctk.StringVar(value="fisico")
         self.add_row_fmt = CTkFrame(inner_extras, fg_color="transparent")
         self.add_row_fmt.pack(anchor="w")
-        for val, txt in [("fisico", "Físico"), ("digital", "Digital"), ("audiolibro", "Audiolibro")]:
+        for val, txt in [("fisico", "Fisico"), ("digital", "Digital"), ("audiolibro", "Audiolibro")]:
             CTkRadioButton(self.add_row_fmt, text=txt, variable=self.fmt_var, value=val).pack(side="left", padx=10)
 
         btn_add_row = CTkFrame(self.add_container, fg_color="transparent")
@@ -184,10 +171,12 @@ class BibliotecaFrame(CTkFrame):
         CTkButton(btn_add_row, text="Guardar Libro", command=self.save_book,
                   height=38, font=("Arial", 14, "bold"), corner_radius=10).pack(side="left", padx=8)
         CTkButton(btn_add_row, text="Cancelar", command=self.close_add_panel,
-                  height=38, font=("Arial", 14), corner_radius=10, fg_color="#1A5276", hover_color="#5DADE2").pack(side="left", padx=8)
+                  height=38, font=("Arial", 14), corner_radius=10,
+                  fg_color="#1A5276", hover_color="#5DADE2").pack(side="left", padx=8)
 
         # --- PANEL EMBEBIDO EDITAR LIBRO ---
-        self.edit_panel = CTkFrame(self, fg_color="#D0EBF5", corner_radius=16, border_width=2, border_color="#2E86C1")
+        self.edit_panel = CTkFrame(self, fg_color="#D0EBF5", corner_radius=16,
+                                   border_width=2, border_color="#2E86C1")
         self.edit_book_id = None
 
         CTkLabel(self.edit_panel, text="EDITAR LIBRO", font=("Helvetica", 22, "bold")).pack(pady=(20, 15))
@@ -195,38 +184,25 @@ class BibliotecaFrame(CTkFrame):
         self.edit_container = CTkFrame(self.edit_panel, fg_color="transparent")
         self.edit_container.pack(expand=True, fill="both")
 
-        self.edit_scroll = ctk.CTkScrollableFrame(self.edit_container, width=700, height=420, fg_color="transparent")
+        self.edit_scroll = ctk.CTkScrollableFrame(self.edit_container, width=700, height=420,
+                                                fg_color="transparent")
         self.edit_scroll.pack(padx=30, pady=5, fill="both", expand=True)
 
-        def edit_row(label_text, widget):
+        def edit_row(label_text, widget_factory):
             row = CTkFrame(self.edit_scroll, fg_color="transparent")
             row.pack(fill="x", pady=(6, 2))
             inner = CTkFrame(row, fg_color="transparent")
             inner.pack(expand=True)
             CTkLabel(inner, text=label_text, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 2))
-            widget(inner)
-            return inner
+            w = widget_factory(inner)
+            w.pack()
+            return w
 
-        edit_row("Título", lambda inner: (
-            setattr(self, 'e_titulo', CTkEntry(inner, width=600, height=32, corner_radius=8)),
-            self.e_titulo.pack()
-        ))
-        edit_row("Autor", lambda inner: (
-            setattr(self, 'e_autor', CTkEntry(inner, width=600, height=32, corner_radius=8)),
-            self.e_autor.pack()
-        ))
-        edit_row("Páginas", lambda inner: (
-            setattr(self, 'e_pags', CTkEntry(inner, width=600, height=32, corner_radius=8)),
-            self.e_pags.pack()
-        ))
-        edit_row("Género", lambda inner: (
-            setattr(self, 'e_genero', CTkEntry(inner, width=600, height=32, corner_radius=8)),
-            self.e_genero.pack()
-        ))
-        edit_row("Ubicación", lambda inner: (
-            setattr(self, 'e_ubi', CTkEntry(inner, width=600, height=32, corner_radius=8)),
-            self.e_ubi.pack()
-        ))
+        self.e_titulo = edit_row("Titulo", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
+        self.e_autor = edit_row("Autor", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
+        self.e_pags = edit_row("Paginas", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
+        self.e_genero = edit_row("Genero", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
+        self.e_ubi = edit_row("Ubicacion", lambda p: CTkEntry(p, width=600, height=32, corner_radius=8))
 
         # Portada
         row_foto = CTkFrame(self.edit_scroll, fg_color="transparent")
@@ -254,16 +230,16 @@ class BibliotecaFrame(CTkFrame):
         self.e_estado = ctk.StringVar(value="no_leido")
         self.edit_row_est = CTkFrame(inner_est, fg_color="transparent")
         self.edit_row_est.pack(anchor="w")
-        for val, txt in [("no_leido", "No leído"), ("leyendo", "Leyendo"), ("leido", "Leído")]:
+        for val, txt in [("no_leido", "No leido"), ("leyendo", "Leyendo"), ("leido", "Leido")]:
             CTkRadioButton(self.edit_row_est, text=txt, variable=self.e_estado,
                            value=val, command=self.on_edit_estado_change).pack(side="left", padx=10)
 
-        # Calificación y Formato (siempre visibles, controlados por edit_book)
+        # Calificacion y Formato (siempre visibles, controlados por edit_book)
         row_stars = CTkFrame(self.edit_scroll, fg_color="transparent")
         row_stars.pack(fill="x", pady=(6, 2))
         inner_stars = CTkFrame(row_stars, fg_color="transparent")
         inner_stars.pack(expand=True)
-        CTkLabel(inner_stars, text="Calificación", font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 2))
+        CTkLabel(inner_stars, text="Calificacion", font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 2))
         self.e_stars = StarRating(inner_stars, rating=0, size=26)
         self.e_stars.pack(anchor="w")
 
@@ -275,7 +251,7 @@ class BibliotecaFrame(CTkFrame):
         self.e_fmt = ctk.StringVar(value="fisico")
         self.edit_row_fmt = CTkFrame(inner_fmt, fg_color="transparent")
         self.edit_row_fmt.pack(anchor="w")
-        for val, txt in [("fisico", "Físico"), ("digital", "Digital"), ("audiolibro", "Audiolibro")]:
+        for val, txt in [("fisico", "Fisico"), ("digital", "Digital"), ("audiolibro", "Audiolibro")]:
             CTkRadioButton(self.edit_row_fmt, text=txt, variable=self.e_fmt,
                            value=val).pack(side="left", padx=10)
 
@@ -284,8 +260,10 @@ class BibliotecaFrame(CTkFrame):
         CTkButton(btn_edit_row, text="Guardar cambios", command=self.save_edit_book,
                   height=38, font=("Arial", 14, "bold"), corner_radius=10).pack(side="left", padx=8)
         CTkButton(btn_edit_row, text="Cancelar", command=self.close_edit_panel,
-                  height=38, font=("Arial", 14), corner_radius=10, fg_color="#1A5276", hover_color="#5DADE2").pack(side="left", padx=8)
+                  height=38, font=("Arial", 14), corner_radius=10,
+                  fg_color="#1A5276", hover_color="#5DADE2").pack(side="left", padx=8)
 
+        # --- SCROLL DE TARJETAS ---
         self.scroll = CTkScrollableFrame(self, width=900, height=500, fg_color="transparent")
         self.scroll.pack(padx=20, pady=10, fill="both", expand=True)
 
@@ -302,13 +280,13 @@ class BibliotecaFrame(CTkFrame):
             self.scroll.pack_forget()
             self.edit_panel.pack_forget()
             self.add_panel.pack(fill="both", padx=20, pady=10, expand=True)
-            self.btn_toggle_add.configure(text="✕ Cerrar panel")
+            self.btn_toggle_add.configure(text="Cerrar panel")
             self.add_panel_visible = True
 
     def close_add_panel(self):
         self.add_panel.pack_forget()
         self.scroll.pack(padx=20, pady=10, fill="both", expand=True)
-        self.btn_toggle_add.configure(text="+ Añadir Libro")
+        self.btn_toggle_add.configure(text="+ Anadir Libro")
         self.add_panel_visible = False
 
     def on_estado_change(self):
@@ -320,7 +298,7 @@ class BibliotecaFrame(CTkFrame):
     def browse_photo(self):
         path = filedialog.askopenfilename(
             title="Seleccionar portada",
-            filetypes=[("Imágenes", "*.png *.jpg *.jpeg *.gif *.bmp"), ("Todos", "*.*")]
+            filetypes=[("Imagenes", "*.png *.jpg *.jpeg *.gif *.bmp"), ("Todos", "*.*")]
         )
         if path:
             self._foto_path = path
@@ -335,7 +313,7 @@ class BibliotecaFrame(CTkFrame):
     def save_book(self):
         titulo = self.entries["titulo"].get().strip()
         if not titulo:
-            messagebox.showwarning("Campo requerido", "El título es obligatorio.")
+            messagebox.showwarning("Campo requerido", "El titulo es obligatorio.")
             return
 
         estado = self.estado_var.get()
@@ -375,7 +353,6 @@ class BibliotecaFrame(CTkFrame):
         self.add_stars.set_rating(0)
         self.fmt_var.set("fisico")
         self.photo_preview.configure(text="", image=None)
-        self._cover_cache.clear()
 
         self.toggle_add_panel()
         self.render_books()
@@ -386,7 +363,7 @@ class BibliotecaFrame(CTkFrame):
 
     def set_orden(self, valor_texto):
         inv = {v: k for k, v in self.ORDEN.items()}
-        self.orden_actual = inv.get(valor_texto, "reciente")
+        self.orden_actual = inv.get(valor_texto, "titulo")
         self.render_books()
 
     def _filtrar_y_ordenar(self, books):
@@ -409,72 +386,62 @@ class BibliotecaFrame(CTkFrame):
         return books
 
     # ------------------------------------------------------------------ #
-    #  RENDERIZADO: 5 COLUMNAS FIJAS
+    #  RENDERIZADO OPTIMIZADO: sincrono, sin batches, widgets estaticos
     # ------------------------------------------------------------------ #
     def render_books(self):
-        if self._render_job:
-            self.after_cancel(self._render_job)
-            self._render_job = None
-
         books = self._filtrar_y_ordenar(self.db.get("books"))
 
-        # 1. Devolver tarjetas visibles al pool (ocultar, no destruir)
+        # 1. Ocultar tarjetas visibles actuales
         for card in self._visible_cards:
             card.grid_remove()
-            self._card_pool.append(card)
         self._visible_cards.clear()
 
-        # 2. Destruir widgets huérfanos (mensajes "vacío", etc.)
-        for w in self.scroll.winfo_children():
-            if w not in self._card_pool:
+        # 2. Limpiar mensajes de vacio
+        for w in list(self.scroll.winfo_children()):
+            if getattr(w, "_is_empty_msg", False):
                 w.destroy()
 
         if not books:
             msg = "No hay libros en esta vista."
             if self.filtro_actual == "tbr":
-                msg = "Tu TBR está vacío 📭"
+                msg = "Tu TBR esta vacio"
             elif self.filtro_actual == "leidos":
-                msg = "Aún no has marcado ningún libro como leído."
+                msg = "Aun no has marcado ningun libro como leido."
             lbl = CTkLabel(self.scroll, text=msg, font=("Arial", 16))
+            lbl._is_empty_msg = True
             lbl.pack(pady=50, fill="x")
             lbl.configure(anchor="center")
             return
 
-        cols = self.COLS  # <-- SIEMPRE 5
+        cols = self.COLS
         total = len(books)
-        chunk = 5
 
         # Reset scroll al inicio
-        if hasattr(self.scroll, '_parent_canvas'):
-            self.scroll._parent_canvas.yview_moveto(0)
+        canvas = getattr(self.scroll, "_parent_canvas", None)
+        if canvas:
+            canvas.yview_moveto(0)
 
-        def draw_batch(start):
-            end = min(start + chunk, total)
-            for idx in range(start, end):
-                row = idx // cols
-                col = idx % cols
+        # 3. Reutilizar del pool o crear nuevas tarjetas
+        for idx in range(total):
+            row = idx // cols
+            col = idx % cols
 
-                # Reutilizar del pool o crear nueva tarjeta
-                if self._card_pool:
-                    card = self._card_pool.pop()
-                    self._update_book_card(card, books[idx])
-                else:
-                    card = self.create_book_card(self.scroll, books[idx])
-
-                card.grid(row=row, column=col, padx=self.CARD_PADX, pady=15)
-                self._visible_cards.append(card)
-
-            if end < total:
-                self._render_job = self.after(25, lambda: draw_batch(end))
+            if self._card_pool:
+                card = self._card_pool.pop()
             else:
-                # Limpiar pool excedente (mantener buffer de ~3 filas)
-                max_pool = cols * 3
-                while len(self._card_pool) > max_pool:
-                    c = self._card_pool.pop()
-                    c.destroy()
-                self.update_idletasks()
+                card = self.create_book_card(self.scroll)
 
-        draw_batch(0)
+            self._update_book_card(card, books[idx])
+            card.grid(row=row, column=col, padx=self.CARD_PADX, pady=15)
+            self._visible_cards.append(card)
+
+        # 4. Recortar pool excedente (mantener buffer de ~3 filas)
+        max_pool = cols * 3
+        while len(self._card_pool) > max_pool:
+            c = self._card_pool.pop()
+            c.destroy()
+
+        self.update_idletasks()
 
     def _load_cover(self, path, size=(120, 170)):
         if not path or not os.path.exists(path):
@@ -492,22 +459,23 @@ class BibliotecaFrame(CTkFrame):
             pass
         return None
 
-    def create_book_card(self, parent, book=None):
-        """Tarjeta de 180px para caber 5 fijas sin cortarse."""
+    def create_book_card(self, parent):
+        """Tarjeta con widgets de estado pre-creados para evitar destruccion masiva."""
         card = CTkFrame(parent, width=self.CARD_WIDTH, height=360, corner_radius=12, border_width=2)
         card.grid_propagate(False)
 
         refs = {}
         card._refs = refs
+        card._book_id = None
 
-        # Cover (ligeramente más pequeño para la tarjeta de 180)
+        # Cover
         cover = CTkFrame(card, width=120, height=150, corner_radius=8, fg_color="#FFFFFF")
         cover.pack(pady=(10, 6))
         cover.pack_propagate(False)
         refs['cover_img'] = CTkLabel(cover, text="")
         refs['cover_img'].place(relx=0.5, rely=0.5, anchor="center")
 
-        # Texto con wraplength para que no se corte y se ajuste a varias líneas
+        # Textos
         refs['title'] = CTkLabel(card, text="", font=("Arial", 13, "bold"), wraplength=160)
         refs['title'].pack(pady=(0, 2))
         refs['author'] = CTkLabel(card, text="", font=("Arial", 10), wraplength=160)
@@ -517,27 +485,37 @@ class BibliotecaFrame(CTkFrame):
         refs['location'] = CTkLabel(card, text="", font=("Arial", 9), wraplength=160)
         refs['location'].pack(pady=(0, 2))
 
-        # Estado / Rating / Formato (contenedor fijo)
+        # Estado frame (contenedor fijo)
         refs['estado_frame'] = CTkFrame(card, fg_color="transparent", height=55)
         refs['estado_frame'].pack(pady=(0, 4))
         refs['estado_frame'].pack_propagate(False)
+
+        # Pre-crear widgets de estado: menu y panel "leido"
+        refs['estado_menu'] = CTkOptionMenu(refs['estado_frame'], values=list(self.ESTADOS.values()),
+                                            width=140)
+
+        refs['estado_done'] = CTkFrame(refs['estado_frame'], fg_color="transparent")
+        refs['estado_done_label'] = CTkLabel(refs['estado_done'], text="",
+                                              font=("Arial", 9, "bold"), text_color="#5DADE2")
+        refs['estado_done_stars'] = StarRating(refs['estado_done'], rating=0, size=14, readonly=True)
+        refs['estado_done_fmt'] = CTkLabel(refs['estado_done'], text="", font=("Arial", 9))
 
         # Botones
         btn_row = CTkFrame(card, fg_color="transparent")
         btn_row.pack(pady=(0, 8))
         refs['btn_edit'] = CTkButton(btn_row, text="Editar", width=28, height=18, font=("Arial", 8))
         refs['btn_edit'].pack(side="left", padx=2)
-        refs['btn_del'] = CTkButton(btn_row, text="Eliminar", width=28, height=18, fg_color="#E74C3C", hover_color="#C0392B")
+        refs['btn_del'] = CTkButton(btn_row, text="Eliminar", width=28, height=18,
+                                    fg_color="#E74C3C", hover_color="#C0392B")
         refs['btn_del'].pack(side="left", padx=2)
 
-        if book:
-            self._update_book_card(card, book)
         return card
 
     def _update_book_card(self, card, book):
-        """Actualiza una tarjeta reciclada con los datos de un libro."""
+        """Actualiza una tarjeta reciclada sin destruir widgets."""
         refs = card._refs
         estado = self.normalize_estado(book.get("estado", "no_leido"))
+        card._book_id = book.get("id")
 
         # Portada
         img = self._load_cover(book.get("foto"))
@@ -547,30 +525,30 @@ class BibliotecaFrame(CTkFrame):
             refs['cover_img'].configure(image=None, text="Libro", font=("Arial", 40))
 
         # Textos completos (sin truncar) — el wraplength se encarga de ajustar
-        refs['title'].configure(text=book.get("titulo", "Sin título"))
+        refs['title'].configure(text=book.get("titulo", "Sin titulo"))
         refs['author'].configure(text=book.get("autor", ""))
-        refs['meta'].configure(text=f"{book.get('paginas', '?')} pág. | {book.get('genero', '')}")
-        refs['location'].configure(text=f"📍 {book.get('ubicacion', '')}")
+        refs['meta'].configure(text=f"{book.get('paginas', '?')} pag. | {book.get('genero', '')}")
+        refs['location'].configure(text=f"Loc: {book.get('ubicacion', '')}")
 
-        # Limpiar y reconstruir zona de estado
-        for w in refs['estado_frame'].winfo_children():
-            w.destroy()
-
+        # Estado: mostrar/ocultar widgets pre-creados
         if estado != "leido":
-            menu = CTkOptionMenu(refs['estado_frame'], values=list(self.ESTADOS.values()),
-                                 command=lambda v, b=book: self.cambiar_estado(b, v),
-                                 width=140)
-            menu.set(self.ESTADOS[estado])
-            menu.place(relx=0.5, rely=0.5, anchor="center")
+            refs['estado_done'].place_forget()
+            refs['estado_menu'].place(relx=0.5, rely=0.5, anchor="center")
+            refs['estado_menu'].set(self.ESTADOS[estado])
+            refs['estado_menu'].configure(
+                command=lambda v, b=book: self.cambiar_estado(b, v)
+            )
         else:
-            CTkLabel(refs['estado_frame'], text=self.ESTADOS.get(estado, ""),
-                     font=("Arial", 9, "bold"), text_color="#5DADE2").place(relx=0.5, y=8, anchor="center")
-            stars = StarRating(refs['estado_frame'], rating=book.get("rating", 0), size=14, readonly=True)
-            stars.place(relx=0.5, y=24, anchor="center")
+            refs['estado_menu'].place_forget()
+            refs['estado_done'].place(relx=0.5, rely=0.5, anchor="center", relwidth=1, relheight=1)
+            refs['estado_done_label'].configure(text=self.ESTADOS.get(estado, ""))
+            refs['estado_done_label'].place(relx=0.5, y=8, anchor="center")
+            refs['estado_done_stars'].set_rating(book.get("rating", 0))
+            refs['estado_done_stars'].place(relx=0.5, y=24, anchor="center")
             fmt = book.get("formato", "fisico")
-            fmt_text = {"fisico": "Físico", "digital": "Digital", "audiolibro": "🎧 Audio"}
-            CTkLabel(refs['estado_frame'], text=fmt_text.get(fmt, ""),
-                     font=("Arial", 9)).place(relx=0.5, y=42, anchor="center")
+            fmt_text = {"fisico": "Fisico", "digital": "Digital", "audiolibro": "Audio"}
+            refs['estado_done_fmt'].configure(text=fmt_text.get(fmt, ""))
+            refs['estado_done_fmt'].place(relx=0.5, y=42, anchor="center")
 
         # Botones
         refs['btn_edit'].configure(command=lambda b=book: self.edit_book(b))
@@ -584,10 +562,8 @@ class BibliotecaFrame(CTkFrame):
             if b.get("id") == book.get("id"):
                 b["estado"] = nuevo
                 if nuevo == "leido":
-                    if "rating" not in b:
-                        b["rating"] = 0
-                    if "formato" not in b:
-                        b["formato"] = "fisico"
+                    b.setdefault("rating", 0)
+                    b.setdefault("formato", "fisico")
                 break
         self.db.set("books", books)
         self.render_books()
@@ -595,7 +571,7 @@ class BibliotecaFrame(CTkFrame):
     def browse_edit_photo(self):
         path = filedialog.askopenfilename(
             title="Seleccionar portada",
-            filetypes=[("Imágenes", "*.png *.jpg *.jpeg *.gif *.bmp"), ("Todos", "*.*")]
+            filetypes=[("Imagenes", "*.png *.jpg *.jpeg *.gif *.bmp"), ("Todos", "*.*")]
         )
         if path:
             self.edit_foto_path = path
@@ -685,22 +661,19 @@ class BibliotecaFrame(CTkFrame):
             self.e_stars.pack_forget()
             self.edit_row_fmt.pack_forget()
 
-        # Calificación y formato
+        # Calificacion y formato
         self.e_stars.set_rating(book.get("rating", 0))
         self.e_fmt.set(book.get("formato", "fisico"))
 
         # Mostrar panel
         self.scroll.pack_forget()
         self.add_panel.pack_forget()
-        self.btn_toggle_add.configure(text="+ Añadir Libro")
+        self.btn_toggle_add.configure(text="+ Anadir Libro")
         self.add_panel_visible = False
         self.edit_panel.pack(fill="both", padx=20, pady=10, expand=True)
 
-    def edit_leido(self, book):
-        self.edit_book(book)
-
     def delete_book(self, book):
-        if not messagebox.askyesno("Confirmar", f'¿Eliminar "{book.get("titulo")}"?'):
+        if not messagebox.askyesno("Confirmar", f'Eliminar "{book.get("titulo")}"?'):
             return
         books = [b for b in self.db.get("books") if b.get("id") != book.get("id")]
         self.db.set("books", books)

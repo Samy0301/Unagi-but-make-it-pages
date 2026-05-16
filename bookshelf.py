@@ -1,4 +1,4 @@
-"""Estantería visual con lomos personalizables - estilo minimalista."""
+"""Estanteria visual con lomos personalizables - estilo minimalista."""
 from tkinter import Canvas, colorchooser, messagebox
 
 import customtkinter as ctk
@@ -16,9 +16,8 @@ COLORS = [
     "#FF6D00", "#FF3D00", "#DD2C00", "#5D4037", "#78909C"
 ]
 
-# Configuración por defecto de estantes
 DEFAULT_SHELVES = [140, 300, 460]
-SHELF_SPACING = 160  # espacio entre estantes
+SHELF_SPACING = 160
 
 
 class BookshelfFrame(CTkFrame):
@@ -50,22 +49,23 @@ class BookshelfFrame(CTkFrame):
             btn.bind("<Button-1>", lambda e, col=c: self.set_color(col))
 
         CTkButton(ctrl, text="Refrescar", command=self.refresh_books, width=100).pack(side="left", padx=10)
-        CTkButton(ctrl, text="Limpiar", command=self.clear_shelf, fg_color="#E74C3C", hover_color="#C0392B", width=100).pack(side="left", padx=5)
+        CTkButton(ctrl, text="Limpiar", command=self.clear_shelf,
+                  fg_color="#E74C3C", hover_color="#C0392B", width=100).pack(side="left", padx=5)
 
         # Controles de estantes
         shelf_ctrl = CTkFrame(self, fg_color="transparent")
         shelf_ctrl.pack(fill="x", padx=20, pady=(0, 5))
-        CTkButton(shelf_ctrl, text="Añadir estante", command=self.add_shelf,
+        CTkButton(shelf_ctrl, text="Anadir estante", command=self.add_shelf,
                   width=130, corner_radius=8).pack(side="left", padx=5)
         CTkButton(shelf_ctrl, text="Quitar estante", command=self.remove_shelf,
                   width=130, corner_radius=8, fg_color="#1A5276", hover_color="#5DADE2").pack(side="left", padx=5)
         self.shelf_count_label = CTkLabel(shelf_ctrl, text=f"Estantes: {len(self.get_shelves())}", font=("Arial", 11))
         self.shelf_count_label.pack(side="left", padx=15)
 
-        self.status_label = CTkLabel(self, text="Click en la estantería para colocar el lomo. Click derecho en un lomo para eliminarlo.", font=("Arial", 11))
+        self.status_label = CTkLabel(self, text="Click en la estanteria para colocar el lomo. Click derecho en un lomo para eliminarlo.", font=("Arial", 11))
         self.status_label.pack(pady=2)
 
-        # Canvas scrollable para estantes
+        # Canvas
         self.canvas_frame = CTkFrame(self, fg_color="transparent")
         self.canvas_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
@@ -74,56 +74,51 @@ class BookshelfFrame(CTkFrame):
         self.canvas.bind("<Button-1>", self.on_canvas_click)
         self.canvas.bind("<Button-3>", self.on_canvas_right_click)
 
-        # Scrollbar vertical
         self.vscroll = ctk.CTkScrollbar(self.canvas_frame, command=self.canvas.yview)
         self.vscroll.pack(side="right", fill="y")
         self.canvas.configure(yscrollcommand=self.vscroll.set)
 
-        # --- SCROLL CON RUEDA / TOUCHPAD ---
-        self.canvas.bind("<MouseWheel>", self._on_mousewheel)      # Windows / macOS
-        self.canvas.bind("<Button-4>", self._on_mousewheel)        # Linux scroll arriba
-        self.canvas.bind("<Button-5>", self._on_mousewheel)        # Linux scroll abajo
+        # Scroll con rueda
+        self.canvas.bind("<MouseWheel>", self._on_mousewheel)
+        self.canvas.bind("<Button-4>", self._on_mousewheel)
+        self.canvas.bind("<Button-5>", self._on_mousewheel)
 
-        # Grid invisible para control de solapamiento
-        self.shelf_grid = {}
+        # Grid de ocupacion: shelf_y -> set de x ocupadas
+        self._shelf_grid = {}
 
-        # Centrado automático al cambiar tamaño
+        # Cache de items del canvas: item_id -> datos del libro
+        self._canvas_items = {}
+
         self._last_canvas_width = 0
         self.canvas.bind("<Configure>", self._on_canvas_configure)
 
         self.draw_shelf()
 
     def _on_mousewheel(self, event):
-        """Maneja scroll con rueda del ratón y touchpad."""
         if event.num == 4 or event.delta > 0:
             self.canvas.yview_scroll(-3, "units")
         elif event.num == 5 or event.delta < 0:
             self.canvas.yview_scroll(3, "units")
 
     def _on_canvas_configure(self, event=None):
-        """Redibuja la estantería cuando el canvas cambia de tamaño para mantenerla centrada."""
         width = self.canvas.winfo_width()
-        # Evitar redibujos innecesarios si el ancho no cambió significativamente
         if abs(width - self._last_canvas_width) > 2:
             self._last_canvas_width = width
             self.draw_shelf()
 
     def get_shelves(self):
-        """Obtiene la lista de posiciones Y de los estantes."""
         config = self.db.get("shelf_config")
         if isinstance(config, dict) and "shelves" in config:
             return config["shelves"]
         return list(DEFAULT_SHELVES)
 
     def save_shelves(self, shelves):
-        """Guarda la configuración de estantes."""
         self.db.set("shelf_config", {"shelves": shelves})
 
     def add_shelf(self):
-        """Añade un nuevo estante debajo del último."""
         shelves = self.get_shelves()
         if len(shelves) >= 10:
-            messagebox.showinfo("Límite", "Máximo 10 estantes.")
+            messagebox.showinfo("Limite", "Maximo 10 estantes.")
             return
         new_y = shelves[-1] + SHELF_SPACING if shelves else 140
         shelves.append(new_y)
@@ -132,16 +127,14 @@ class BookshelfFrame(CTkFrame):
         self.draw_shelf()
 
     def remove_shelf(self):
-        """Elimina el último estante (si está vacío)."""
         shelves = self.get_shelves()
         if len(shelves) <= 1:
-            messagebox.showinfo("Mínimo", "Debe haber al menos 1 estante.")
+            messagebox.showinfo("Minimo", "Debe haber al menos 1 estante.")
             return
         last_y = shelves[-1]
-        # Verificar si hay libros en el último estante
         shelf_items = [item for item in self.db.get("bookshelf") if item.get("y") == last_y]
         if shelf_items:
-            messagebox.showinfo("Ocupado", "El último estante tiene libros. Muévelos primero.")
+            messagebox.showinfo("Ocupado", "El ultimo estante tiene libros. Muevelos primero.")
             return
         shelves.pop()
         self.save_shelves(shelves)
@@ -155,8 +148,8 @@ class BookshelfFrame(CTkFrame):
         shelf_book_ids = {item.get("book_id") for item in self.db.get("bookshelf")}
         available = [b for b in books if b.get("id") not in shelf_book_ids]
         if not available:
-            return ["Todos los libros están en la estantería"]
-        return [b.get("titulo", "Sin título") for b in available]
+            return ["Todos los libros estan en la estanteria"]
+        return [b.get("titulo", "Sin titulo") for b in available]
 
     def refresh_books(self):
         titles = self._book_titles()
@@ -174,37 +167,34 @@ class BookshelfFrame(CTkFrame):
             self.set_color(c)
 
     def clear_shelf(self):
-        if messagebox.askyesno("Confirmar", "¿Eliminar todos los lomos de la estantería?"):
+        if messagebox.askyesno("Confirmar", "Eliminar todos los lomos de la estanteria?"):
             self.db.set("bookshelf", [])
-            self.shelf_grid = {}
+            self._shelf_grid = {}
+            self._canvas_items = {}
             self.refresh_books()
             self.draw_shelf()
 
     def _rebuild_grid(self):
-        """Reconstruye el grid a partir de los datos guardados."""
-        self.shelf_grid = {}
+        self._shelf_grid = {}
         for item in self.db.get("bookshelf"):
             shelf_y = item.get("y")
             x = item.get("x")
-            if shelf_y not in self.shelf_grid:
-                self.shelf_grid[shelf_y] = {}
-            self.shelf_grid[shelf_y][x] = item
+            if shelf_y not in self._shelf_grid:
+                self._shelf_grid[shelf_y] = set()
+            self._shelf_grid[shelf_y].add(x)
 
     def draw_shelf(self):
         self.canvas.delete("all")
+        self._canvas_items = {}
         self._rebuild_grid()
         shelves = self.get_shelves()
 
-        # Obtener ancho real del canvas (ahora siempre correcto gracias a <Configure>)
         canvas_w = max(950, self.canvas.winfo_width())
+        shelf_inner_w = 800
+        frame_thickness = 18
+        top_margin = 30
+        bottom_margin = 40
 
-        # Dimensiones del mueble de estantería
-        shelf_inner_w = 800   # ancho interior donde van los libros
-        frame_thickness = 18  # grosor del marco de madera
-        top_margin = 30       # espacio arriba del primer estante
-        bottom_margin = 40    # espacio debajo del último estante
-
-        # Calcular altura total del mueble
         if shelves:
             inner_height = shelves[-1] - shelves[0] + bottom_margin + top_margin
             furniture_h = inner_height + frame_thickness * 2
@@ -218,78 +208,59 @@ class BookshelfFrame(CTkFrame):
         total_height = furniture_bottom + 50
         self.canvas.configure(scrollregion=(0, 0, canvas_w, total_height))
 
-        # Centro del mueble
         furniture_x = (canvas_w - (shelf_inner_w + frame_thickness * 2)) / 2
         left_frame = furniture_x
         right_frame = furniture_x + shelf_inner_w + frame_thickness * 2
         left_inner = furniture_x + frame_thickness
         right_inner = right_frame - frame_thickness
 
-        # ─── MARCO DEL MUEBLE (efecto 3D de madera) ───
-        # Sombra del mueble
+        # Marco del mueble (efecto 3D)
         self.canvas.create_rectangle(
             furniture_x + 6, furniture_top + 6,
             right_frame + 6, furniture_bottom + 6,
             fill="#5DADE2", outline="", stipple="gray25"
         )
-
-        # Marco exterior (madera oscura)
         self.canvas.create_rectangle(
-            furniture_x, furniture_top,
-            right_frame, furniture_bottom,
+            furniture_x, furniture_top, right_frame, furniture_bottom,
             fill="#D0EBF5", outline="#1A5276", width=2
         )
-
-        # Borde claro superior (efecto 3D)
         self.canvas.create_line(
-            furniture_x + 2, furniture_top + 2,
-            right_frame - 2, furniture_top + 2,
+            furniture_x + 2, furniture_top + 2, right_frame - 2, furniture_top + 2,
             fill="#2E86C1", width=2
         )
         self.canvas.create_line(
-            furniture_x + 2, furniture_top + 2,
-            furniture_x + 2, furniture_bottom - 2,
+            furniture_x + 2, furniture_top + 2, furniture_x + 2, furniture_bottom - 2,
             fill="#2E86C1", width=2
         )
-
-        # Borde oscuro inferior (efecto 3D)
         self.canvas.create_line(
-            furniture_x + 2, furniture_bottom - 2,
-            right_frame - 2, furniture_bottom - 2,
+            furniture_x + 2, furniture_bottom - 2, right_frame - 2, furniture_bottom - 2,
             fill="#1A5276", width=2
         )
         self.canvas.create_line(
-            right_frame - 2, furniture_top + 2,
-            right_frame - 2, furniture_bottom - 2,
+            right_frame - 2, furniture_top + 2, right_frame - 2, furniture_bottom - 2,
             fill="#1A5276", width=2
         )
 
-        # ─── ESTANTES (tablones de madera) ───
+        # Estantes
         for y in shelves:
-            # Tablón del estante
             self.canvas.create_rectangle(
-                left_inner - 2, y - 4,
-                right_inner + 2, y + 4,
+                left_inner - 2, y - 4, right_inner + 2, y + 4,
                 fill="#1A5276", outline="#2E86C1", width=1
             )
-            # Borde claro arriba del tablón
             self.canvas.create_line(
-                left_inner - 2, y - 3,
-                right_inner + 2, y - 3,
+                left_inner - 2, y - 3, right_inner + 2, y - 3,
                 fill="#5D8AA8", width=1
             )
-            # Borde oscuro abajo del tablón
             self.canvas.create_line(
-                left_inner - 2, y + 3,
-                right_inner + 2, y + 3,
+                left_inner - 2, y + 3, right_inner + 2, y + 3,
                 fill="#2E86C1", width=1
             )
 
-        # Dibujar lomos
+        # Lomos
         for item in self.db.get("bookshelf"):
             self._draw_spine(item, left_inner, right_inner)
 
-    def _draw_spine(self, item, left_x=30, right_x=920):
+    def _draw_spine(self, item, left_x, right_x):
         x = item["x"]
         y_base = item["y"]
         color = item.get("color", "#48D1CC")
@@ -300,27 +271,40 @@ class BookshelfFrame(CTkFrame):
         shelf_y = min(self.get_shelves(), key=lambda s: abs(s - y_base))
         y_top = shelf_y - height
 
-        # Sombra sutil a la derecha
-        self.canvas.create_rectangle(x + 2, y_top + 2, x + width + 2, shelf_y + 2,
-                                     fill="#CFD8DC", outline="", stipple="gray50")
+        # IDs del canvas para este lomo
+        ids = []
+
+        # Sombra
+        ids.append(self.canvas.create_rectangle(
+            x + 2, y_top + 2, x + width + 2, shelf_y + 2,
+            fill="#CFD8DC", outline="", stipple="gray50"
+        ))
 
         # Lomo principal
-        self.canvas.create_rectangle(x, y_top, x + width, shelf_y,
-                                     fill=color, outline="#2E86C1", width=1)
+        ids.append(self.canvas.create_rectangle(
+            x, y_top, x + width, shelf_y,
+            fill=color, outline="#2E86C1", width=1
+        ))
 
-        # Borde superior claro
-        self.canvas.create_line(x + 1, y_top + 1, x + width - 1, y_top + 1,
-                                fill="#2C3E50", width=1, stipple="gray50")
+        # Borde superior
+        ids.append(self.canvas.create_line(
+            x + 1, y_top + 1, x + width - 1, y_top + 1,
+            fill="#2C3E50", width=1, stipple="gray50"
+        ))
 
-        # Texto vertical rotado 90°
-        self.canvas.create_text(x + width / 2, (y_top + shelf_y) / 2,
-                                text=title, fill="#2C3E50", font=("Arial", 8),
-                                angle=90, anchor="center")
+        # Texto
+        ids.append(self.canvas.create_text(
+            x + width / 2, (y_top + shelf_y) / 2,
+            text=title, fill="#2C3E50", font=("Arial", 8),
+            angle=90, anchor="center"
+        ))
+
+        # Guardar referencia para click derecho
+        for iid in ids:
+            self._canvas_items[iid] = item
 
     def _find_slot(self, shelf_y, x_click, width):
-        """Verifica si hay espacio en la posición deseada sin solapamiento."""
-        grid = self.shelf_grid.get(shelf_y, {})
-        self.canvas.update_idletasks()
+        grid = self._shelf_grid.get(shelf_y, set())
         canvas_w = max(950, self.canvas.winfo_width())
         shelf_inner_w = 800
         frame_thickness = 18
@@ -328,17 +312,15 @@ class BookshelfFrame(CTkFrame):
         right_margin = left_margin + shelf_inner_w - 5
         x = max(left_margin, min(x_click - width // 2, right_margin - width))
 
-        occupied = sorted(grid.keys())
-        for ox in occupied:
-            item = grid[ox]
-            ow = item.get("width", 40)
+        for ox in grid:
+            ow = 18  # width fijo
             if not (x + width <= ox or x >= ox + ow):
                 return None
         return x
 
     def on_canvas_click(self, event):
         title = self.book_var.get()
-        if title in ("Sin libros", "Todos los libros están en la estantería"):
+        if title in ("Sin libros", "Todos los libros estan en la estanteria"):
             return
 
         books = self.db.get("books")
@@ -348,7 +330,7 @@ class BookshelfFrame(CTkFrame):
 
         shelf = self.db.get("bookshelf")
         if any(item.get("book_id") == book.get("id") for item in shelf):
-            messagebox.showinfo("Libro ya colocado", f'"{title}" ya está en la estantería.')
+            messagebox.showinfo("Libro ya colocado", f'"{title}" ya esta en la estanteria.')
             return
 
         paginas = book.get("paginas", 200)
@@ -356,7 +338,6 @@ class BookshelfFrame(CTkFrame):
         tlen = len(book["titulo"])
         height_by_title = tlen * 6 + 14
         height = max(height_by_pages, height_by_title)
-
         width = 18
 
         shelves = self.get_shelves()
@@ -364,7 +345,6 @@ class BookshelfFrame(CTkFrame):
             messagebox.showinfo("Sin espacio", "Necesitas al menos 2 estantes para colocar libros.")
             return
 
-        # Solo permitir colocar desde el segundo estante en adelante
         valid_shelves = shelves[1:]
         click_y = self.canvas.canvasy(event.y)
         shelf_y = min(valid_shelves, key=lambda s: abs(s - click_y))
@@ -372,7 +352,7 @@ class BookshelfFrame(CTkFrame):
         click_x = self.canvas.canvasx(event.x)
         x = self._find_slot(shelf_y, click_x, width)
         if x is None:
-            messagebox.showinfo("Espacio ocupado", "Ya hay un libro en esa posición.")
+            messagebox.showinfo("Espacio ocupado", "Ya hay un libro en esa posicion.")
             return
 
         new_item = {
@@ -390,7 +370,11 @@ class BookshelfFrame(CTkFrame):
         shelf.append(new_item)
         self.db.set("bookshelf", shelf)
         self.refresh_books()
-        self.draw_shelf()
+        # Redibujar solo el nuevo lomo en vez de todo el canvas
+        self._rebuild_grid()
+        self._draw_spine(new_item,
+                        (max(950, self.canvas.winfo_width()) - (800 + 36)) / 2 + 18 + 5,
+                        (max(950, self.canvas.winfo_width()) - (800 + 36)) / 2 + 800 + 18 - 5)
 
     def on_canvas_right_click(self, event):
         shelves = self.get_shelves()
@@ -403,26 +387,22 @@ class BookshelfFrame(CTkFrame):
         if abs(shelf_y - click_y) > 130:
             return
 
-        grid = self.shelf_grid.get(shelf_y, {})
-        if not grid:
-            return
-
+        click_x = self.canvas.canvasx(event.x)
         closest_item = None
         closest_dist = float("inf")
-        click_x = self.canvas.canvasx(event.x)
 
-        for x, item in grid.items():
-            width = item.get("width", 40)
-            center_x = x + width / 2
+        for iid, item in self._canvas_items.items():
+            x = item.get("x", 0)
+            w = item.get("width", 40)
+            center_x = x + w / 2
             dist = abs(center_x - click_x)
-            if dist < closest_dist and dist < width / 2 + 5:
+            if dist < closest_dist and dist < w / 2 + 5:
                 closest_dist = dist
                 closest_item = item
-        # ... resto igual
 
         if closest_item:
             book_title = closest_item.get("title", "este libro")
-            if messagebox.askyesno("Eliminar lomo", f'¿Eliminar "{book_title}" de la estantería?'):
+            if messagebox.askyesno("Eliminar lomo", f'Eliminar "{book_title}" de la estanteria?'):
                 shelf = [item for item in self.db.get("bookshelf")
                          if item.get("id") != closest_item.get("id")]
                 self.db.set("bookshelf", shelf)

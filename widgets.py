@@ -8,47 +8,24 @@ class StarRating(CTkFrame):
         super().__init__(master, fg_color="transparent", **kwargs)
         self.rating = rating
         self.command = command
-        self.size = size
         self.readonly = readonly
         self.stars = []
+
         for i in range(5):
             lbl = CTkLabel(self, text="☆", font=("Arial", size), text_color="#F5B041")
             if not readonly:
                 lbl.bind("<Button-1>", lambda e, idx=i: self.set_rating(idx + 1))
             lbl.pack(side="left", padx=2)
             self.stars.append(lbl)
+
         self.update_stars()
 
     def set_rating(self, value):
-        # Actualizar SIEMPRE la UI, incluso en modo readonly
         self.rating = value
         self.update_stars()
-        # Solo disparar el callback si NO es readonly
         if self.command and not self.readonly:
             self.command(value)
 
     def update_stars(self):
         for i, lbl in enumerate(self.stars):
             lbl.configure(text="★" if i < self.rating else "☆")
-
-
-class IconRating(CTkFrame):
-    def __init__(self, master, icon="♥", max_val=5, value=0, **kwargs):
-        super().__init__(master, fg_color="transparent", **kwargs)
-        self.value = value
-        self.icon = icon
-        self.labels = []
-        for i in range(max_val):
-            lbl = CTkLabel(self, text=icon, font=("Arial", 18), text_color="#85929E")
-            lbl.bind("<Button-1>", lambda e, idx=i: self.set_value(idx + 1))
-            lbl.pack(side="left", padx=3)
-            self.labels.append(lbl)
-        self.update_ui()
-
-    def set_value(self, v):
-        self.value = v
-        self.update_ui()
-
-    def update_ui(self):
-        for i, lbl in enumerate(self.labels):
-            lbl.configure(text_color="#E67E22" if i < self.value else "#85929E")

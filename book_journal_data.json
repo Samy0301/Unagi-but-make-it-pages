@@ -1,388 +1,388 @@
 {
-    "books": [
-        {
-            "id": "2026-05-08T14:40:49.537209",
-            "titulo": "Amos y Mazmorras",
-            "autor": "Darlys  Stefanie",
-            "paginas": 765,
-            "genero": "Policiaco/Romance",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg",
-            "estado": "leido",
-            "rating": 5,
-            "formato": "digital"
-        },
-        {
-            "id": "2026-05-08T14:56:25.981774",
-            "titulo": "El Heroe Perdido",
-            "autor": "Rick Riordan",
-            "paginas": 534,
-            "genero": "Fantasia/GreekMitology",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/,hfcx.png",
-            "estado": "leido",
-            "rating": 4,
-            "formato": "digital"
-        },
-        {
-            "id": "2026-05-08T14:44:37.243156",
-            "titulo": "God of Fury",
-            "autor": "Rina Kent",
-            "paginas": 468,
-            "genero": "DarkRomance",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg",
-            "estado": "leido",
-            "rating": 5,
-            "formato": "digital"
-        },
-        {
-            "id": "2026-05-07T22:13:43.944853",
-            "titulo": "Love Song",
-            "autor": "Elle Kennedy",
-            "paginas": 350,
-            "genero": "Romance",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg",
-            "estado": "leido",
-            "rating": 4,
-            "formato": "digital"
-        },
-        {
-            "id": "2026-05-07T22:12:16.226147",
-            "titulo": "Prohibido Enamorarse",
-            "autor": "Elle Kennedy",
-            "paginas": 340,
-            "genero": "SportRomance",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/kbegf.jpg",
-            "estado": "leido",
-            "rating": 5,
-            "formato": "digital"
-        },
-        {
-            "id": "2026-05-07T22:19:15.989810",
-            "titulo": "Sweet Venom",
-            "autor": "Rina Kent",
-            "paginas": 430,
-            "genero": "SportDarkRomance",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/daac48dd-84e4-4986-b67e-f0064b3a3ba7.jpg",
-            "estado": "leyendo",
-            "rating": 0,
-            "formato": "fisico"
-        },
-        {
-            "id": "2026-05-07T22:20:03.321279",
-            "titulo": "The Mistake",
-            "autor": "Elle Kennedy",
-            "paginas": 489,
-            "genero": "SportRomance",
-            "ubicacion": "Books",
-            "foto": "C:/Users/pc/Pictures/.hebrf.jpg",
-            "estado": "leido",
-            "rating": 5,
-            "formato": "digital"
-        }
-    ],
-    "reviews": [
-        {
-            "id": "2026-05-09T16:40:19.093876",
-            "titulo": "Good of Ruin",
-            "autor": "Rina Kent",
-            "fecha_inicio": "4/5/2025",
-            "fecha_final": "6/5/2025",
-            "paginas": 450,
-            "formato": "digital",
-            "genero": "DarkRomance",
-            "rating": 5,
-            "personaje_fav": "Nikolai Sokolov",
-            "personaje_odiado": "Editora de Astrid",
-            "sentimientos": {
-                "amor": 5,
-                "enojo": 4,
-                "tristeza": 4,
-                "plot": 2,
-                "reflexion": 3,
-                "felicidad": 5,
-                "hot": 3
-            },
-            "frases": "-Even if you hate yourself I love you for the bouth of us\n-You beter remember who the fuck you belong to Nikolai",
-            "resena": "Una puta obra de arte",
-            "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg"
-        }
-    ],
-    "tracker": {
-        "2026-05": {
-            "1": 34,
-            "2": 3,
-            "3": 387,
-            "4": 76,
-            "6": 76,
-            "7": 45,
-            "8": 45,
-            "10": 45
-        }
+  "books": [
+    {
+      "id": "2026-05-08T14:40:49.537209",
+      "titulo": "Amos y Mazmorras",
+      "autor": "Darlys  Stefanie",
+      "paginas": 765,
+      "genero": "Policiaco/Romance",
+      "ubicacion": "Books",
+      "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg",
+      "estado": "leido",
+      "rating": 5,
+      "formato": "digital"
     },
-    "bookshelf": [
-        {
-            "id": "2026-05-16T01:32:08.129047",
-            "book_id": "2026-05-08T14:40:49.537209",
-            "title": "Amos y Mazmorras",
-            "x": 467.0,
-            "y": 300,
-            "color": "#E67E22",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-16T01:32:10.493572",
-            "book_id": "2026-05-08T14:56:25.981774",
-            "title": "El Heroe Perdido",
-            "x": 587.0,
-            "y": 300,
-            "color": "#48D1CC",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-16T01:32:12.329001",
-            "book_id": "2026-05-08T14:44:37.243156",
-            "title": "God of Fury",
-            "x": 525.0,
-            "y": 300,
-            "color": "#4DD0E1",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-16T01:32:14.204715",
-            "book_id": "2026-05-07T22:13:43.944853",
-            "title": "Love Song",
-            "x": 725.0,
-            "y": 300,
-            "color": "#F5B041",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-16T01:32:16.304302",
-            "book_id": "2026-05-07T22:12:16.226147",
-            "title": "Prohibido Enamorarse",
-            "x": 675.0,
-            "y": 300,
-            "color": "#5DADE2",
-            "width": 18,
-            "height": 134,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-16T01:47:40.244259",
-            "book_id": "2026-05-07T22:19:15.989810",
-            "title": "Sweet Venom",
-            "x": 845.0,
-            "y": 300,
-            "color": "#FF1744",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        },
-        {
-            "id": "2026-05-16T01:47:42.951245",
-            "book_id": "2026-05-07T22:20:03.321279",
-            "title": "The Mistake",
-            "x": 896.0,
-            "y": 300,
-            "color": "#F50057",
-            "width": 18,
-            "height": 130,
-            "tilt": 0
-        }
-    ],
-    "reading_streaks": [
-        {
-            "start": "2026-05-01",
-            "end": "2026-05-04",
-            "length": 4
-        },
-        {
-            "start": "2026-05-06",
-            "end": "2026-05-08",
-            "length": 3
-        },
-        {
-            "start": "2026-05-10",
-            "end": "2026-05-10",
-            "length": 1
-        }
-    ],
-    "current_streak": {
-        "count": 0
+    {
+      "id": "2026-05-08T14:56:25.981774",
+      "titulo": "El Heroe Perdido",
+      "autor": "Rick Riordan",
+      "paginas": 534,
+      "genero": "Fantasia/GreekMitology",
+      "ubicacion": "Books",
+      "foto": "C:/Users/pc/Pictures/,hfcx.png",
+      "estado": "leido",
+      "rating": 4,
+      "formato": "digital"
     },
-    "tbr": [],
-    "shelf_config": {
-        "shelves": [
-            140,
-            300,
-            460,
-            620
-        ]
+    {
+      "id": "2026-05-08T14:44:37.243156",
+      "titulo": "God of Fury",
+      "autor": "Rina Kent",
+      "paginas": 468,
+      "genero": "DarkRomance",
+      "ubicacion": "Books",
+      "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg",
+      "estado": "leido",
+      "rating": 5,
+      "formato": "digital"
     },
-    "challenges": {
-        "reto_lector": {
-            "2": {
-                "titulo": "The Graham Effect",
-                "autor": "Elle Kennedy",
-                "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
-            },
-            "1": {
-                "titulo": "af",
-                "autor": "",
-                "foto": "C:/Users/pc/Pictures/,hfcx.png"
-            }
-        },
-        "collect_colors": {
-            "green": {
-                "titulo": "The Deal",
-                "autor": "Elle Kennedy",
-                "foto": "C:/Users/pc/Pictures/etg.jpg"
-            },
-            "light_blue": {
-                "titulo": "WSr",
-                "autor": "eth",
-                "foto": "C:/Users/pc/Pictures/Screenshot 2025-11-21 160844.png"
-            },
-            "blue": {
-                "titulo": "eth",
-                "autor": "EAth",
-                "foto": "C:/Users/pc/Pictures/download (8).jpg"
-            },
-            "yellow": {
-                "titulo": "c",
-                "autor": ",hg",
-                "foto": "C:/Users/pc/Pictures/akaashi.jpg"
-            },
-            "orange": {
-                "titulo": "jv",
-                "autor": "b",
-                "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg"
-            },
-            "red": {
-                "titulo": "b",
-                "autor": "j",
-                "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
-            },
-            "purple": {
-                "titulo": "f",
-                "autor": "",
-                "foto": "C:/Users/pc/Pictures/0c7ac980-00b8-43b2-9673-375b0bc1f47a.jpg"
-            },
-            "pink": {
-                "titulo": "n",
-                "autor": "",
-                "foto": "C:/Users/pc/Pictures/Can you hug me like that_.jpg"
-            },
-            "brown": {
-                "titulo": "k",
-                "autor": "",
-                "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg"
-            },
-            "black": {
-                "titulo": "j",
-                "autor": "",
-                "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg"
-            },
-            "white": {
-                "titulo": "d",
-                "autor": "",
-                "foto": "C:/Users/pc/Pictures/0c7ac980-00b8-43b2-9673-375b0bc1f47a.jpg"
-            },
-            "grey": {
-                "titulo": "d",
-                "autor": "",
-                "foto": "C:/Users/pc/Pictures/•HAIKYUU! •.jpg"
-            }
-        },
-        "bracket": {
-            "jan": {
-                "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
-            },
-            "feb": {
-                "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg"
-            }
-        },
-        "genre_tracker": {
-            "ciencia_ficcion": [
-                16,
-                17,
-                18,
-                19
-            ],
-            "fantasia": [
-                11,
-                12,
-                13,
-                14,
-                15,
-                16,
-                17,
-                18,
-                19
-            ],
-            "terror": [
-                19
-            ],
-            "romantico": [
-                19
-            ],
-            "aventura": [
-                19
-            ],
-            "distopia": [
-                19
-            ],
-            "historica": [
-                19
-            ],
-            "biografia": [
-                19
-            ],
-            "divulgacion": [
-                19
-            ],
-            "thriller": [
-                19
-            ]
-        },
-        "reading_30": [
-            1,
-            2
-        ],
-        "alphabet": {
-            "G": {
-                "titulo": "God Of Fury",
-                "autor": "Rina Kent"
-            }
-        },
-        "bingo": [
-            11,
-            13,
-            17,
-            7,
-            12,
-            6
-        ],
-        "yearly": {
-            "1": {
-                "foto": "C:/Users/pc/Pictures/#cute#otter.jpg"
-            },
-            "6": {
-                "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg"
-            }
-        }
+    {
+      "id": "2026-05-07T22:13:43.944853",
+      "titulo": "Love Song",
+      "autor": "Elle Kennedy",
+      "paginas": 350,
+      "genero": "Romance",
+      "ubicacion": "Books",
+      "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg",
+      "estado": "leido",
+      "rating": 4,
+      "formato": "digital"
+    },
+    {
+      "id": "2026-05-07T22:12:16.226147",
+      "titulo": "Prohibido Enamorarse",
+      "autor": "Elle Kennedy",
+      "paginas": 340,
+      "genero": "SportRomance",
+      "ubicacion": "Books",
+      "foto": "C:/Users/pc/Pictures/kbegf.jpg",
+      "estado": "leido",
+      "rating": 5,
+      "formato": "digital"
+    },
+    {
+      "id": "2026-05-07T22:19:15.989810",
+      "titulo": "Sweet Venom",
+      "autor": "Rina Kent",
+      "paginas": 430,
+      "genero": "SportDarkRomance",
+      "ubicacion": "Books",
+      "foto": "C:/Users/pc/Pictures/daac48dd-84e4-4986-b67e-f0064b3a3ba7.jpg",
+      "estado": "leyendo",
+      "rating": 0,
+      "formato": "fisico"
+    },
+    {
+      "id": "2026-05-07T22:20:03.321279",
+      "titulo": "The Mistake",
+      "autor": "Elle Kennedy",
+      "paginas": 489,
+      "genero": "SportRomance",
+      "ubicacion": "Books",
+      "foto": "C:/Users/pc/Pictures/.hebrf.jpg",
+      "estado": "leido",
+      "rating": 5,
+      "formato": "digital"
     }
+  ],
+  "reviews": [
+    {
+      "id": "2026-05-09T16:40:19.093876",
+      "titulo": "Good of Ruin",
+      "autor": "Rina Kent",
+      "fecha_inicio": "4/5/2025",
+      "fecha_final": "6/5/2025",
+      "paginas": 450,
+      "formato": "digital",
+      "genero": "DarkRomance",
+      "rating": 5,
+      "personaje_fav": "Nikolai Sokolov",
+      "personaje_odiado": "Editora de Astrid",
+      "sentimientos": {
+        "amor": 5,
+        "enojo": 4,
+        "tristeza": 4,
+        "plot": 2,
+        "reflexion": 3,
+        "felicidad": 5,
+        "hot": 3
+      },
+      "frases": "-Even if you hate yourself I love you for the bouth of us\n-You beter remember who the fuck you belong to Nikolai",
+      "resena": "Una puta obra de arte",
+      "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg"
+    }
+  ],
+  "tracker": {
+    "2026-05": {
+      "1": 34,
+      "2": 3,
+      "3": 387,
+      "4": 76,
+      "6": 76,
+      "7": 45,
+      "8": 45,
+      "10": 45
+    }
+  },
+  "bookshelf": [
+    {
+      "id": "2026-05-16T01:32:08.129047",
+      "book_id": "2026-05-08T14:40:49.537209",
+      "title": "Amos y Mazmorras",
+      "x": 467.0,
+      "y": 300,
+      "color": "#E67E22",
+      "width": 18,
+      "height": 130,
+      "tilt": 0
+    },
+    {
+      "id": "2026-05-16T01:32:10.493572",
+      "book_id": "2026-05-08T14:56:25.981774",
+      "title": "El Heroe Perdido",
+      "x": 587.0,
+      "y": 300,
+      "color": "#48D1CC",
+      "width": 18,
+      "height": 130,
+      "tilt": 0
+    },
+    {
+      "id": "2026-05-16T01:32:12.329001",
+      "book_id": "2026-05-08T14:44:37.243156",
+      "title": "God of Fury",
+      "x": 525.0,
+      "y": 300,
+      "color": "#4DD0E1",
+      "width": 18,
+      "height": 130,
+      "tilt": 0
+    },
+    {
+      "id": "2026-05-16T01:32:14.204715",
+      "book_id": "2026-05-07T22:13:43.944853",
+      "title": "Love Song",
+      "x": 725.0,
+      "y": 300,
+      "color": "#F5B041",
+      "width": 18,
+      "height": 130,
+      "tilt": 0
+    },
+    {
+      "id": "2026-05-16T01:32:16.304302",
+      "book_id": "2026-05-07T22:12:16.226147",
+      "title": "Prohibido Enamorarse",
+      "x": 675.0,
+      "y": 300,
+      "color": "#5DADE2",
+      "width": 18,
+      "height": 134,
+      "tilt": 0
+    },
+    {
+      "id": "2026-05-16T01:47:40.244259",
+      "book_id": "2026-05-07T22:19:15.989810",
+      "title": "Sweet Venom",
+      "x": 845.0,
+      "y": 300,
+      "color": "#FF1744",
+      "width": 18,
+      "height": 130,
+      "tilt": 0
+    },
+    {
+      "id": "2026-05-16T01:47:42.951245",
+      "book_id": "2026-05-07T22:20:03.321279",
+      "title": "The Mistake",
+      "x": 896.0,
+      "y": 300,
+      "color": "#F50057",
+      "width": 18,
+      "height": 130,
+      "tilt": 0
+    }
+  ],
+  "reading_streaks": [
+    {
+      "start": "2026-05-01",
+      "end": "2026-05-04",
+      "length": 4
+    },
+    {
+      "start": "2026-05-06",
+      "end": "2026-05-08",
+      "length": 3
+    },
+    {
+      "start": "2026-05-10",
+      "end": "2026-05-10",
+      "length": 1
+    }
+  ],
+  "current_streak": {
+    "count": 0
+  },
+  "tbr": [],
+  "shelf_config": {
+    "shelves": [
+      140,
+      300,
+      460,
+      620
+    ]
+  },
+  "challenges": {
+    "reto_lector": {
+      "2": {
+        "titulo": "The Graham Effect",
+        "autor": "Elle Kennedy",
+        "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
+      },
+      "1": {
+        "titulo": "af",
+        "autor": "",
+        "foto": "C:/Users/pc/Pictures/,hfcx.png"
+      }
+    },
+    "collect_colors": {
+      "green": {
+        "titulo": "The Deal",
+        "autor": "Elle Kennedy",
+        "foto": "C:/Users/pc/Pictures/etg.jpg"
+      },
+      "light_blue": {
+        "titulo": "WSr",
+        "autor": "eth",
+        "foto": "C:/Users/pc/Pictures/Screenshot 2025-11-21 160844.png"
+      },
+      "blue": {
+        "titulo": "eth",
+        "autor": "EAth",
+        "foto": "C:/Users/pc/Pictures/download (8).jpg"
+      },
+      "yellow": {
+        "titulo": "c",
+        "autor": ",hg",
+        "foto": "C:/Users/pc/Pictures/akaashi.jpg"
+      },
+      "orange": {
+        "titulo": "jv",
+        "autor": "b",
+        "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg"
+      },
+      "red": {
+        "titulo": "b",
+        "autor": "j",
+        "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
+      },
+      "purple": {
+        "titulo": "f",
+        "autor": "",
+        "foto": "C:/Users/pc/Pictures/0c7ac980-00b8-43b2-9673-375b0bc1f47a.jpg"
+      },
+      "pink": {
+        "titulo": "n",
+        "autor": "",
+        "foto": "C:/Users/pc/Pictures/Can you hug me like that_.jpg"
+      },
+      "brown": {
+        "titulo": "k",
+        "autor": "",
+        "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg"
+      },
+      "black": {
+        "titulo": "j",
+        "autor": "",
+        "foto": "C:/Users/pc/Pictures/2373ffd9-e950-4f1f-a124-1adcab62553c.jpg"
+      },
+      "white": {
+        "titulo": "d",
+        "autor": "",
+        "foto": "C:/Users/pc/Pictures/0c7ac980-00b8-43b2-9673-375b0bc1f47a.jpg"
+      },
+      "grey": {
+        "titulo": "d",
+        "autor": "",
+        "foto": "C:/Users/pc/Pictures/•HAIKYUU! •.jpg"
+      }
+    },
+    "bracket": {
+      "jan": {
+        "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
+      },
+      "feb": {
+        "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg"
+      }
+    },
+    "genre_tracker": {
+      "ciencia_ficcion": [
+        16,
+        17,
+        18,
+        19
+      ],
+      "fantasia": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "terror": [
+        19
+      ],
+      "romantico": [
+        19
+      ],
+      "aventura": [
+        19
+      ],
+      "distopia": [
+        19
+      ],
+      "historica": [
+        19
+      ],
+      "biografia": [
+        19
+      ],
+      "divulgacion": [
+        19
+      ],
+      "thriller": [
+        19
+      ]
+    },
+    "reading_30": [
+      1,
+      2
+    ],
+    "alphabet": {
+      "G": {
+        "titulo": "God Of Fury",
+        "autor": "Rina Kent"
+      }
+    },
+    "bingo": [
+      11,
+      13,
+      17,
+      7,
+      12,
+      6
+    ],
+    "yearly": {
+      "1": {
+        "foto": "C:/Users/pc/Pictures/#cute#otter.jpg"
+      },
+      "6": {
+        "foto": "C:/Users/pc/Pictures/#love #art #poster #graphic #design.jpg"
+      }
+    }
+  }
 }

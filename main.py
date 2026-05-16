@@ -1,5 +1,5 @@
 """
-📚 BOOK JOURNAL v2 - CustomTkinter
+Book Journal v2 - CustomTkinter
 Biblioteca | Tracker | Bookshelf | Review | Challenges
 """
 import customtkinter as ctk
@@ -19,7 +19,7 @@ ctk.set_default_color_theme("blue")
 class BookJournalApp(CTk):
     def __init__(self):
         super().__init__()
-        self.title("📚 Book Journal v2")
+        self.title("Book Journal v2")
         self.geometry("1250x850")
         self.minsize(1100, 750)
 
@@ -28,84 +28,88 @@ class BookJournalApp(CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        # Sidebar with ocean depth gradient
-        self.sidebar = CTkFrame(self, width=220, corner_radius=0, fg_color=PALETA["bg_header"],
-                                border_width=0)
+        # Sidebar
+        self.sidebar = CTkFrame(self, width=220, corner_radius=0,
+                                fg_color=PALETA["bg_header"], border_width=0)
         self.sidebar.grid(row=0, column=0, sticky="nswe")
         self.sidebar.grid_rowconfigure(8, weight=1)
 
-        # Subtle top glow effect
-        self.sidebar_glow = CTkFrame(self.sidebar, height=3, fg_color=PALETA["seafoam"],
-                                     corner_radius=0)
-        self.sidebar_glow.place(x=0, y=0, relwidth=1)
+        # Glow superior
+        CTkFrame(self.sidebar, height=3, fg_color=PALETA["seafoam"],
+                 corner_radius=0).place(x=0, y=0, relwidth=1)
 
-        CTkLabel(self.sidebar, text="Book\nJournal", font=("Helvetica", 24, "bold")).grid(
+        CTkLabel(self.sidebar, text="Book\nJournal",
+                 font=("Helvetica", 24, "bold")).grid(
             row=0, column=0, pady=(30, 20), padx=20)
 
-        self.nav_buttons = []
+        # Navegacion
         nav_items = [
-            ("Biblioteca", "📖", BibliotecaFrame),
-            ("Tracker", "", TrackerFrame),
-            ("Bookshelf", "", BookshelfFrame),
-            ("Review", "", ReviewFrame),
-            ("Challenges", "", ChallengesFrame)
+            ("Biblioteca", BibliotecaFrame),
+            ("Tracker", TrackerFrame),
+            ("Bookshelf", BookshelfFrame),
+            ("Review", ReviewFrame),
+            ("Challenges", ChallengesFrame),
         ]
 
         self.frames = {}
-        self.current_frame = None
+        self.nav_buttons = {}
         self.current_name = None
 
-        for idx, (name, icon, FrameClass) in enumerate(nav_items, 1):
+        for idx, (name, FrameClass) in enumerate(nav_items, 1):
             btn = CTkButton(
-                self.sidebar, text=f"{icon} {name}", font=("Arial", 14),
+                self.sidebar, text=name, font=("Arial", 14),
                 anchor="w", height=42, width=180,
                 fg_color="transparent",
                 hover_color=PALETA["sky"],
                 text_color=PALETA["ocean"],
-                command=lambda f=FrameClass, n=name: self.show_frame(f, n)
+                command=lambda n=name, fc=FrameClass: self.show_frame(n, fc)
             )
             btn.grid(row=idx, column=0, pady=8, padx=15)
-            self.nav_buttons.append((btn, name))
+            self.nav_buttons[name] = btn
 
-        # Content
+        # Contenedor unico para todos los frames (stacking)
         self.content = CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.content.grid(row=0, column=1, sticky="nswe", padx=10, pady=10)
         self.content.grid_columnconfigure(0, weight=1)
         self.content.grid_rowconfigure(0, weight=1)
 
-        self.show_frame(BibliotecaFrame, "Biblioteca")
+        # Cerrado seguro
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
-    def show_frame(self, FrameClass, name):
-        # Actualizar botones del sidebar
-        for btn, btn_name in self.nav_buttons:
-            if btn_name == name:
+        # Frame inicial
+        self.show_frame("Biblioteca", BibliotecaFrame)
+
+    def show_frame(self, name, FrameClass):
+        # Actualizar sidebar
+        for n, btn in self.nav_buttons.items():
+            if n == name:
                 btn.configure(fg_color=PALETA["sand"], text_color=PALETA["text_main"])
             else:
                 btn.configure(fg_color="transparent", text_color=PALETA["text_main"])
 
-        # Ocultar frame actual
-        if self.current_frame:
-            self.current_frame.grid_remove()
-
         # Crear solo la primera vez
         if name not in self.frames:
-            self.frames[name] = FrameClass(self.content, self.db, corner_radius=15)
-            self.frames[name].grid(row=0, column=0, sticky="nswe")
+            frame = FrameClass(self.content, self.db, corner_radius=15)
+            frame.grid(row=0, column=0, sticky="nswe")
+            self.frames[name] = frame
 
-        # Mostrar frame cacheado
+        # Levantar el frame seleccionado (sin destruir ni recrear nada)
+        self.frames[name].lift()
+
+        # Refrescar solo si la DB cambio desde la ultima visita
         frame = self.frames[name]
-        frame.grid()
-
-        # Refrescar datos SOLO si la base de datos cambió desde la última vez
         if hasattr(frame, "refresh"):
             current_v = self.db.get_version()
-            last_v = getattr(frame, '_last_db_version', -1)
+            last_v = getattr(frame, "_last_db_version", -1)
             if current_v != last_v:
                 frame.refresh()
                 frame._last_db_version = current_v
 
-        self.current_frame = frame
         self.current_name = name
+
+    def on_close(self):
+        self.db.save()  # flush sincrono antes de morir
+        self.destroy()
 
 
 if __name__ == "__main__":

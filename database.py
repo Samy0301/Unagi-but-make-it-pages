@@ -1,4 +1,9 @@
 """Capa de persistencia JSON."""
+import json
+import os
+import threading
+from datetime import datetime, timedelta
+
 # ═══════════════════════════════════════════════════════════════════
 #  PALETA DE COLORES - PLAYA & CIELO
 # ═══════════════════════════════════════════════════════════════════
@@ -27,11 +32,6 @@ PALETA = {
     "shadow": "#A0B0B8",
 }
 
-
-import json
-import os
-from datetime import datetime, timedelta
-
 DATA_FILE = "book_journal_data.json"
 
 
@@ -39,24 +39,37 @@ class Database:
     def __init__(self, filepath=DATA_FILE):
         self.filepath = filepath
         self.data = self._load()
-        self._ensure_structure()
         self._version = 0
+        self._timer = None
+        self._lock = threading.Lock()
+        self._ensure_structure()
 
     def _load(self):
-        if os.path.exists(self.filepath):
-            try:
-                with open(self.filepath, "r", encoding="utf-8") as f:
-                    return json.load(f)
-            except (json.JSONDecodeError, OSError):
-                return {}
-        return {}
+        if not os.path.exists(self.filepath):
+            return {}
+        try:
+            with open(self.filepath, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, OSError):
+            return {}
 
     def save(self):
-        try:
-            with open(self.filepath, "w", encoding="utf-8") as f:
-                json.dump(self.data, f, indent=4, ensure_ascii=False)
-        except OSError as e:
-            print(f"[Database] Error al guardar: {e}")
+        """Guarda inmediatamente a disco. Llamar al cerrar la app."""
+        with self._lock:
+            try:
+                with open(self.filepath, "w", encoding="utf-8") as f:
+                    json.dump(self.data, f, indent=2, ensure_ascii=False)
+            except OSError as e:
+                print(f"[Database] Error al guardar: {e}")
+
+    def _schedule_save(self, delay=0.3):
+        """Guardado diferido: si llegan 10 cambios en 300 ms, solo se escribe 1 vez."""
+        with self._lock:
+            if self._timer:
+                self._timer.cancel()
+            self._timer = threading.Timer(delay, self.save)
+            self._timer.daemon = True
+            self._timer.start()
 
     def _ensure_structure(self):
         defaults = {
@@ -66,7 +79,6 @@ class Database:
             "bookshelf": [],
             "reading_streaks": [],
             "current_streak": {"count": 0},
-            "tbr": [],
             "shelf_config": {"shelves": [140, 300, 460]},
             "challenges": {"reto_lector": {}, "collect_colors": {}, "bracket": {}}
         }
@@ -84,7 +96,7 @@ class Database:
     def set(self, key, value):
         self.data[key] = value
         self._version += 1
-        self.save()
+        self._schedule_save()
 
     def get_version(self):
         return self._version

@@ -5,10 +5,7 @@ import os
 from datetime import date, datetime, timedelta
 
 import customtkinter as ctk
-from customtkinter import (
-    CTkFrame, CTkLabel, CTkButton, CTkEntry,
-    CTkOptionMenu, CTkScrollableFrame
-)
+from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkEntry, CTkOptionMenu, CTkScrollableFrame
 from tkinter import Canvas
 
 from PIL import Image
@@ -46,14 +43,14 @@ def color_for_pages(pages):
     if p <= 0:
         return "#C8E0F0"
     stops = [
-        (1,   "#29B6F6"),   # azul claro
-        (10,  "#00E5FF"),   # cian brillante
-        (20,  "#00E676"),   # verde neón
-        (35,  "#76FF03"),   # verde lima
-        (50,  "#FFEA00"),   # amarillo brillante
-        (70,  "#FF9100"),   # naranja brillante
-        (90,  "#FF3D00"),   # naranja rojizo
-        (120, "#D500F9"),   # púrpura vibrante
+        (1,   "#29B6F6"),
+        (10,  "#00E5FF"),
+        (20,  "#00E676"),
+        (35,  "#76FF03"),
+        (50,  "#FFEA00"),
+        (70,  "#FF9100"),
+        (90,  "#FF3D00"),
+        (120, "#D500F9"),
     ]
     if p >= stops[-1][0]:
         return stops[-1][1]
@@ -67,18 +64,9 @@ def color_for_pages(pages):
 
 
 MONTH_COLORS = {
-    1:  "#00B0FF",   # Enero - azul brillante
-    2:  "#E040FB",   # Febrero - púrpura vibrante
-    3:  "#00E676",   # Marzo - verde neón
-    4:  "#FFEA00",   # Abril - amarillo brillante
-    5:  "#FF9100",   # Mayo - naranja vibrante
-    6:  "#FF1744",   # Junio - rojo intenso
-    7:  "#D50000",   # Julio - rojo profundo
-    8:  "#FF6D00",   # Agosto - naranja fuerte
-    9:  "#FFAB00",   # Septiembre - ámbar brillante
-    10: "#651FFF",   # Octubre - violeta intenso
-    11: "#3D5AFE",   # Noviembre - índigo brillante
-    12: "#00BFA5",   # Diciembre - turquesa profundo
+    1:  "#00B0FF", 2:  "#E040FB", 3:  "#00E676", 4:  "#FFEA00",
+    5:  "#FF9100", 6:  "#FF1744", 7:  "#D50000", 8:  "#FF6D00",
+    9:  "#FFAB00", 10: "#651FFF", 11: "#3D5AFE", 12: "#00BFA5",
 }
 
 MONTH_NAMES = {
@@ -127,10 +115,10 @@ class TrackerFrame(CTkFrame):
 
         inp = CTkFrame(left, fg_color="transparent")
         inp.pack(pady=10)
-        CTkLabel(inp, text="Día:").pack(side="left", padx=5)
+        CTkLabel(inp, text="Dia:").pack(side="left", padx=5)
         self.entry_day = CTkEntry(inp, width=50)
         self.entry_day.pack(side="left", padx=5)
-        CTkLabel(inp, text="Páginas:").pack(side="left", padx=5)
+        CTkLabel(inp, text="Paginas:").pack(side="left", padx=5)
         self.entry_pages = CTkEntry(inp, width=80)
         self.entry_pages.pack(side="left", padx=5)
         CTkButton(inp, text="Registrar", command=self.log_day).pack(side="left", padx=10)
@@ -142,19 +130,15 @@ class TrackerFrame(CTkFrame):
         self.reading_scroll = CTkScrollableFrame(right, width=280, height=180, fg_color="transparent")
         self.reading_scroll.pack(fill="x", pady=5)
 
-        self.streak_frame = CTkFrame(right, corner_radius=10, border_width=2, border_color="#2E86C1", fg_color="#FFFFFF")
+        self.streak_frame = CTkFrame(right, corner_radius=10, border_width=2,
+                                     border_color="#2E86C1", fg_color="#FFFFFF")
         self.streak_frame.pack(fill="x", pady=15)
-        self.streak_label = CTkLabel(self.streak_frame, text="Racha actual: 0 días", font=("Arial", 14, "bold"))
+        self.streak_label = CTkLabel(self.streak_frame, text="Racha actual: 0 dias", font=("Arial", 14, "bold"))
         self.streak_label.pack(pady=10)
 
         CTkLabel(right, text="Historial de rachas", font=("Helvetica", 14, "bold")).pack(anchor="w", pady=(5, 5))
         self.streaks_scroll = CTkScrollableFrame(right, width=280, height=200, fg_color="transparent")
         self.streaks_scroll.pack(fill="x", pady=5)
-
-        # Pool para filas de "leyendo"
-        self._reading_pool = []
-        self._reading_visible = []
-        self._reading_job = None
 
         self.render_tracker()
         self.render_reading()
@@ -172,100 +156,49 @@ class TrackerFrame(CTkFrame):
         return None
 
     def render_reading(self):
-        if self._reading_job:
-            self.after_cancel(self._reading_job)
-            self._reading_job = None
+        """Render simple sin pool: tipicamente 0-3 libros."""
+        for w in list(self.reading_scroll.winfo_children()):
+            w.destroy()
 
         books = [b for b in self.db.get("books") if b.get("estado") == "leyendo"]
-
-        # Devolver al pool
-        for row in self._reading_visible:
-            row.pack_forget()
-            self._reading_pool.append(row)
-        self._reading_visible.clear()
-
-        # Limpiar huérfanos
-        for w in self.reading_scroll.winfo_children():
-            if w not in self._reading_pool:
-                w.destroy()
-
         if not books:
-            CTkLabel(self.reading_scroll, text="No estás leyendo nada ahora.", font=("Arial", 11)).pack(pady=10)
+            CTkLabel(self.reading_scroll, text="No estas leyendo nada ahora.", font=("Arial", 11)).pack(pady=10)
             return
 
-        total = len(books)
-        chunk = 4
+        for b in books:
+            row = CTkFrame(self.reading_scroll, corner_radius=10, border_width=1,
+                           height=70, border_color="#2E86C1", fg_color="#FFFFFF")
+            row.pack(fill="x", pady=4)
+            row.pack_propagate(False)
 
-        def draw_batch(start):
-            end = min(start + chunk, total)
-            for i in range(start, end):
-                b = books[i]
-                if self._reading_pool:
-                    row = self._reading_pool.pop()
-                    self._update_reading_row(row, b)
-                else:
-                    row = self._create_reading_row(self.reading_scroll, b)
-                row.pack(fill="x", pady=4)
-                self._reading_visible.append(row)
-
-            if end < total:
-                self._reading_job = self.after(20, lambda: draw_batch(end))
+            cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#FFFFFF")
+            cover.pack(side="left", padx=(10, 8), pady=10)
+            cover.pack_propagate(False)
+            img = self._load_cover_mini(b.get("foto"))
+            if img:
+                CTkLabel(cover, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
             else:
-                while len(self._reading_pool) > 8:
-                    r = self._reading_pool.pop()
-                    r.destroy()
-                self.update_idletasks()
+                CTkLabel(cover, text="Libro", font=("Arial", 16)).place(relx=0.5, rely=0.5, anchor="center")
 
-        draw_batch(0)
-
-    def _create_reading_row(self, parent, book=None):
-        row = CTkFrame(parent, corner_radius=10, border_width=1, height=70, border_color="#2E86C1", fg_color="#FFFFFF")
-        row.pack_propagate(False)
-
-        refs = {}
-        row._refs = refs
-
-        cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#FFFFFF")
-        cover.pack(side="left", padx=(10, 8), pady=10)
-        cover.pack_propagate(False)
-        refs['cover_img'] = CTkLabel(cover, text="")
-        refs['cover_img'].place(relx=0.5, rely=0.5, anchor="center")
-
-        text_frame = CTkFrame(row, fg_color="transparent")
-        text_frame.pack(side="left", fill="y", expand=True, pady=8)
-        refs['title'] = CTkLabel(text_frame, text="", font=("Arial", 12, "bold"))
-        refs['title'].pack(anchor="w")
-        refs['author'] = CTkLabel(text_frame, text="", font=("Arial", 10), text_color="#5DADE2")
-        refs['author'].pack(anchor="w")
-
-        if book:
-            self._update_reading_row(row, book)
-        return row
-
-    def _update_reading_row(self, row, book):
-        refs = row._refs
-        img = self._load_cover_mini(book.get("foto"))
-        if img:
-            refs['cover_img'].configure(image=img, text="")
-        else:
-            refs['cover_img'].configure(image=None, text="Libro", font=("Arial", 16))
-        refs['title'].configure(text=book.get("titulo", "Sin título"))
-        refs['author'].configure(text=book.get("autor", ""))
+            text_frame = CTkFrame(row, fg_color="transparent")
+            text_frame.pack(side="left", fill="y", expand=True, pady=8)
+            CTkLabel(text_frame, text=b.get("titulo", "Sin titulo"), font=("Arial", 12, "bold")).pack(anchor="w")
+            CTkLabel(text_frame, text=b.get("autor", ""), font=("Arial", 10), text_color="#5DADE2").pack(anchor="w")
 
     def render_streaks(self):
         self.db.recalc_streaks()
         current = self.db.get("current_streak")
         count = current.get("count", 0) if current else 0
         self.streak_label.configure(
-            text=f"Racha actual: {count} días" if count > 0 else "Racha actual: 0 días"
+            text=f"Racha actual: {count} dias" if count > 0 else "Racha actual: 0 dias"
         )
 
-        for w in self.streaks_scroll.winfo_children():
+        for w in list(self.streaks_scroll.winfo_children()):
             w.destroy()
 
         streaks = self.db.get("reading_streaks")
         if not streaks:
-            CTkLabel(self.streaks_scroll, text="Aún no hay rachas registradas.", font=("Arial", 11)).pack(pady=10)
+            CTkLabel(self.streaks_scroll, text="Aun no hay rachas registradas.", font=("Arial", 11)).pack(pady=10)
             return
 
         for s in reversed(streaks):
@@ -273,8 +206,8 @@ class TrackerFrame(CTkFrame):
             row.pack(fill="x", pady=3)
             start = datetime.fromisoformat(s["start"]).strftime("%d/%m/%Y")
             end = datetime.fromisoformat(s["end"]).strftime("%d/%m/%Y")
-            CTkLabel(row, text=f"{start} → {end}", font=("Arial", 10)).pack(side="left", padx=10, pady=5)
-            CTkLabel(row, text=f"{s['length']} días", font=("Arial", 10, "bold")).pack(side="right", padx=10, pady=5)
+            CTkLabel(row, text=f"{start} -> {end}", font=("Arial", 10)).pack(side="left", padx=10, pady=5)
+            CTkLabel(row, text=f"{s['length']} dias", font=("Arial", 10, "bold")).pack(side="right", padx=10, pady=5)
 
     def render_tracker(self):
         self.canvas.delete("all")
@@ -287,14 +220,16 @@ class TrackerFrame(CTkFrame):
         tracker_data = self.db.get("tracker").get(f"{year}-{month:02d}", {})
         month_color = MONTH_COLORS.get(month, "#FFFFFF")
 
-        # Anillo decorativo con color del mes
+        # Anillo decorativo
         self.canvas.create_oval(cx - r_outer - 8, cy - r_outer - 8,
                                 cx + r_outer + 8, cy + r_outer + 8,
                                 fill="", outline=month_color, width=4)
 
+        angle_per_day = 360 / days_in_month
+
         for day in range(1, days_in_month + 1):
-            angle_start = (day - 1) * (360 / days_in_month) - 90
-            angle_end = day * (360 / days_in_month) - 90
+            angle_start = (day - 1) * angle_per_day - 90
+            angle_end = day * angle_per_day - 90
 
             pages = tracker_data.get(str(day), 0)
             color = color_for_pages(pages)
@@ -314,16 +249,14 @@ class TrackerFrame(CTkFrame):
                 self.canvas.create_text(x2, y2, text=str(pages), fill="#2C3E50",
                                         font=("Arial", 8, "bold"))
 
-        # Círculo central con color del mes
+        # Circulo central
         self.canvas.create_oval(cx - 70, cy - 70, cx + 70, cy + 70,
                                 fill=month_color, outline="#2E86C1", width=2)
         total = sum(int(v) for v in tracker_data.values() if str(v).isdigit())
 
-        # Nombre del mes en el centro
         self.canvas.create_text(cx, cy - 18, text=MONTH_NAMES.get(month, ""),
                                 fill="#2C3E50", font=("Arial", 16, "bold"))
-        # Total de páginas debajo
-        self.canvas.create_text(cx, cy + 12, text=f"{total} pág.", fill="#2C3E50",
+        self.canvas.create_text(cx, cy + 12, text=f"{total} pag.", fill="#2C3E50",
                                 font=("Arial", 11, "bold"))
 
     def _draw_arc(self, cx, cy, r_out, r_in, a1, a2, color):
@@ -342,9 +275,7 @@ class TrackerFrame(CTkFrame):
     def log_day(self):
         day = self.entry_day.get().strip()
         pages = self.entry_pages.get().strip()
-        if not day.isdigit():
-            return
-        if not pages.isdigit():
+        if not day.isdigit() or not pages.isdigit():
             return
         year = int(self.year_var.get())
         month = int(self.month_var.get())
