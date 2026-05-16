@@ -1,4 +1,3 @@
-"""Widgets reutilizables."""
 import customtkinter as ctk
 from customtkinter import CTkFrame, CTkLabel
 from database import PALETA
@@ -14,7 +13,7 @@ class StarRating(CTkFrame):
 
         for i in range(5):
             lbl = CTkLabel(self, text="☆", font=("Arial", size), 
-                          text_color=PALETA["coral"])
+                        text_color=PALETA["coral"])
             if not readonly:
                 lbl.bind("<Button-1>", lambda e, idx=i: self.set_rating(idx + 1))
             lbl.pack(side="left", padx=2)

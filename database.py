@@ -1,12 +1,8 @@
-"""Capa de persistencia JSON."""
 import json
 import os
 import threading
 from datetime import datetime, timedelta
 
-# ═══════════════════════════════════════════════════════════════════
-#  PALETA - OCÉANO PROFUNDO CON CORAL
-# ═══════════════════════════════════════════════════════════════════
 PALETA = {
     "bg_main": "#0A1628",
     "bg_panel": "#0F1D32",
@@ -53,7 +49,7 @@ class Database:
             return {}
 
     def save(self):
-        """Guarda inmediatamente a disco. Llamar al cerrar la app."""
+        """Guarda inmediatamente a disco Llamar al cerrar la app"""
         with self._lock:
             try:
                 with open(self.filepath, "w", encoding="utf-8") as f:
@@ -62,7 +58,7 @@ class Database:
                 print(f"[Database] Error al guardar: {e}")
 
     def _schedule_save(self, delay=0.3):
-        """Guardado diferido: si llegan 10 cambios en 300 ms, solo se escribe 1 vez."""
+        """Guardado diferido: si llegan 10 cambios en 300 ms, solo se escribe 1 vez"""
         with self._lock:
             if self._timer:
                 self._timer.cancel()
@@ -149,7 +145,7 @@ class Database:
         today = datetime.now().date()
         last_end = current_end
 
-        if last_end < today - timedelta(days=1):
+        if last_end < today:
             streaks.append(last_streak)
             self.set("current_streak", {"count": 0})
         else:

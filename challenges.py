@@ -1,4 +1,3 @@
-"""Challenges - Retos literarios con estetica coherente al resto de la app."""
 import os
 import tkinter
 from tkinter import filedialog, messagebox
@@ -15,10 +14,6 @@ except ImportError:
 from database import Database, PALETA
 
 
-# ═══════════════════════════════════════════════════════════════════
-#  DATOS
-# ═══════════════════════════════════════════════════════════════════
-# Todos los meses en naranja coral (como pide el usuario)
 RETO_LECTOR_DATA = {
     1:  {"mes": "ENERO",      "color": PALETA["coral"]},
     2:  {"mes": "FEBRERO",    "color": PALETA["coral"]},
@@ -34,7 +29,6 @@ RETO_LECTOR_DATA = {
     12: {"mes": "DICIEMBRE",  "color": PALETA["coral"]},
 }
 
-# Colores ORIGINALES restaurados para Collect the Colors (como pide el usuario)
 COLLECT_COLORS_DATA = [
     {"key": "#E74C3C", "name": "Red",        "color": "#DF1600", "bg": "#F5FAFC"},
     {"key": "orange",   "name": "Orange",     "color": "#EE7811", "bg": "#F5FAFC"},
@@ -96,9 +90,6 @@ YEARLY_DATA = [
 ]
 
 
-# ═══════════════════════════════════════════════════════════════════
-#  WIDGET AUXILIAR
-# ═══════════════════════════════════════════════════════════════════
 class FolderCard(CTkFrame):
     def __init__(self, parent, title, subtitle="", color=PALETA["ocean"],
                  command=None, width=240, height=200, **kwargs):
@@ -131,11 +122,7 @@ class FolderCard(CTkFrame):
             self.command()
 
 
-# ═══════════════════════════════════════════════════════════════════
-#  FRAME PRINCIPAL
-# ═══════════════════════════════════════════════════════════════════
 class ChallengesFrame(CTkFrame):
-    # Todas las carpetas en azul ocean
     CHALLENGES = [
         ("reto_lector",    "Monthly Books",  "",                               PALETA["ocean"]),
         ("collect_colors", "Collect the Colors", "",                           PALETA["ocean"]),
@@ -160,11 +147,9 @@ class ChallengesFrame(CTkFrame):
         self._bingo_cells = {}
         self._day30_circles = {}
 
-        # --- PANEL CARPETAS ---
         self.folders_panel = CTkScrollableFrame(self, fg_color="transparent")
         self.build_folders()
 
-        # --- PANEL GENERICO DE RETO ---
         self.challenge_panel = CTkFrame(self, fg_color="transparent")
         h = CTkFrame(self.challenge_panel, fg_color="transparent")
         h.pack(fill="x", padx=20, pady=(15, 5))
@@ -178,7 +163,6 @@ class ChallengesFrame(CTkFrame):
         self.challenge_scroll = CTkScrollableFrame(self.challenge_panel, fg_color="transparent")
         self.challenge_scroll.pack(fill="both", expand=True, padx=20, pady=10)
 
-        # --- FORMULARIO INTEGRADO ---
         self.form_panel = CTkFrame(self, fg_color=PALETA["bg_card"], corner_radius=16,
                                    border_width=2, border_color=PALETA["border_accent"])
         CTkLabel(self.form_panel, text="Completar Reto", font=("Helvetica", 22, "bold"),
@@ -227,9 +211,7 @@ class ChallengesFrame(CTkFrame):
 
         self.show_folders()
 
-    # ═══════════════════════════════════════════════════════════════
-    #  DB HELPERS
-    # ═══════════════════════════════════════════════════════════════
+
     def _ensure_challenges(self):
         raw = self.db.get("challenges")
         if not isinstance(raw, dict):
@@ -292,9 +274,7 @@ class ChallengesFrame(CTkFrame):
         CTkLabel(self.cover_box, text="Libro", font=("Arial", 48),
                  text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
 
-    # ═══════════════════════════════════════════════════════════════
-    #  CARPETAS
-    # ═══════════════════════════════════════════════════════════════
+
     def build_folders(self):
         for w in self.folders_panel.winfo_children():
             w.destroy()
@@ -343,9 +323,7 @@ class ChallengesFrame(CTkFrame):
 
         self.challenge_panel.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # ═══════════════════════════════════════════════════════════════
     #  RETO LECTOR
-    # ═══════════════════════════════════════════════════════════════
     def render_reto_lector(self):
         cols = 4
         for c in range(cols):
@@ -399,9 +377,7 @@ class ChallengesFrame(CTkFrame):
                 child.bind("<Button-1>", lambda e, m=mes_num: self.open_form("reto_lector", m))
         return card
 
-    # ═══════════════════════════════════════════════════════════════
     #  COLLECT COLORS
-    # ═══════════════════════════════════════════════════════════════
     def render_collect_colors(self):
         cols = 5
         for c in range(cols):
@@ -454,9 +430,7 @@ class ChallengesFrame(CTkFrame):
                 child.bind("<Button-1>", lambda e, k=cdata["key"]: self.open_form("collect_colors", k))
         return card
 
-    # ═══════════════════════════════════════════════════════════════
     #  GENRE TRACKER
-    # ═══════════════════════════════════════════════════════════════
     def _get_genre_tracker(self):
         ch = self._ensure_challenges()
         return ch.get("genre_tracker", {})
@@ -469,8 +443,6 @@ class ChallengesFrame(CTkFrame):
     def render_bracket(self):
         container = CTkFrame(self.challenge_scroll, fg_color="transparent")
         container.pack(expand=True, fill="both", padx=20, pady=20)
-
-        # Titulo y subtítulo movidos al header del panel
 
         saved = self._get_genre_tracker()
 
@@ -570,9 +542,7 @@ class ChallengesFrame(CTkFrame):
                 del saved[sq._genre_key]
         self._set_genre_tracker(saved)
 
-    # ═══════════════════════════════════════════════════════════════
     #  30 DAY CHALLENGE
-    # ═══════════════════════════════════════════════════════════════
     def _get_day30_data(self):
         ch = self._ensure_challenges()
         return ch.get("reading_30", [])
@@ -595,8 +565,6 @@ class ChallengesFrame(CTkFrame):
 
         container = CTkFrame(self.challenge_scroll, fg_color="transparent")
         container.pack(expand=True, fill="both", padx=20, pady=20)
-
-        # Titulo y subtítulo movidos al header del panel
 
         saved = self._get_day30_data()
         saved = self._validate_day30(saved)
@@ -720,9 +688,7 @@ class ChallengesFrame(CTkFrame):
             self._paint_day30_circle(number, False)
             self._update_day30_streak(validated)
 
-    # ═══════════════════════════════════════════════════════════════
     #  FORMULARIO
-    # ═══════════════════════════════════════════════════════════════
     def open_form(self, challenge_type, key):
         self._current_challenge_type = challenge_type
         self._current_challenge_key = key
@@ -777,9 +743,7 @@ class ChallengesFrame(CTkFrame):
         messagebox.showinfo("Exito", "Reto guardado correctamente.")
         self.close_form()
 
-    # ═══════════════════════════════════════════════════════════════
     #  ALPHABET CHALLENGE
-    # ═══════════════════════════════════════════════════════════════
     def _get_alpha_data(self):
         ch = self._ensure_challenges()
         return ch.get("alphabet", {})
@@ -792,8 +756,6 @@ class ChallengesFrame(CTkFrame):
     def render_alpha(self):
         container = CTkFrame(self.challenge_scroll, fg_color="transparent")
         container.pack(expand=True, fill="both", padx=20, pady=20)
-
-        # Titulo y subtítulo movidos al header del panel
 
         saved = self._get_alpha_data()
 
@@ -880,9 +842,7 @@ class ChallengesFrame(CTkFrame):
         self._alpha_editing = letter
         self.show_challenge("alphabet")
 
-    # ═══════════════════════════════════════════════════════════════
     #  BOOKISH BINGO
-    # ═══════════════════════════════════════════════════════════════
     def _get_bingo_data(self):
         ch = self._ensure_challenges()
         return ch.get("bingo", [])
@@ -895,8 +855,6 @@ class ChallengesFrame(CTkFrame):
     def render_bingo(self):
         container = CTkFrame(self.challenge_scroll, fg_color="transparent")
         container.pack(expand=True, fill="both", padx=20, pady=20)
-
-        # Titulo y subtítulo movidos al header del panel
 
         saved = set(self._get_bingo_data())
         grid = CTkFrame(container, fg_color="transparent")
@@ -1014,9 +972,7 @@ class ChallengesFrame(CTkFrame):
         cell.bind("<Button-3>", lambda e, i=index: self._on_bingo_right_click(i, e))
         cell.configure(cursor="hand2")
 
-    # ═══════════════════════════════════════════════════════════════
     #  YEARLY CHALLENGE
-    # ═══════════════════════════════════════════════════════════════
     def _get_yearly_data(self):
         ch = self._ensure_challenges()
         return ch.get("yearly", {})

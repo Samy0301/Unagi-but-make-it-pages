@@ -1,4 +1,3 @@
-"""Biblioteca con grid de libros, estados y filtros TBR/Leidos."""
 import os
 from tkinter import messagebox, filedialog
 
@@ -56,43 +55,40 @@ class BibliotecaFrame(CTkFrame):
         self._preview_img = None
         self._foto_path = None
 
-        # Pool simple
         self._card_pool = []
         self._visible_cards = []
 
-        # Header
         hdr = CTkFrame(self, fg_color="transparent")
         hdr.pack(fill="x", pady=(15, 5), padx=20)
         CTkLabel(hdr, text="BIBLIOTECA", font=("Helvetica", 28, "bold"),
-                 text_color=PALETA["text_main"]).pack(side="left")
+                text_color=PALETA["text_main"]).pack(side="left")
 
-        # Barra de herramientas
         tools = CTkFrame(self, fg_color="transparent")
         tools.pack(fill="x", padx=20, pady=5)
 
         for key, text in self.FILTROS.items():
             CTkButton(tools, text=text, width=100,
-                      fg_color=PALETA["ocean"],
-                      hover_color=PALETA["coral"],
-                      text_color=PALETA["text_main"],
-                      command=lambda k=key: self.set_filtro(k)).pack(side="left", padx=5)
+                    fg_color=PALETA["ocean"],
+                    hover_color=PALETA["coral"],
+                    text_color=PALETA["text_main"],
+                    command=lambda k=key: self.set_filtro(k)).pack(side="left", padx=5)
 
         CTkLabel(tools, text="Buscar:", font=("Arial", 14),
-                 text_color=PALETA["text_secondary"]).pack(side="left", padx=(20, 2))
+                text_color=PALETA["text_secondary"]).pack(side="left", padx=(20, 2))
         self.search_entry = CTkEntry(tools, width=200, placeholder_text="Buscar titulo o autor...",
-                                     fg_color=PALETA["bg_input"],
-                                     text_color=PALETA["text_main"],
-                                     border_color=PALETA["border"])
+                                    fg_color=PALETA["bg_input"],
+                                    text_color=PALETA["text_main"],
+                                    border_color=PALETA["border"])
         self.search_entry.pack(side="left", padx=5)
         self.search_entry.bind("<KeyRelease>", lambda e: self.render_books())
         CTkButton(tools, text="X", width=30,
-                  fg_color=PALETA["coral"],
-                  hover_color=PALETA["coral_light"],
-                  text_color=PALETA["bg_main"],
-                  command=self.clear_search).pack(side="left", padx=2)
+                fg_color=PALETA["coral"],
+                hover_color=PALETA["coral_light"],
+                text_color=PALETA["bg_main"],
+                command=self.clear_search).pack(side="left", padx=2)
 
         CTkLabel(tools, text="Orden:", font=("Arial", 11),
-                 text_color=PALETA["text_secondary"]).pack(side="left", padx=(20, 5))
+                text_color=PALETA["text_secondary"]).pack(side="left", padx=(20, 5))
         self.orden_menu = CTkOptionMenu(tools, values=list(self.ORDEN.values()), width=160,
                                         fg_color=PALETA["bg_input"],
                                         button_color=PALETA["ocean"],
@@ -112,18 +108,17 @@ class BibliotecaFrame(CTkFrame):
                                         command=self.toggle_add_panel)
         self.btn_toggle_add.pack(side="right", padx=5)
 
-        # --- PANEL EMBEBIDO ANADIR LIBRO ---
         self.add_panel = CTkFrame(self, fg_color=PALETA["bg_card"], corner_radius=16,
-                                  border_width=2, border_color=PALETA["border_accent"])
+                                border_width=2, border_color=PALETA["border_accent"])
 
         CTkLabel(self.add_panel, text="NUEVO LIBRO", font=("Helvetica", 22, "bold"),
-                 text_color=PALETA["text_main"]).pack(pady=(20, 15))
+                text_color=PALETA["text_main"]).pack(pady=(20, 15))
 
         self.add_container = CTkFrame(self.add_panel, fg_color="transparent")
         self.add_container.pack(expand=True, fill="both")
 
         self.add_scroll = ctk.CTkScrollableFrame(self.add_container, width=700, height=420,
-                                               fg_color="transparent")
+                                            fg_color="transparent")
         self.add_scroll.pack(padx=30, pady=5, fill="both", expand=True)
 
         self.entries = {}
@@ -134,73 +129,70 @@ class BibliotecaFrame(CTkFrame):
             inner = CTkFrame(row, fg_color="transparent")
             inner.pack(expand=True)
             CTkLabel(inner, text=label_text, font=("Arial", 12, "bold"),
-                     text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                    text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
             w = widget_factory(inner)
             w.pack()
             return w
 
         self.entries["titulo"] = add_row("Titulo *", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
-        self.entries["autor"] = add_row("Autor", 
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
+        self.entries["autor"]= add_row("Autor", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
         self.entries["paginas"] = add_row("N Paginas", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
         self.entries["genero"] = add_row("Genero", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
         self.entries["ubicacion"] = add_row("Ubicacion", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
 
-        # Portada
         row_foto = CTkFrame(self.add_scroll, fg_color="transparent")
         row_foto.pack(fill="x", pady=(6, 2))
         inner_foto = CTkFrame(row_foto, fg_color="transparent")
         inner_foto.pack(expand=True)
         CTkLabel(inner_foto, text="Portada", font=("Arial", 12, "bold"),
-                 text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
         self.add_foto_row = CTkFrame(inner_foto, fg_color="transparent")
         self.add_foto_row.pack(anchor="w")
         CTkButton(self.add_foto_row, text="Examinar", width=120, height=32, corner_radius=8,
-                  fg_color=PALETA["coral"],
-                  hover_color=PALETA["coral_light"],
-                  text_color=PALETA["bg_main"],
-                  command=self.browse_photo).pack(side="left", padx=(0, 12))
+                fg_color=PALETA["coral"],
+                hover_color=PALETA["coral_light"],
+                text_color=PALETA["bg_main"],
+                command=self.browse_photo).pack(side="left", padx=(0, 12))
         self.photo_preview = CTkLabel(self.add_foto_row, text="", width=40, height=55,
-                                      fg_color=PALETA["bg_input"])
+                                    fg_color=PALETA["bg_input"])
         self.photo_preview.pack(side="left")
 
-        # Estado
         row_est = CTkFrame(self.add_scroll, fg_color="transparent")
         row_est.pack(fill="x", pady=(6, 2))
         inner_est = CTkFrame(row_est, fg_color="transparent")
         inner_est.pack(expand=True)
         CTkLabel(inner_est, text="Estado", font=("Arial", 12, "bold"),
-                 text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
         self.estado_var = ctk.StringVar(value="")
         self.add_row_est = CTkFrame(inner_est, fg_color="transparent")
         self.add_row_est.pack(anchor="w")
         for val, txt in [("no_leido", "No leido"), ("leyendo", "Leyendo"), ("leido", "Leido")]:
             CTkRadioButton(self.add_row_est, text=txt, variable=self.estado_var, value=val,
-                           fg_color=PALETA["coral"],
-                           border_color=PALETA["border_accent"],
-                           text_color=PALETA["text_secondary"],
-                           command=self.on_estado_change).pack(side="left", padx=10)
+                        fg_color=PALETA["coral"],
+                        border_color=PALETA["border_accent"],
+                        text_color=PALETA["text_secondary"],
+                        command=self.on_estado_change).pack(side="left", padx=10)
 
-        # Extras para "leido"
         self.extras_frame = CTkFrame(self.add_scroll, fg_color="transparent")
         self.extras_frame.pack(fill="x", padx=30, pady=(6, 0))
         self.extras_frame.pack_forget()
@@ -211,41 +203,40 @@ class BibliotecaFrame(CTkFrame):
         inner_extras.pack(expand=True)
 
         CTkLabel(inner_extras, text="Calificacion", font=("Arial", 12, "bold"),
-                 text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
         self.add_stars = StarRating(inner_extras, rating=0, size=26)
         self.add_stars.pack(anchor="w")
 
         CTkLabel(inner_extras, text="Formato", font=("Arial", 12, "bold"),
-                 text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(8, 2))
+                text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(8, 2))
         self.fmt_var = ctk.StringVar(value="fisico")
         self.add_row_fmt = CTkFrame(inner_extras, fg_color="transparent")
         self.add_row_fmt.pack(anchor="w")
         for val, txt in [("fisico", "Fisico"), ("digital", "Digital"), ("audiolibro", "Audiolibro")]:
             CTkRadioButton(self.add_row_fmt, text=txt, variable=self.fmt_var, value=val,
-                           fg_color=PALETA["coral"],
-                           border_color=PALETA["border_accent"],
-                           text_color=PALETA["text_secondary"]).pack(side="left", padx=10)
+                        fg_color=PALETA["coral"],
+                        border_color=PALETA["border_accent"],
+                        text_color=PALETA["text_secondary"]).pack(side="left", padx=10)
 
         btn_add_row = CTkFrame(self.add_container, fg_color="transparent")
         btn_add_row.pack(pady=(15, 20))
         CTkButton(btn_add_row, text="Guardar Libro", command=self.save_book,
-                  height=38, font=("Arial", 14, "bold"), corner_radius=10,
-                  fg_color=PALETA["coral"],
-                  hover_color=PALETA["coral_light"],
-                  text_color=PALETA["bg_main"]).pack(side="left", padx=8)
+                height=38, font=("Arial", 14, "bold"), corner_radius=10,
+                fg_color=PALETA["coral"],
+                hover_color=PALETA["coral_light"],
+                text_color=PALETA["bg_main"]).pack(side="left", padx=8)
         CTkButton(btn_add_row, text="Cancelar", command=self.close_add_panel,
-                  height=38, font=("Arial", 14), corner_radius=10,
-                  fg_color=PALETA["ocean"],
-                  hover_color=PALETA["coral"],
-                  text_color=PALETA["text_main"]).pack(side="left", padx=8)
+                height=38, font=("Arial", 14), corner_radius=10,
+                fg_color=PALETA["ocean"],
+                hover_color=PALETA["coral"],
+                text_color=PALETA["text_main"]).pack(side="left", padx=8)
 
-        # --- PANEL EMBEBIDO EDITAR LIBRO ---
         self.edit_panel = CTkFrame(self, fg_color=PALETA["bg_card"], corner_radius=16,
-                                   border_width=2, border_color=PALETA["border_accent"])
+                                border_width=2, border_color=PALETA["border_accent"])
         self.edit_book_id = None
 
         CTkLabel(self.edit_panel, text="EDITAR LIBRO", font=("Helvetica", 22, "bold"),
-                 text_color=PALETA["text_main"]).pack(pady=(20, 15))
+                text_color=PALETA["text_main"]).pack(pady=(20, 15))
 
         self.edit_container = CTkFrame(self.edit_panel, fg_color="transparent")
         self.edit_container.pack(expand=True, fill="both")
@@ -260,44 +251,44 @@ class BibliotecaFrame(CTkFrame):
             inner = CTkFrame(row, fg_color="transparent")
             inner.pack(expand=True)
             CTkLabel(inner, text=label_text, font=("Arial", 12, "bold"),
-                     text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                    text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
             w = widget_factory(inner)
             w.pack()
             return w
 
         self.e_titulo = edit_row("Titulo", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
         self.e_autor = edit_row("Autor", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
         self.e_pags = edit_row("Paginas", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
         self.e_genero = edit_row("Genero", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
         self.e_ubi = edit_row("Ubicacion", 
             lambda p: CTkEntry(p, width=600, height=32, corner_radius=8,
-                              fg_color=PALETA["bg_input"],
-                              text_color=PALETA["text_main"],
-                              border_color=PALETA["border"]))
+                            fg_color=PALETA["bg_input"],
+                            text_color=PALETA["text_main"],
+                            border_color=PALETA["border"]))
 
-        # Portada
+
         row_foto = CTkFrame(self.edit_scroll, fg_color="transparent")
         row_foto.pack(fill="x", pady=(6, 2))
         inner_foto = CTkFrame(row_foto, fg_color="transparent")
         inner_foto.pack(expand=True)
         CTkLabel(inner_foto, text="Portada", font=("Arial", 12, "bold"),
-                 text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
         self.edit_foto_row = CTkFrame(inner_foto, fg_color="transparent")
         self.edit_foto_row.pack(anchor="w")
 
@@ -305,38 +296,36 @@ class BibliotecaFrame(CTkFrame):
         self.edit_preview_img = None
 
         CTkButton(self.edit_foto_row, text="Examinar", width=120, height=32, corner_radius=8,
-                  fg_color=PALETA["coral"],
-                  hover_color=PALETA["coral_light"],
-                  text_color=PALETA["bg_main"],
-                  command=self.browse_edit_photo).pack(side="left", padx=(0, 12))
+                fg_color=PALETA["coral"],
+                hover_color=PALETA["coral_light"],
+                text_color=PALETA["bg_main"],
+                command=self.browse_edit_photo).pack(side="left", padx=(0, 12))
         self.edit_preview = CTkLabel(self.edit_foto_row, text="", width=40, height=55,
-                                     fg_color=PALETA["bg_input"])
+                                    fg_color=PALETA["bg_input"])
         self.edit_preview.pack(side="left")
 
-        # Estado
         row_est = CTkFrame(self.edit_scroll, fg_color="transparent")
         row_est.pack(fill="x", pady=(6, 2))
         inner_est = CTkFrame(row_est, fg_color="transparent")
         inner_est.pack(expand=True)
         CTkLabel(inner_est, text="Estado", font=("Arial", 12, "bold"),
-                 text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
         self.e_estado = ctk.StringVar(value="no_leido")
         self.edit_row_est = CTkFrame(inner_est, fg_color="transparent")
         self.edit_row_est.pack(anchor="w")
         for val, txt in [("no_leido", "No leido"), ("leyendo", "Leyendo"), ("leido", "Leido")]:
             CTkRadioButton(self.edit_row_est, text=txt, variable=self.e_estado,
-                           value=val, command=self.on_edit_estado_change,
-                           fg_color=PALETA["coral"],
-                           border_color=PALETA["border_accent"],
-                           text_color=PALETA["text_secondary"]).pack(side="left", padx=10)
+                        value=val, command=self.on_edit_estado_change,
+                        fg_color=PALETA["coral"],
+                        border_color=PALETA["border_accent"],
+                        text_color=PALETA["text_secondary"]).pack(side="left", padx=10)
 
-        # Calificacion y Formato
         row_stars = CTkFrame(self.edit_scroll, fg_color="transparent")
         row_stars.pack(fill="x", pady=(6, 2))
         inner_stars = CTkFrame(row_stars, fg_color="transparent")
         inner_stars.pack(expand=True)
         CTkLabel(inner_stars, text="Calificacion", font=("Arial", 12, "bold"),
-                 text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
         self.e_stars = StarRating(inner_stars, rating=0, size=26)
         self.e_stars.pack(anchor="w")
 
@@ -345,31 +334,30 @@ class BibliotecaFrame(CTkFrame):
         inner_fmt = CTkFrame(row_fmt, fg_color="transparent")
         inner_fmt.pack(expand=True)
         CTkLabel(inner_fmt, text="Formato", font=("Arial", 12, "bold"),
-                 text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["text_secondary"]).pack(anchor="w", pady=(0, 2))
         self.e_fmt = ctk.StringVar(value="fisico")
         self.edit_row_fmt = CTkFrame(inner_fmt, fg_color="transparent")
         self.edit_row_fmt.pack(anchor="w")
         for val, txt in [("fisico", "Fisico"), ("digital", "Digital"), ("audiolibro", "Audiolibro")]:
             CTkRadioButton(self.edit_row_fmt, text=txt, variable=self.e_fmt,
-                           value=val,
-                           fg_color=PALETA["coral"],
-                           border_color=PALETA["border_accent"],
-                           text_color=PALETA["text_secondary"]).pack(side="left", padx=10)
+                        value=val,
+                        fg_color=PALETA["coral"],
+                        border_color=PALETA["border_accent"],
+                        text_color=PALETA["text_secondary"]).pack(side="left", padx=10)
 
         btn_edit_row = CTkFrame(self.edit_container, fg_color="transparent")
         btn_edit_row.pack(pady=(15, 20))
         CTkButton(btn_edit_row, text="Guardar cambios", command=self.save_edit_book,
-                  height=38, font=("Arial", 14, "bold"), corner_radius=10,
-                  fg_color=PALETA["coral"],
-                  hover_color=PALETA["coral_light"],
-                  text_color=PALETA["bg_main"]).pack(side="left", padx=8)
+                height=38, font=("Arial", 14, "bold"), corner_radius=10,
+                fg_color=PALETA["coral"],
+                hover_color=PALETA["coral_light"],
+                text_color=PALETA["bg_main"]).pack(side="left", padx=8)
         CTkButton(btn_edit_row, text="Cancelar", command=self.close_edit_panel,
-                  height=38, font=("Arial", 14), corner_radius=10,
-                  fg_color=PALETA["ocean"],
-                  hover_color=PALETA["coral"],
-                  text_color=PALETA["text_main"]).pack(side="left", padx=8)
+                height=38, font=("Arial", 14), corner_radius=10,
+                fg_color=PALETA["ocean"],
+                hover_color=PALETA["coral"],
+                text_color=PALETA["text_main"]).pack(side="left", padx=8)
 
-        # --- SCROLL DE TARJETAS ---
         self.scroll = CTkScrollableFrame(self, width=900, height=500, fg_color="transparent")
         self.scroll.pack(padx=20, pady=10, fill="both", expand=True)
 
@@ -387,16 +375,16 @@ class BibliotecaFrame(CTkFrame):
             self.edit_panel.pack_forget()
             self.add_panel.pack(fill="both", padx=20, pady=10, expand=True)
             self.btn_toggle_add.configure(text="Cerrar panel",
-                                          fg_color=PALETA["coral_dark"],
-                                          hover_color=PALETA["coral"])
+                                        fg_color=PALETA["coral_dark"],
+                                        hover_color=PALETA["coral"])
             self.add_panel_visible = True
 
     def close_add_panel(self):
         self.add_panel.pack_forget()
         self.scroll.pack(padx=20, pady=10, fill="both", expand=True)
         self.btn_toggle_add.configure(text="+ Anadir Libro",
-                                      fg_color=PALETA["coral"],
-                                      hover_color=PALETA["coral_light"])
+                                    fg_color=PALETA["coral"],
+                                    hover_color=PALETA["coral_light"])
         self.add_panel_visible = False
 
     def on_estado_change(self):
@@ -485,8 +473,8 @@ class BibliotecaFrame(CTkFrame):
         q = self.search_entry.get().strip().lower()
         if q:
             books = [b for b in books if q in b.get("titulo", "").lower()
-                     or q in b.get("autor", "").lower()
-                     or q in b.get("genero", "").lower()]
+                    or q in b.get("autor", "").lower()
+                    or q in b.get("genero", "").lower()]
 
         if self.orden_actual == "titulo":
             books.sort(key=lambda b: b.get("titulo", "").lower())
@@ -513,7 +501,7 @@ class BibliotecaFrame(CTkFrame):
             elif self.filtro_actual == "leidos":
                 msg = "Aun no has marcado ningun libro como leido."
             lbl = CTkLabel(self.scroll, text=msg, font=("Arial", 16),
-                          text_color=PALETA["text_muted"])
+                        text_color=PALETA["text_muted"])
             lbl._is_empty_msg = True
             lbl.pack(pady=50, fill="x")
             lbl.configure(anchor="center")
@@ -572,20 +560,18 @@ class BibliotecaFrame(CTkFrame):
         card._refs = refs
         card._book_id = None
 
-        # Cover
         cover = CTkFrame(card, width=120, height=150, corner_radius=8,
-                         fg_color=PALETA["bg_input"])
+                        fg_color=PALETA["bg_input"])
         cover.pack(pady=(10, 6))
         cover.pack_propagate(False)
         refs['cover_img'] = CTkLabel(cover, text="")
         refs['cover_img'].place(relx=0.5, rely=0.5, anchor="center")
 
-        # Textos
         refs['title'] = CTkLabel(card, text="", font=("Arial", 13, "bold"),
-                                 text_color=PALETA["text_main"], wraplength=160)
+                                text_color=PALETA["text_main"], wraplength=160)
         refs['title'].pack(pady=(0, 2))
         refs['author'] = CTkLabel(card, text="", font=("Arial", 10),
-                                  text_color=PALETA["text_secondary"], wraplength=160)
+                                text_color=PALETA["text_secondary"], wraplength=160)
         refs['author'].pack(pady=(0, 2))
         refs['meta'] = CTkLabel(card, text="", font=("Arial", 9),
                                 text_color=PALETA["text_muted"], wraplength=160)
@@ -594,12 +580,10 @@ class BibliotecaFrame(CTkFrame):
                                     text_color=PALETA["text_muted"], wraplength=160)
         refs['location'].pack(pady=(0, 2))
 
-        # Estado frame
         refs['estado_frame'] = CTkFrame(card, fg_color="transparent", height=55)
         refs['estado_frame'].pack(pady=(0, 4))
         refs['estado_frame'].pack_propagate(False)
 
-        # Pre-crear widgets de estado
         refs['estado_menu'] = CTkOptionMenu(refs['estado_frame'], values=list(self.ESTADOS.values()),
                                             width=140,
                                             fg_color=PALETA["bg_input"],
@@ -612,19 +596,18 @@ class BibliotecaFrame(CTkFrame):
 
         refs['estado_done'] = CTkFrame(refs['estado_frame'], fg_color="transparent")
         refs['estado_done_label'] = CTkLabel(refs['estado_done'], text="",
-                                              font=("Arial", 9, "bold"),
-                                              text_color=PALETA["coral"])
+                                            font=("Arial", 9, "bold"),
+                                            text_color=PALETA["coral"])
         refs['estado_done_stars'] = StarRating(refs['estado_done'], rating=0, size=14, readonly=True)
         refs['estado_done_fmt'] = CTkLabel(refs['estado_done'], text="", font=("Arial", 9),
-                                           text_color=PALETA["text_secondary"])
+                                        text_color=PALETA["text_secondary"])
 
-        # Botones
         btn_row = CTkFrame(card, fg_color="transparent")
         btn_row.pack(pady=(0, 8))
         refs['btn_edit'] = CTkButton(btn_row, text="Editar", width=28, height=18, font=("Arial", 8),
-                                     fg_color=PALETA["ocean"],
-                                     hover_color=PALETA["coral"],
-                                     text_color=PALETA["text_main"])
+                                    fg_color=PALETA["ocean"],
+                                    hover_color=PALETA["coral"],
+                                    text_color=PALETA["text_main"])
         refs['btn_edit'].pack(side="left", padx=2)
         refs['btn_del'] = CTkButton(btn_row, text="Eliminar", width=28, height=18,
                                     fg_color=PALETA["error"],
@@ -639,7 +622,6 @@ class BibliotecaFrame(CTkFrame):
         estado = self.normalize_estado(book.get("estado", "no_leido"))
         card._book_id = book.get("id")
 
-        # Portada
         img = self._load_cover(book.get("foto"))
         if img:
             refs['cover_img'].configure(image=img, text="")
@@ -648,13 +630,11 @@ class BibliotecaFrame(CTkFrame):
                                         font=("Arial", 40),
                                         text_color=PALETA["text_muted"])
 
-        # Textos
         refs['title'].configure(text=book.get("titulo", "Sin titulo"))
         refs['author'].configure(text=book.get("autor", ""))
         refs['meta'].configure(text=f"{book.get('paginas', '?')} pag. | {book.get('genero', '')}")
         refs['location'].configure(text=f"Loc: {book.get('ubicacion', '')}")
 
-        # Estado
         if estado != "leido":
             refs['estado_done'].place_forget()
             refs['estado_menu'].place(relx=0.5, rely=0.5, anchor="center")
@@ -674,7 +654,6 @@ class BibliotecaFrame(CTkFrame):
             refs['estado_done_fmt'].configure(text=fmt_text.get(fmt, ""))
             refs['estado_done_fmt'].place(relx=0.5, y=42, anchor="center")
 
-        # Botones
         refs['btn_edit'].configure(command=lambda b=book: self.edit_book(b))
         refs['btn_del'].configure(command=lambda b=book: self.delete_book(b))
 
@@ -788,8 +767,8 @@ class BibliotecaFrame(CTkFrame):
         self.scroll.pack_forget()
         self.add_panel.pack_forget()
         self.btn_toggle_add.configure(text="+ Anadir Libro",
-                                      fg_color=PALETA["coral"],
-                                      hover_color=PALETA["coral_light"])
+                                    fg_color=PALETA["coral"],
+                                    hover_color=PALETA["coral_light"])
         self.add_panel_visible = False
         self.edit_panel.pack(fill="both", padx=20, pady=10, expand=True)
 
