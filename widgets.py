@@ -12,7 +12,7 @@ class StarRating(CTkFrame):
         self.readonly = readonly
         self.stars = []
         for i in range(5):
-            lbl = CTkLabel(self, text="☆", font=("Arial", size), text_color="gold")
+            lbl = CTkLabel(self, text="☆", font=("Arial", size), text_color="#F5B041")
             if not readonly:
                 lbl.bind("<Button-1>", lambda e, idx=i: self.set_rating(idx + 1))
             lbl.pack(side="left", padx=2)
@@ -39,7 +39,7 @@ class IconRating(CTkFrame):
         self.icon = icon
         self.labels = []
         for i in range(max_val):
-            lbl = CTkLabel(self, text=icon, font=("Arial", 18), text_color="gray")
+            lbl = CTkLabel(self, text=icon, font=("Arial", 18), text_color="#85929E")
             lbl.bind("<Button-1>", lambda e, idx=i: self.set_value(idx + 1))
             lbl.pack(side="left", padx=3)
             self.labels.append(lbl)
@@ -51,4 +51,4 @@ class IconRating(CTkFrame):
 
     def update_ui(self):
         for i, lbl in enumerate(self.labels):
-            lbl.configure(text_color="#ff6b6b" if i < self.value else "gray")
+            lbl.configure(text_color="#E67E22" if i < self.value else "#85929E")

@@ -18,7 +18,7 @@ try:
 except ImportError:
     CTkImage = None
 
-from database import Database
+from database import Database, PALETA
 
 
 def lerp_color(c1, c2, t):
@@ -38,20 +38,22 @@ def lerp_color(c1, c2, t):
 
 def color_for_pages(pages):
     if pages == 0 or pages == "None" or pages == "":
-        return "#1f1f1f"
+        return "#C8E0F0"
     try:
         p = int(pages)
     except (ValueError, TypeError):
-        return "#1f1f1f"
+        return "#C8E0F0"
     if p <= 0:
-        return "#1f1f1f"
+        return "#C8E0F0"
     stops = [
-        (1,   "#3a3a5c"),
-        (10,  "#40E0D0"),
-        (30,  "#4DD0E1"),
-        (50,  "#FFD54F"),
-        (80,  "#FF8A65"),
-        (120, "#FF8A65"),
+        (1,   "#29B6F6"),   # azul claro
+        (10,  "#00E5FF"),   # cian brillante
+        (20,  "#00E676"),   # verde neón
+        (35,  "#76FF03"),   # verde lima
+        (50,  "#FFEA00"),   # amarillo brillante
+        (70,  "#FF9100"),   # naranja brillante
+        (90,  "#FF3D00"),   # naranja rojizo
+        (120, "#D500F9"),   # púrpura vibrante
     ]
     if p >= stops[-1][0]:
         return stops[-1][1]
@@ -65,18 +67,18 @@ def color_for_pages(pages):
 
 
 MONTH_COLORS = {
-    1:  "#5DADE2",   # Enero - azul hielo
-    2:  "#AF7AC5",   # Febrero - lila
-    3:  "#58D68D",   # Marzo - verde primavera
-    4:  "#F4D03F",   # Abril - amarillo pascua
-    5:  "#F5B041",   # Mayo - naranja claro
-    6:  "#FF8A65",   # Junio - rojo
-    7:  "#FF7043",   # Julio - rojo oscuro
-    8:  "#E67E22",   # Agosto - naranja
-    9:  "#D35400",   # Septiembre - calabaza
-    10: "#8E44AD",   # Octubre - morado
-    11: "#0B3A5C",   # Noviembre - gris azulado
-    12: "#1ABC9C",   # Diciembre - turquesa
+    1:  "#00B0FF",   # Enero - azul brillante
+    2:  "#E040FB",   # Febrero - púrpura vibrante
+    3:  "#00E676",   # Marzo - verde neón
+    4:  "#FFEA00",   # Abril - amarillo brillante
+    5:  "#FF9100",   # Mayo - naranja vibrante
+    6:  "#FF1744",   # Junio - rojo intenso
+    7:  "#D50000",   # Julio - rojo profundo
+    8:  "#FF6D00",   # Agosto - naranja fuerte
+    9:  "#FFAB00",   # Septiembre - ámbar brillante
+    10: "#651FFF",   # Octubre - violeta intenso
+    11: "#3D5AFE",   # Noviembre - índigo brillante
+    12: "#00BFA5",   # Diciembre - turquesa profundo
 }
 
 MONTH_NAMES = {
@@ -92,7 +94,7 @@ class TrackerFrame(CTkFrame):
         self.db = db
         self.configure(fg_color="transparent")
 
-        CTkLabel(self, text="📅 Reading Tracker", font=("Helvetica", 28, "bold")).pack(pady=(15, 5))
+        CTkLabel(self, text="Reading Tracker", font=("Helvetica", 28, "bold")).pack(pady=(15, 5))
 
         main = CTkFrame(self, fg_color="transparent")
         main.pack(fill="both", expand=True, padx=20, pady=10)
@@ -111,7 +113,7 @@ class TrackerFrame(CTkFrame):
         CTkOptionMenu(ctrl, values=[str(i) for i in range(2026, 2036)], variable=self.year_var, width=100).pack(side="left", padx=5)
         CTkButton(ctrl, text="Cargar", command=self.render_tracker, width=80).pack(side="left", padx=10)
 
-        self.canvas = Canvas(left, width=520, height=520, bg="#0B1B2B", highlightthickness=0)
+        self.canvas = Canvas(left, width=520, height=520, bg="#D0EBF5", highlightthickness=0)
         self.canvas.pack(pady=10)
 
         legend = CTkFrame(left, fg_color="transparent")
@@ -136,16 +138,16 @@ class TrackerFrame(CTkFrame):
         right = CTkFrame(main, fg_color="transparent")
         right.grid(row=0, column=1, sticky="nsew")
 
-        CTkLabel(right, text="📖 Leyendo ahora", font=("Helvetica", 16, "bold")).pack(anchor="w", pady=(0, 5))
+        CTkLabel(right, text="Leyendo ahora", font=("Helvetica", 16, "bold")).pack(anchor="w", pady=(0, 5))
         self.reading_scroll = CTkScrollableFrame(right, width=280, height=180, fg_color="transparent")
         self.reading_scroll.pack(fill="x", pady=5)
 
-        self.streak_frame = CTkFrame(right, corner_radius=10, border_width=2, border_color="#1E5F8E", fg_color="#162F4A")
+        self.streak_frame = CTkFrame(right, corner_radius=10, border_width=2, border_color="#2E86C1", fg_color="#FFFFFF")
         self.streak_frame.pack(fill="x", pady=15)
-        self.streak_label = CTkLabel(self.streak_frame, text="🔥 Racha actual: 0 días", font=("Arial", 14, "bold"))
+        self.streak_label = CTkLabel(self.streak_frame, text="Racha actual: 0 días", font=("Arial", 14, "bold"))
         self.streak_label.pack(pady=10)
 
-        CTkLabel(right, text="📜 Historial de rachas", font=("Helvetica", 14, "bold")).pack(anchor="w", pady=(5, 5))
+        CTkLabel(right, text="Historial de rachas", font=("Helvetica", 14, "bold")).pack(anchor="w", pady=(5, 5))
         self.streaks_scroll = CTkScrollableFrame(right, width=280, height=200, fg_color="transparent")
         self.streaks_scroll.pack(fill="x", pady=5)
 
@@ -217,13 +219,13 @@ class TrackerFrame(CTkFrame):
         draw_batch(0)
 
     def _create_reading_row(self, parent, book=None):
-        row = CTkFrame(parent, corner_radius=10, border_width=1, height=70, border_color="#1E5F8E", fg_color="#162F4A")
+        row = CTkFrame(parent, corner_radius=10, border_width=1, height=70, border_color="#2E86C1", fg_color="#FFFFFF")
         row.pack_propagate(False)
 
         refs = {}
         row._refs = refs
 
-        cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#162F4A")
+        cover = CTkFrame(row, width=35, height=50, corner_radius=4, fg_color="#FFFFFF")
         cover.pack(side="left", padx=(10, 8), pady=10)
         cover.pack_propagate(False)
         refs['cover_img'] = CTkLabel(cover, text="")
@@ -233,7 +235,7 @@ class TrackerFrame(CTkFrame):
         text_frame.pack(side="left", fill="y", expand=True, pady=8)
         refs['title'] = CTkLabel(text_frame, text="", font=("Arial", 12, "bold"))
         refs['title'].pack(anchor="w")
-        refs['author'] = CTkLabel(text_frame, text="", font=("Arial", 10), text_color="#4A90A4")
+        refs['author'] = CTkLabel(text_frame, text="", font=("Arial", 10), text_color="#5DADE2")
         refs['author'].pack(anchor="w")
 
         if book:
@@ -246,7 +248,7 @@ class TrackerFrame(CTkFrame):
         if img:
             refs['cover_img'].configure(image=img, text="")
         else:
-            refs['cover_img'].configure(image=None, text="📕", font=("Arial", 16))
+            refs['cover_img'].configure(image=None, text="Libro", font=("Arial", 16))
         refs['title'].configure(text=book.get("titulo", "Sin título"))
         refs['author'].configure(text=book.get("autor", ""))
 
@@ -255,7 +257,7 @@ class TrackerFrame(CTkFrame):
         current = self.db.get("current_streak")
         count = current.get("count", 0) if current else 0
         self.streak_label.configure(
-            text=f"🔥 Racha actual: {count} días" if count > 0 else "🔥 Racha actual: 0 días"
+            text=f"Racha actual: {count} días" if count > 0 else "Racha actual: 0 días"
         )
 
         for w in self.streaks_scroll.winfo_children():
@@ -283,7 +285,7 @@ class TrackerFrame(CTkFrame):
         month = int(self.month_var.get())
         days_in_month = calendar.monthrange(year, month)[1]
         tracker_data = self.db.get("tracker").get(f"{year}-{month:02d}", {})
-        month_color = MONTH_COLORS.get(month, "#162F4A")
+        month_color = MONTH_COLORS.get(month, "#FFFFFF")
 
         # Anillo decorativo con color del mes
         self.canvas.create_oval(cx - r_outer - 8, cy - r_outer - 8,
@@ -304,24 +306,24 @@ class TrackerFrame(CTkFrame):
             x = cx + rad * 0.85 * math.cos(math.radians(mid_angle))
             y = cy + rad * 0.85 * math.sin(math.radians(mid_angle))
 
-            self.canvas.create_text(x, y, text=str(day), fill="#E0F7FA", font=("Arial", 9, "bold"))
+            self.canvas.create_text(x, y, text=str(day), fill="#2C3E50", font=("Arial", 9, "bold"))
 
             if pages and str(pages).isdigit() and int(pages) > 0:
                 x2 = cx + (r_inner - 25) * math.cos(math.radians(mid_angle))
                 y2 = cy + (r_inner - 25) * math.sin(math.radians(mid_angle))
-                self.canvas.create_text(x2, y2, text=str(pages), fill="#E0F7FA",
+                self.canvas.create_text(x2, y2, text=str(pages), fill="#2C3E50",
                                         font=("Arial", 8, "bold"))
 
         # Círculo central con color del mes
         self.canvas.create_oval(cx - 70, cy - 70, cx + 70, cy + 70,
-                                fill=month_color, outline="#1E5F8E", width=2)
+                                fill=month_color, outline="#2E86C1", width=2)
         total = sum(int(v) for v in tracker_data.values() if str(v).isdigit())
 
         # Nombre del mes en el centro
         self.canvas.create_text(cx, cy - 18, text=MONTH_NAMES.get(month, ""),
-                                fill="#E0F7FA", font=("Arial", 16, "bold"))
+                                fill="#2C3E50", font=("Arial", 16, "bold"))
         # Total de páginas debajo
-        self.canvas.create_text(cx, cy + 12, text=f"{total} pág.", fill="#E0F7FA",
+        self.canvas.create_text(cx, cy + 12, text=f"{total} pág.", fill="#2C3E50",
                                 font=("Arial", 11, "bold"))
 
     def _draw_arc(self, cx, cy, r_out, r_in, a1, a2, color):

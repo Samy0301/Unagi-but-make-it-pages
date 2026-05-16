@@ -1,4 +1,33 @@
 """Capa de persistencia JSON."""
+# ═══════════════════════════════════════════════════════════════════
+#  PALETA DE COLORES - PLAYA & CIELO
+# ═══════════════════════════════════════════════════════════════════
+PALETA = {
+    "bg_main": "#C8E0F0",
+    "bg_panel": "#A8D4E8",
+    "bg_card": "#E0F0F5",
+    "bg_input": "#F0F8FB",
+    "bg_header": "#8FB8D8",
+    "bg_dark": "#0F3A5C",
+    "ocean": "#1E6BA8",
+    "sky": "#3D8BC8",
+    "sand": "#E89C20",
+    "sun": "#E08000",
+    "coral": "#D06010",
+    "seafoam": "#2AB8B0",
+    "wave_dark": "#0F3A5C",
+    "sand_light": "#F0D060",
+    "rose": "#F0B0A8",
+    "text_main": "#1A2D3D",
+    "text_secondary": "#3D6A88",
+    "text_light": "#C8E0F0",
+    "text_muted": "#607080",
+    "border": "#88B8D8",
+    "border_accent": "#3D8BC8",
+    "shadow": "#A0B0B8",
+}
+
+
 import json
 import os
 from datetime import datetime, timedelta
