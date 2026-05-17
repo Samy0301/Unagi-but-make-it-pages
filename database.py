@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 
 def _get_data_path():
-    """Devuelve la ruta completa al archivo JSON en AppData (Windows) o home (Linux/macOS)."""
+    """Devuelve la ruta completa al archivo JSON en AppData (Windows) o home (Linux/macOS)"""
     if sys.platform == "win32":
         base = os.environ.get("APPDATA")
         if base:
@@ -152,7 +152,6 @@ class Database:
                 current_start = dates[i]
                 current_end = dates[i]
 
-        # Añadir la última racha detectada
         all_streaks.append({
             "start": current_start.isoformat(),
             "end": current_end.isoformat(),
@@ -163,15 +162,12 @@ class Database:
         last_end = current_end
 
         if last_end < today - timedelta(days=1):
-            # Racha rota: toda la secuencia va al historial
             self.set("current_streak", {"count": 0, "start": None, "last_date": None})
             self.set("reading_streaks", all_streaks)
         else:
-            # Racha activa: la última racha es la actual, todas van al historial
             self.set("current_streak", {
                 "start": all_streaks[-1]["start"],
                 "last_date": all_streaks[-1]["end"],
                 "count": all_streaks[-1]["length"]
             })
-            # Guardar TODAS las rachas en reading_streaks, la última es la actual
             self.set("reading_streaks", all_streaks)

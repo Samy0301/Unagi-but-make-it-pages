@@ -124,13 +124,13 @@ class FolderCard(CTkFrame):
 
 class ChallengesFrame(CTkFrame):
     CHALLENGES = [
-        ("reto_lector",    "Monthly Books",  "",                               PALETA["ocean"]),
-        ("collect_colors", "Collect the Colors", "",                           PALETA["ocean"]),
-        ("genre_tracker",  "Genre Tracker",      "",                           PALETA["ocean"]),
-        ("reading_30",     "30 Day Challenge",   "",                           PALETA["ocean"]),
-        ("alphabet",       "Alphabet Challenge", "",                           PALETA["ocean"]),
-        ("bingo",          "Bookish Bingo",      "",                           PALETA["ocean"]),
-        ("yearly",         "Yearly Challenge",   "",                           PALETA["ocean"]),
+        ("reto_lector",    "Monthly Books",  "",         PALETA["ocean"]),
+        ("collect_colors", "Collect the Colors", "",     PALETA["ocean"]),
+        ("genre_tracker",  "Genre Tracker",      "",     PALETA["ocean"]),
+        ("reading_30",     "30 Day Challenge",   "",     PALETA["ocean"]),
+        ("alphabet",       "Alphabet Challenge", "",     PALETA["ocean"]),
+        ("bingo",          "Bookish Bingo",      "",     PALETA["ocean"]),
+        ("yearly",         "Yearly Challenge",   "",     PALETA["ocean"]),
     ]
 
     def __init__(self, master, db: Database, **kwargs):
@@ -154,8 +154,8 @@ class ChallengesFrame(CTkFrame):
         h = CTkFrame(self.challenge_panel, fg_color="transparent")
         h.pack(fill="x", padx=20, pady=(15, 5))
         CTkButton(h, text="<- Volver", width=90, command=self.show_folders,
-                  fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
-                  text_color=PALETA["text_main"]).pack(side="left")
+                fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
+                text_color=PALETA["text_main"]).pack(side="left")
         self.challenge_title = CTkLabel(h, text="", font=("Helvetica", 24, "bold"),
                                         text_color=PALETA["text_main"])
         self.challenge_title.pack(side="left", padx=15)
@@ -164,50 +164,50 @@ class ChallengesFrame(CTkFrame):
         self.challenge_scroll.pack(fill="both", expand=True, padx=20, pady=10)
 
         self.form_panel = CTkFrame(self, fg_color=PALETA["bg_card"], corner_radius=16,
-                                   border_width=2, border_color=PALETA["border_accent"])
+                                border_width=2, border_color=PALETA["border_accent"])
         CTkLabel(self.form_panel, text="Completar Reto", font=("Helvetica", 22, "bold"),
-                 text_color=PALETA["text_main"]).pack(pady=(18, 12))
+                text_color=PALETA["text_main"]).pack(pady=(18, 12))
         self.form_scroll = CTkScrollableFrame(self.form_panel, width=800, height=500, fg_color="transparent")
         self.form_scroll.pack(padx=25, pady=5, fill="both", expand=True)
 
         self.cover_box = CTkFrame(self.form_scroll, width=160, height=200, corner_radius=10,
-                                  fg_color=PALETA["bg_input"], border_width=2,
-                                  border_color=PALETA["border_accent"])
+                                fg_color=PALETA["bg_input"], border_width=2,
+                                border_color=PALETA["border_accent"])
         self.cover_box.pack(pady=(0, 10))
         self.cover_box.pack_propagate(False)
         CTkButton(self.form_scroll, text="Examinar portada", width=160, height=34,
-                  fg_color=PALETA["coral"], hover_color=PALETA["coral_light"],
-                  text_color=PALETA["bg_main"],
-                  command=self.browse_form_photo).pack(pady=(0, 15))
+                fg_color=PALETA["coral"], hover_color=PALETA["coral_light"],
+                text_color=PALETA["bg_main"],
+                command=self.browse_form_photo).pack(pady=(0, 15))
 
         CTkLabel(self.form_scroll, text="Titulo del libro *", font=("Arial", 11, "bold"),
-                 text_color=PALETA["coral"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["coral"]).pack(anchor="w", pady=(0, 2))
         self.form_titulo = CTkEntry(self.form_scroll, width=600, height=34, corner_radius=8, font=("Arial", 13),
                                     fg_color=PALETA["bg_input"], text_color=PALETA["text_main"],
                                     border_color=PALETA["border"])
         self.form_titulo.pack(anchor="w", pady=(0, 12))
 
         CTkLabel(self.form_scroll, text="Autor", font=("Arial", 11, "bold"),
-                 text_color=PALETA["coral"]).pack(anchor="w", pady=(0, 2))
+                text_color=PALETA["coral"]).pack(anchor="w", pady=(0, 2))
         self.form_autor = CTkEntry(self.form_scroll, width=600, height=34, corner_radius=8, font=("Arial", 13),
-                                   fg_color=PALETA["bg_input"], text_color=PALETA["text_main"],
-                                   border_color=PALETA["border"])
+                                fg_color=PALETA["bg_input"], text_color=PALETA["text_main"],
+                                border_color=PALETA["border"])
         self.form_autor.pack(anchor="w", pady=(0, 12))
 
         self.form_context_label = CTkLabel(self.form_scroll, text="", font=("Arial", 12),
-                                          text_color=PALETA["text_muted"], wraplength=700)
+                                        text_color=PALETA["text_muted"], wraplength=700)
         self.form_context_label.pack(pady=(5, 15))
 
         btn_row = CTkFrame(self.form_panel, fg_color="transparent")
         btn_row.pack(pady=(10, 18))
         CTkButton(btn_row, text="Guardar", command=self.save_form,
-                  height=38, font=("Arial", 13, "bold"), corner_radius=10,
-                  fg_color=PALETA["coral"], hover_color=PALETA["coral_light"],
-                  text_color=PALETA["bg_main"]).pack(side="left", padx=8)
+                height=38, font=("Arial", 13, "bold"), corner_radius=10,
+                fg_color=PALETA["coral"], hover_color=PALETA["coral_light"],
+                text_color=PALETA["bg_main"]).pack(side="left", padx=8)
         CTkButton(btn_row, text="Cancelar", command=self.close_form,
-                  height=38, font=("Arial", 13), corner_radius=10,
-                  fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
-                  text_color=PALETA["text_main"]).pack(side="left", padx=8)
+                height=38, font=("Arial", 13), corner_radius=10,
+                fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
+                text_color=PALETA["text_main"]).pack(side="left", padx=8)
 
         self.show_folders()
 
@@ -272,7 +272,7 @@ class ChallengesFrame(CTkFrame):
                 pass
         self._form_preview_img = None
         CTkLabel(self.cover_box, text="Libro", font=("Arial", 48),
-                 text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
+                text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
 
 
     def build_folders(self):
@@ -286,7 +286,7 @@ class ChallengesFrame(CTkFrame):
         positions = [(0,1), (0,2), (0,3), (1,1), (1,2), (1,3), (2,1)]
         for (r, c), (key, title, subtitle, color) in zip(positions, self.CHALLENGES):
             f = FolderCard(container, title=title, subtitle=subtitle, color=color,
-                           command=lambda k=key: self.show_challenge(k))
+                        command=lambda k=key: self.show_challenge(k))
             f.grid(row=r, column=c, padx=15, pady=20)
 
     def show_folders(self):
@@ -344,9 +344,9 @@ class ChallengesFrame(CTkFrame):
         hdr.pack(fill="x", padx=0, pady=0)
         hdr.pack_propagate(False)
         CTkLabel(hdr, text=info["mes"], font=("Helvetica", 14, "bold"),
-                 text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
+                text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
         CTkLabel(card, text="Libro favorito del mes", font=("Arial", 11, "bold"),
-                 text_color=PALETA["text_muted"]).pack(pady=(10, 8), padx=10)
+                text_color=PALETA["text_muted"]).pack(pady=(10, 8), padx=10)
         content = CTkFrame(card, fg_color="transparent", height=210)
         content.pack(fill="x", padx=10, pady=(0, 8))
         content.pack_propagate(False)
@@ -357,18 +357,18 @@ class ChallengesFrame(CTkFrame):
                 CTkLabel(content, image=img, text="").pack(pady=(8, 4))
             else:
                 CTkLabel(content, text="Libro", font=("Arial", 48),
-                         text_color=PALETA["text_muted"]).pack(pady=(20, 4))
+                        text_color=PALETA["text_muted"]).pack(pady=(20, 4))
             CTkLabel(content, text=saved.get("titulo", ""), font=("Arial", 12, "bold"),
-                     text_color=PALETA["text_main"], wraplength=250).pack(pady=(4, 0))
+                    text_color=PALETA["text_main"], wraplength=250).pack(pady=(4, 0))
             CTkLabel(content, text=saved.get("autor", ""), font=("Arial", 10),
-                     text_color=PALETA["text_secondary"], wraplength=250).pack()
+                    text_color=PALETA["text_secondary"], wraplength=250).pack()
         else:
             CTkLabel(content, text="Sin libro favorito", font=("Arial", 12),
-                     text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.4, anchor="center")
+                    text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.4, anchor="center")
             CTkButton(content, text="Anadir favorito", width=140, height=30,
-                      fg_color=PALETA["coral"], hover_color=PALETA["coral_light"],
-                      text_color=PALETA["bg_main"],
-                      command=lambda m=mes_num: self.open_form("reto_lector", m)).place(relx=0.5, rely=0.7, anchor="center")
+                    fg_color=PALETA["coral"], hover_color=PALETA["coral_light"],
+                    text_color=PALETA["bg_main"],
+                    command=lambda m=mes_num: self.open_form("reto_lector", m)).place(relx=0.5, rely=0.7, anchor="center")
 
         if saved:
             card.configure(cursor="hand2")
@@ -376,9 +376,9 @@ class ChallengesFrame(CTkFrame):
             for child in card.winfo_children():
                 child.bind("<Button-1>", lambda e, m=mes_num: self.open_form("reto_lector", m))
             CTkButton(card, text="Editar", width=120, height=28,
-                      fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
-                      text_color=PALETA["text_main"],
-                      command=lambda m=mes_num: self.open_form("reto_lector", m)).pack(pady=(0, 8))
+                    fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
+                    text_color=PALETA["text_main"],
+                    command=lambda m=mes_num: self.open_form("reto_lector", m)).pack(pady=(0, 8))
         return card
 
     #  COLLECT COLORS
@@ -402,7 +402,7 @@ class ChallengesFrame(CTkFrame):
         hdr.pack(fill="x", padx=0, pady=0)
         hdr.pack_propagate(False)
         CTkLabel(hdr, text=cdata["name"], font=("Helvetica", 13, "bold"),
-                 text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
+                text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
         slot = CTkFrame(card, width=120, height=160, corner_radius=10,
                         border_width=4, border_color=color, fg_color=PALETA["bg_input"])
         slot.pack(pady=(15, 8))
@@ -414,18 +414,18 @@ class ChallengesFrame(CTkFrame):
                 CTkLabel(slot, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
             else:
                 CTkLabel(slot, text="Libro", font=("Arial", 40),
-                         text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
+                        text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
             CTkLabel(card, text=saved.get("titulo", ""), font=("Arial", 11, "bold"),
-                     text_color=PALETA["text_main"], wraplength=180).pack(pady=(2, 0))
+                    text_color=PALETA["text_main"], wraplength=180).pack(pady=(2, 0))
             CTkLabel(card, text=saved.get("autor", ""), font=("Arial", 10),
-                     text_color=PALETA["text_secondary"], wraplength=180).pack()
+                    text_color=PALETA["text_secondary"], wraplength=180).pack()
         else:
             CTkLabel(slot, text="Libro", font=("Arial", 40),
-                     text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
+                    text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
             CTkButton(card, text="Anadir", width=120, height=28,
-                      fg_color=PALETA["coral"], hover_color=PALETA["coral_light"],
-                      text_color=PALETA["bg_main"],
-                      command=lambda k=cdata["key"]: self.open_form("collect_colors", k)).pack(pady=(8, 0))
+                    fg_color=PALETA["coral"], hover_color=PALETA["coral_light"],
+                    text_color=PALETA["bg_main"],
+                    command=lambda k=cdata["key"]: self.open_form("collect_colors", k)).pack(pady=(8, 0))
 
         if saved:
             card.configure(cursor="hand2")
@@ -433,9 +433,9 @@ class ChallengesFrame(CTkFrame):
             for child in card.winfo_children():
                 child.bind("<Button-1>", lambda e, k=cdata["key"]: self.open_form("collect_colors", k))
             CTkButton(card, text="Editar", width=120, height=28,
-                      fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
-                      text_color=PALETA["text_main"],
-                      command=lambda k=cdata["key"]: self.open_form("collect_colors", k)).pack(pady=(0, 8))
+                    fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
+                    text_color=PALETA["text_main"],
+                    command=lambda k=cdata["key"]: self.open_form("collect_colors", k)).pack(pady=(0, 8))
         return card
 
     #  GENRE TRACKER
@@ -466,7 +466,7 @@ class ChallengesFrame(CTkFrame):
             if i in (0, 5, 10, 15):
                 num = 20 - i
                 CTkLabel(slot, text=str(num), font=("Arial", 10, "bold"),
-                         text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
+                        text_color=PALETA["text_muted"]).place(relx=0.5, rely=0.5, anchor="center")
 
         grid_frame = CTkFrame(main, fg_color="transparent")
         grid_frame.pack(side="left", fill="both", expand=True)
@@ -488,7 +488,7 @@ class ChallengesFrame(CTkFrame):
             sq.pack(pady=1)
 
         lbl = CTkLabel(col, text=gdata["name"], font=("Arial", 12, "bold"),
-                       text_color=gdata["color"], wraplength=65, justify="center")
+                    text_color=gdata["color"], wraplength=65, justify="center")
         lbl.pack(pady=(8, 0))
         return col
 
@@ -498,7 +498,7 @@ class ChallengesFrame(CTkFrame):
         border = color
 
         sq = CTkFrame(parent, width=size, height=size, corner_radius=2,
-                      fg_color=fg, border_width=2, border_color=border)
+                    fg_color=fg, border_width=2, border_color=border)
         sq.pack_propagate(False)
 
         sq._genre_key = genre_key
@@ -617,7 +617,7 @@ class ChallengesFrame(CTkFrame):
         circ.grid_propagate(False)
 
         lbl = CTkLabel(circ, text=str(number), font=("Arial", 24, "bold"),
-                       text_color=PALETA["text_main"] if is_filled else PALETA["text_muted"])
+                    text_color=PALETA["text_main"] if is_filled else PALETA["text_muted"])
         lbl.place(relx=0.5, rely=0.5, anchor="center")
 
         circ._number = number
@@ -793,37 +793,37 @@ class ChallengesFrame(CTkFrame):
         badge_color = PALETA["success"] if is_saved else PALETA["bg_input"]
         border_color = PALETA["success"] if is_saved else PALETA["border_accent"]
         badge = CTkFrame(row, width=42, height=42, corner_radius=8,
-                         fg_color=badge_color, border_width=2, border_color=border_color)
+                        fg_color=badge_color, border_width=2, border_color=border_color)
         badge.pack(side="left", padx=(10, 12))
         badge.pack_propagate(False)
         CTkLabel(badge, text=letter, font=("Helvetica", 18, "bold"),
-                 text_color=PALETA["text_main"] if is_saved else PALETA["coral"]).place(relx=0.5, rely=0.5, anchor="center")
+                text_color=PALETA["text_main"] if is_saved else PALETA["coral"]).place(relx=0.5, rely=0.5, anchor="center")
 
         fields = CTkFrame(row, fg_color="transparent")
         fields.pack(side="left", fill="both", expand=True, pady=4)
 
         if is_saved:
             CTkLabel(fields, text=data.get("titulo", ""), font=("Arial", 13, "bold"),
-                     text_color=PALETA["text_main"]).pack(anchor="w")
+                    text_color=PALETA["text_main"]).pack(anchor="w")
             CTkLabel(fields, text=data.get("autor", ""), font=("Arial", 12),
-                     text_color=PALETA["text_muted"]).pack(anchor="w")
+                    text_color=PALETA["text_muted"]).pack(anchor="w")
 
             CTkButton(row, text="Editar", width=36, height=36, corner_radius=8,
-                      fg_color=PALETA["ocean"], hover_color=PALETA["bg_header"],
-                      text_color=PALETA["text_main"],
-                      command=lambda l=letter: self._on_alpha_edit(l)).pack(side="right", padx=(8, 10))
+                    fg_color=PALETA["ocean"], hover_color=PALETA["bg_header"],
+                    text_color=PALETA["text_main"],
+                    command=lambda l=letter: self._on_alpha_edit(l)).pack(side="right", padx=(8, 10))
         else:
             titulo = CTkEntry(fields, placeholder_text="Titulo del libro...", height=30,
-                              corner_radius=6, font=("Arial", 13),
-                              fg_color=PALETA["bg_input"], text_color=PALETA["text_main"],
-                              border_color=PALETA["border"])
+                            corner_radius=6, font=("Arial", 13),
+                            fg_color=PALETA["bg_input"], text_color=PALETA["text_main"],
+                            border_color=PALETA["border"])
             titulo.pack(fill="x", pady=(1, 2))
             if data.get("titulo"):
                 titulo.insert(0, data["titulo"])
 
             autor = CTkEntry(fields, placeholder_text="Autor...", height=30,
-                             corner_radius=6, font=("Arial", 12), text_color=PALETA["text_secondary"],
-                             fg_color=PALETA["bg_input"], border_color=PALETA["border"])
+                            corner_radius=6, font=("Arial", 12), text_color=PALETA["text_secondary"],
+                            fg_color=PALETA["bg_input"], border_color=PALETA["border"])
             autor.pack(fill="x", pady=(0, 1))
             if data.get("autor"):
                 autor.insert(0, data["autor"])
@@ -892,8 +892,8 @@ class ChallengesFrame(CTkFrame):
         cell._done = is_done
 
         lbl = CTkLabel(cell, text=text,
-                       font=("Arial", 13 if is_done else 12, "bold" if is_done else "normal"),
-                       text_color=text_color, wraplength=150, justify="center")
+                    font=("Arial", 13 if is_done else 12, "bold" if is_done else "normal"),
+                    text_color=text_color, wraplength=150, justify="center")
         lbl.place(relx=0.5, rely=0.5, anchor="center")
 
         if is_done:
@@ -901,7 +901,7 @@ class ChallengesFrame(CTkFrame):
                                 fg_color=PALETA["success"], border_width=0)
             check_bg.place(relx=0.88, rely=0.12, anchor="center")
             CTkLabel(check_bg, text="OK", font=("Arial", 10, "bold"),
-                     text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
+                    text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
 
         for widget in cell.winfo_children():
             widget.bind("<Button-1>", lambda e, i=index: self._on_bingo_click(i))
@@ -961,8 +961,8 @@ class ChallengesFrame(CTkFrame):
 
         text = BINGO_DATA[index]
         lbl = CTkLabel(cell, text=text,
-                       font=("Arial", 13 if is_done else 12, "bold" if is_done else "normal"),
-                       text_color=text_color, wraplength=150, justify="center")
+                    font=("Arial", 13 if is_done else 12, "bold" if is_done else "normal"),
+                    text_color=text_color, wraplength=150, justify="center")
         lbl.place(relx=0.5, rely=0.5, anchor="center")
 
         if is_done:
@@ -970,7 +970,7 @@ class ChallengesFrame(CTkFrame):
                                 fg_color=PALETA["success"], border_width=0)
             check_bg.place(relx=0.88, rely=0.12, anchor="center")
             CTkLabel(check_bg, text="OK", font=("Arial", 10, "bold"),
-                     text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
+                    text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
 
         for widget in cell.winfo_children():
             widget.bind("<Button-1>", lambda e, i=index: self._on_bingo_click(i))
@@ -1042,7 +1042,7 @@ class ChallengesFrame(CTkFrame):
         row.pack_propagate(False)
 
         num_lbl = CTkLabel(row, text=f"{num}.", font=("Arial", 13, "bold"),
-                           text_color=PALETA["text_muted"], width=32)
+                        text_color=PALETA["text_muted"], width=32)
         num_lbl.pack(side="left", padx=(0, 8))
 
         if has_cover:
@@ -1072,10 +1072,10 @@ class ChallengesFrame(CTkFrame):
                 CTkLabel(cell, image=img, text="").place(relx=0.5, rely=0.5, anchor="center")
             else:
                 CTkLabel(cell, text=str(num), font=("Helvetica", 18, "bold"),
-                         text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
+                        text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
         else:
             CTkLabel(cell, text=str(num), font=("Helvetica", 22, "bold"),
-                     text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
+                    text_color=PALETA["text_main"]).place(relx=0.5, rely=0.5, anchor="center")
 
         cell.bind("<Button-1>", lambda e, n=num: self._on_yearly_click(n))
         for w in cell.winfo_children():
