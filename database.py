@@ -1,7 +1,23 @@
 import json
 import os
+import sys
 import threading
 from datetime import datetime, timedelta
+
+
+def _get_data_path():
+    """Devuelve la ruta completa al archivo JSON en AppData (Windows) o home (Linux/macOS)."""
+    if sys.platform == "win32":
+        base = os.environ.get("APPDATA")
+        if base:
+            folder = os.path.join(base, "BookJournal")
+        else:
+            folder = os.path.join(os.path.expanduser("~"), "BookJournal")
+    else:
+        folder = os.path.join(os.path.expanduser("~"), ".bookjournal")
+    os.makedirs(folder, exist_ok=True)
+    return os.path.join(folder, "book_journal_data.json")
+
 
 PALETA = {
     "bg_main": "#0A1628",
@@ -27,7 +43,7 @@ PALETA = {
     "success": "#5DBE8A",
 }
 
-DATA_FILE = "book_journal_data.json"
+DATA_FILE = _get_data_path()
 
 
 class Database:
@@ -116,11 +132,11 @@ class Database:
     def recalc_streaks(self):
         dates = sorted(self.get_tracker_dates())
         if not dates:
-            self.set("current_streak", {"count": 0})
+            self.set("current_streak", {"count": 0, "start": None, "last_date": None})
             self.set("reading_streaks", [])
             return
 
-        streaks = []
+        all_streaks = []
         current_start = dates[0]
         current_end = dates[0]
 
@@ -128,7 +144,7 @@ class Database:
             if dates[i] == current_end + timedelta(days=1):
                 current_end = dates[i]
             else:
-                streaks.append({
+                all_streaks.append({
                     "start": current_start.isoformat(),
                     "end": current_end.isoformat(),
                     "length": (current_end - current_start).days + 1
@@ -136,23 +152,26 @@ class Database:
                 current_start = dates[i]
                 current_end = dates[i]
 
-        last_streak = {
+        # Añadir la última racha detectada
+        all_streaks.append({
             "start": current_start.isoformat(),
             "end": current_end.isoformat(),
             "length": (current_end - current_start).days + 1
-        }
+        })
 
         today = datetime.now().date()
         last_end = current_end
 
-        if last_end < today:
-            streaks.append(last_streak)
-            self.set("current_streak", {"count": 0})
+        if last_end < today - timedelta(days=1):
+            # Racha rota: toda la secuencia va al historial
+            self.set("current_streak", {"count": 0, "start": None, "last_date": None})
+            self.set("reading_streaks", all_streaks)
         else:
+            # Racha activa: la última racha es la actual, todas van al historial
             self.set("current_streak", {
-                "start": last_streak["start"],
-                "last_date": last_streak["end"],
-                "count": last_streak["length"]
+                "start": all_streaks[-1]["start"],
+                "last_date": all_streaks[-1]["end"],
+                "count": all_streaks[-1]["length"]
             })
-
-        self.set("reading_streaks", streaks)
+            # Guardar TODAS las rachas en reading_streaks, la última es la actual
+            self.set("reading_streaks", all_streaks)

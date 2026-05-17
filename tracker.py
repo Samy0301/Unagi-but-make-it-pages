@@ -154,15 +154,6 @@ class TrackerFrame(CTkFrame):
                                                 fg_color="transparent")
         self.reading_scroll.pack(fill="x", pady=5)
 
-        # Racha con acento coral
-        self.streak_frame = CTkFrame(right, corner_radius=10, border_width=2,
-                                    border_color=PALETA["coral"], fg_color=PALETA["bg_card"])
-        self.streak_frame.pack(fill="x", pady=15)
-        self.streak_label = CTkLabel(self.streak_frame, text="Racha actual: 0 dias",
-                                    font=("Arial", 14, "bold"),
-                                    text_color=PALETA["coral"])
-        self.streak_label.pack(pady=10)
-
         CTkLabel(right, text="Historial de rachas", font=("Helvetica", 14, "bold"),
                 text_color=PALETA["text_main"]).pack(anchor="w", pady=(5, 5))
         self.streaks_scroll = CTkScrollableFrame(right, width=280, height=200,
@@ -220,24 +211,25 @@ class TrackerFrame(CTkFrame):
 
     def render_streaks(self):
         self.db.recalc_streaks()
-        current = self.db.get("current_streak")
-        count = current.get("count", 0) if current else 0
-        self.streak_label.configure(
-            text=f"Racha actual: {count} dias" if count > 0 else "Racha actual: 0 dias"
-        )
 
         for w in list(self.streaks_scroll.winfo_children()):
             w.destroy()
 
         streaks = self.db.get("reading_streaks")
+        current = self.db.get("current_streak")
+        has_active = current.get("count", 0) > 0 if current else False
+
         if not streaks:
             CTkLabel(self.streaks_scroll, text="Aun no hay rachas registradas.",
                     font=("Arial", 11), text_color=PALETA["text_muted"]).pack(pady=10)
             return
 
-        for s in reversed(streaks):
-            row = CTkFrame(self.streaks_scroll, corner_radius=8, border_width=1,
-                        border_color=PALETA["border"], fg_color=PALETA["bg_card"])
+        for idx, s in enumerate(reversed(streaks)):
+            is_active = (idx == 0 and has_active)
+            border_color = PALETA["coral"] if is_active else PALETA["border"]
+
+            row = CTkFrame(self.streaks_scroll, corner_radius=8, border_width=2,
+                        border_color=border_color, fg_color=PALETA["bg_card"])
             row.pack(fill="x", pady=3)
             start = datetime.fromisoformat(s["start"]).strftime("%d/%m/%Y")
             end = datetime.fromisoformat(s["end"]).strftime("%d/%m/%Y")
