@@ -130,7 +130,8 @@
       "16": 78,
       "18": 78,
       "19": 78,
-      "21": 780
+      "21": 780,
+      "22": 3
     }
   },
   "bookshelf": [
@@ -236,8 +237,8 @@
   ],
   "current_streak": {
     "start": "2026-05-21",
-    "last_date": "2026-05-21",
-    "count": 1
+    "last_date": "2026-05-22",
+    "count": 2
   },
   "tbr": [],
   "shelf_config": {
@@ -256,14 +257,14 @@
         "foto": "C:/Users/pc/Pictures/#aesthetic #wallpaper.jpg"
       },
       "1": {
-        "titulo": "af",
-        "autor": "",
+        "titulo": "Bride",
+        "autor": "Ali Hazelwood",
         "foto": "C:/Users/pc/Pictures/,hfcx.png"
       },
       "3": {
-        "titulo": "jgc",
-        "autor": "",
-        "foto": "C:/Users/pc/Pictures/0c7ac980-00b8-43b2-9673-375b0bc1f47a.jpg"
+        "titulo": "God of Fury",
+        "autor": "Rina Kent",
+        "foto": "C:/Users/pc/Pictures/@ mike_debeer _ instagram story.jpg"
       },
       "5": {
         "titulo": "Hunt the villain",

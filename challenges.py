@@ -375,6 +375,10 @@ class ChallengesFrame(CTkFrame):
             card.bind("<Button-1>", lambda e, m=mes_num: self.open_form("reto_lector", m))
             for child in card.winfo_children():
                 child.bind("<Button-1>", lambda e, m=mes_num: self.open_form("reto_lector", m))
+            CTkButton(card, text="Editar", width=120, height=28,
+                      fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
+                      text_color=PALETA["text_main"],
+                      command=lambda m=mes_num: self.open_form("reto_lector", m)).pack(pady=(0, 8))
         return card
 
     #  COLLECT COLORS
@@ -428,6 +432,10 @@ class ChallengesFrame(CTkFrame):
             card.bind("<Button-1>", lambda e, k=cdata["key"]: self.open_form("collect_colors", k))
             for child in card.winfo_children():
                 child.bind("<Button-1>", lambda e, k=cdata["key"]: self.open_form("collect_colors", k))
+            CTkButton(card, text="Editar", width=120, height=28,
+                      fg_color=PALETA["ocean"], hover_color=PALETA["coral"],
+                      text_color=PALETA["text_main"],
+                      command=lambda k=cdata["key"]: self.open_form("collect_colors", k)).pack(pady=(0, 8))
         return card
 
     #  GENRE TRACKER
